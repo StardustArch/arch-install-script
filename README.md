@@ -26,38 +26,39 @@ Automated installation script for a minimal Arch Linux setup with GNOME, PipeWir
 git clone https://github.com/your-username/arch-installer.git
 cd arch-installer
 sudo ./arch-installer.sh
-🔧 Customization
+```
+## 🔧 Customization
 Edit these variables in the script before running:
-
-bash
-Copy
+``` bash
 # System configuration
 HOSTNAME="archlinux"
 USERNAME="user"
 TIMEZONE="Africa/Maputo"
 KEYMAP="us"
 LANG="en_US.UTF-8"
-
-# Disk configuration
+```
+## Disk configuration
 DISK="/dev/sda"
 EFI_SIZE="512M"
 SWAP_SIZE="4G"
 ROOT_SIZE="30G"
 HOME_SIZE="50G"
 DATA_SIZE="100G"
-📂 Partition Scheme
+
+### 📂 Partition Scheme
 Partition	Filesystem	Size	Mount Point
 /dev/sda1	FAT32	512M	/boot
 /dev/sda2	Btrfs	30G	/
 /dev/sda3	Btrfs	50G	/home
 /dev/sda4	NTFS	100G	/mnt/data
-📦 Included Packages
+
+## 📦 Included Packages
 Core System
 base base-devel linux linux-firmware
-
 btrfs-progs networkmanager grub efibootmgr
-
+``` bash
 sudo nano git reflector
+```
 
 Desktop Environment
 gnome gnome-tweaks gdm
@@ -73,32 +74,29 @@ linux-liquorix linux-liquorix-headers
 
 flatpak flathub
 
-⚙️ Post-Installation
+## ⚙️ Post-Installation
 After reboot:
 
 Connect to network using GNOME settings
 
 Install additional Flatpak apps:
 
-bash
-Copy
+``` bash
 flatpak install flathub com.discordapp.Discord
 flatpak install flathub com.spotify.Client
-🛠 Troubleshooting
+```
+## 🛠 Troubleshooting
 Common Issues
 No internet connection:
-
-bash
-Copy
+``` bash
 systemctl enable --now NetworkManager
+```
 Audio not working:
-
-bash
-Copy
+``` bash
 systemctl enable --now pipewire pipewire-pulse
+```
 Brave not installing:
 Ensure yay is installed and try manually:
-
-bash
-Copy
+``` bash
 yay -S brave-bin
+```
