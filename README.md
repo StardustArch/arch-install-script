@@ -24,9 +24,9 @@ Automated installation script for a minimal Arch Linux setup with GNOME, PipeWir
 ## 🚀 Quick Start
 
 ```bash
-git clone https://github.com/your-username/arch-installer.git
+git clone https://github.com/StardustArch/arch-install-script.git
 cd arch-installer
-sudo ./arch-installer.sh
+sudo ./arch-install.sh
 ```
 
 ## 🔧 Customization
