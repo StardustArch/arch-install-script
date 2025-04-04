@@ -66,7 +66,6 @@ ROOT/HOME_SIZE=REST_OF_DISK_SPACE
 - **@**: Subvolume for the root system (`/`).
 - **@home**: Subvolume for the `/home` directory.
 3. **/dev/sda3**: Data partition in **NTFS**, 100GB in size, mounted at `/mnt/ntfs_data` for storing files. It has no subvolume.
----
 
 ## 📦 Included Packages
 
