@@ -40,24 +40,33 @@ USERNAME="user"
 TIMEZONE="Africa/Maputo"
 KEYMAP="us"
 LANG="en_US.UTF-8"
+DEFAULT_PASSWORD="123"(You can change it)
 
 # Disk configuration
 DISK="/dev/sda"
 EFI_SIZE="512M"
-SWAP_SIZE="4G"
-ROOT_SIZE="30G"
-HOME_SIZE="50G"
+SWAP_SIZE= RAM_SIZE
 DATA_SIZE="100G"
+ROOT/HOME_SIZE=REST_OF_DISK_SPACE
 ```
 
 ## 📂 Partition Scheme
 
-| Partition   | Filesystem | Size  | Mount Point |
-|-------------|------------|-------|-------------|
-| /dev/sda1   | FAT32      | 512M  | /boot       |
-| /dev/sda2   | Btrfs      | 30G   | /           |
-| /dev/sda3   | Btrfs      | 50G   | /home       |
-| /dev/sda4   | NTFS       | 100G  | /mnt/data   |
+| Partition   | Filesystem | Size  | Mount Point     | Subvolume      |
+|-------------|------------|-------|-----------------|----------------|
+| /dev/sda1   | FAT32      | 512M  | /boot/efi       | N/A            |
+| /dev/sda2   | Btrfs      | 100G  | /               | @              |
+| /dev/sda2   | Btrfs      | 100G  | /home           | @home          |
+| /dev/sda3   | NTFS       | 100G  | /mnt/ntfs_dados | N/A            |
+
+### Explicação:
+
+1. **/dev/sda1**: 512MB EFI (ESP) partition, formatted in **FAT32** and mounted at `/boot/efi` for system boot. It has no subvolume.
+2. **/dev/sda2**: Main system partition with **Btrfs**, 100GB in size, with two subvolumes:
+- **@**: Subvolume for the root system (`/`).
+- **@home**: Subvolume for the `/home` directory.
+3. **/dev/sda3**: Data partition in **NTFS**, 100GB in size, mounted at `/mnt/ntfs_data` for storing files. It has no subvolume.
+---
 
 ## 📦 Included Packages
 
