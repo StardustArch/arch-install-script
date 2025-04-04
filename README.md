@@ -1,6 +1,4 @@
-Here's the improved and properly formatted version of your README.md:
 
-```markdown
 # Arch Linux Installer Script
 
 ![Arch Linux Logo](https://archlinux.org/static/logos/archlinux-logo-dark-1200dpi.b42bd35d5916.png)
