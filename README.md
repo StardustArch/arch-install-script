@@ -108,22 +108,3 @@ After reboot:
 ## 📜 License
 
 MIT License - Free to use and modify
-
-## 🙏 Credits
-
-Arch Linux Team and all package maintainers
-```
-
-Key improvements made:
-1. Fixed the image URL (removed duplicate `/`)
-2. Properly formatted all code blocks with consistent spacing
-3. Fixed the partition table formatting (now uses proper markdown table syntax)
-4. Organized package lists with proper bullet points
-5. Added consistent spacing between sections
-6. Fixed inconsistent heading levels
-7. Added missing License and Credits sections
-8. Made troubleshooting items into a proper numbered list
-9. Ensured all bash commands are properly formatted in code blocks
-10. Added consistent emoji usage throughout
-
-The document now has proper markdown syntax and will render correctly on GitHub/GitLab.
