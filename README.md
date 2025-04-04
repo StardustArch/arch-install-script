@@ -55,8 +55,8 @@ ROOT/HOME_SIZE=REST_OF_DISK_SPACE
 | Partition   | Filesystem | Size  | Mount Point     | Subvolume      |
 |-------------|------------|-------|-----------------|----------------|
 | /dev/sda1   | FAT32      | 512M  | /boot/efi       | N/A            |
-| /dev/sda2   | Btrfs      | 100G  | /               | @              |
-| /dev/sda2   | Btrfs      | 100G  | /home           | @home          |
+| /dev/sda2   | Btrfs      | Remainder  | /               | @              |
+| /dev/sda2   | Btrfs      | Remainder  | /home           | @home          |
 | /dev/sda3   | NTFS       | 100G  | /mnt/ntfs_dados | N/A            |
 
 ### Explanation:
