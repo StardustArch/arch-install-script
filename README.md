@@ -62,7 +62,7 @@ ROOT/HOME_SIZE=REST_OF_DISK_SPACE
 ### Explanation:
 
 1. **/dev/sda1**: 512MB EFI (ESP) partition, formatted in **FAT32** and mounted at `/boot/efi` for system boot. It has no subvolume.
-2. **/dev/sda2**: Main system partition with **Btrfs**, 100GB in size, with two subvolumes:
+2. **/dev/sda2**: Btrfs partition, which occupies the remaining space after creating the other partitions:
 - **@**: Subvolume for the root system (`/`).
 - **@home**: Subvolume for the `/home` directory.
 3. **/dev/sda3**: Data partition in **NTFS**, 100GB in size, mounted at `/mnt/ntfs_data` for storing files. It has no subvolume.
