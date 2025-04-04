@@ -70,7 +70,7 @@ ROOT/HOME_SIZE=REST_OF_DISK_SPACE
 ## 📦 Included Packages
 
 ### Core System
-- base base-devel linux linux-firmware
+- base base-devel linux-firmware
 - btrfs-progs networkmanager grub efibootmgr
 - sudo nano git reflector
 
