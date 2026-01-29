@@ -1,53 +1,143 @@
 #!/bin/bash
-# install.sh - Arch Eterno Setup
 
-# 1. Instala o reflector (se não tiver)
-sudo pacman -Sy --noconfirm reflector
+# ==========================================
+# CONFIGURAÇÃO E VARIÁVEIS
+# ==========================================
+set -e  # Para o script se houver erro
 
-# 2. Busca os 10 mirrors mais rápidos (focando na região e HTTPS)
-# Dica: Incluí 'South Africa' explicitamente pois é o vizinho mais rápido.
-echo "Otimizando mirrors... isso pode levar alguns segundos..."
-sudo reflector --country 'South Africa,Brazil,Portugal' --latest 10 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+# Cores
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
 
-echo ">>> 1. Atualizando sistema e criando snapshot de segurança..."
-sudo pacman -Syu --noconfirm
+DOTFILES_DIR="$HOME/dotfiles"
 
-echo ">>> 2. Instalando Base Gráfica (Hyprland & Audio)..."
-# pipewire: audio, waybar: barra, dunst: notificacoes, kitty: terminal
-sudo pacman -S --noconfirm hyprland xorg-xwayland waybar dunst \
-kitty rofi-wayland pipewire pipewire-pulse wireplumber \
-polkit-gnome thunar ttc-iosevka-nerd ttf-jetbrains-mono-nerd \
-xdg-desktop-portal-hyprland qt5-wayland qt6-wayland
+# Funções de Log
+log() { echo -e "${GREEN}[+] $1${NC}"; }
+warn() { echo -e "${YELLOW}[!] $1${NC}"; }
+err()  { echo -e "${RED}[X] $1${NC}"; }
 
-echo ">>> 3. Instalando Ferramentas de Contêiner (Distrobox)..."
-sudo pacman -S --noconfirm podman distrobox podman-compose
-# Habilitar podman socket (opcional, bom para compatibilidade docker)
-systemctl --user enable --now podman.socket
+trap 'err "Erro na linha $LINENO. Verifique a saída acima."' ERR
 
-echo ">>> 4. Instalando Nix (Multi-user)..."
-# Usando o instalador determinado (zero-to-nix style)
-if ! command -v nix &> /dev/null; then
-    sh <(curl -L https://nixos.org/nix/install) --daemon
-    # Ativar nix para esta sessão sem precisar relogar
-    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+log ">>> INICIANDO SETUP 'ARCH ETERNO' (v2 com SDDM) <<<"
+
+# ==========================================
+# 1. OTIMIZAÇÃO DE MIRRORS
+# ==========================================
+if command -v reflector &> /dev/null; then
+    if [ -n "$(find /etc/pacman.d/mirrorlist -mtime -1 2>/dev/null)" ]; then
+        warn "Mirrors atualizados recentemente. Pulando."
+    else
+        log "Otimizando mirrors (ZA, BR, PT)..."
+        sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
+        sudo reflector --country 'South Africa,Brazil,Portugal' --latest 10 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+    fi
 else
-    echo "Nix já instalado."
+    log "Instalando Reflector..."
+    sudo pacman -Sy --noconfirm --needed reflector
 fi
 
-echo ">>> 5. Instalando Home Manager (Standalone)..."
-# Adiciona o canal unstable (mais atualizado)
-nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
-nix-channel --update
-# Instala o home-manager
-nix-shell '<home-manager>' -A install
+# ==========================================
+# 2. ATUALIZAÇÃO E PACOTES BASE
+# ==========================================
+log "Sincronizando sistema..."
+sudo pacman -Syu --noconfirm
 
-echo ">>> 6. Preparando estrutura de Dotfiles..."
-mkdir -p ~/.config/hypr
-# Aqui futuramente entra o 'stow', por enquanto vamos criar configs basicas
-# para garantir que o Hyprland abra.
+log "Instalando pacotes base..."
 
-# Config minima do Hyprland para não dar tela preta/erro
-cat <<EOF > ~/.config/hypr/hyprland.conf
+PKGS=(
+    git
+    base-devel
+    hyprland
+    xorg-xwayland
+    waybar
+    dunst
+    kitty
+    rofi-wayland
+    pipewire
+    pipewire-pulse
+    wireplumber
+    polkit-gnome
+    thunar
+    ttf-jetbrains-mono-nerd
+    xdg-desktop-portal-hyprland
+    qt5-wayland
+    qt6-wayland
+    # --- SDDM e Deps ---
+    sddm
+    qt5-quickcontrols2
+    qt5-graphicaleffects
+    qt5-svg
+    # --- Container ---
+    podman
+    distrobox
+    podman-compose
+    stow
+    btop
+)
+
+sudo pacman -S --noconfirm --needed "${PKGS[@]}"
+
+# Habilitar Podman Socket
+if ! systemctl --user is-active --quiet podman.socket; then
+    log "Habilitando Podman Socket..."
+    systemctl --user enable --now podman.socket
+fi
+
+# ==========================================
+# 3. CONFIGURAÇÃO DO DISPLAY MANAGER (SDDM)
+# ==========================================
+log "Configurando SDDM (Tela de Login)..."
+
+# Habilita o serviço do SDDM para iniciar no boot
+if ! systemctl is-enabled --quiet sddm; then
+    sudo systemctl enable sddm
+    log "Serviço SDDM habilitado."
+else
+    warn "SDDM já estava habilitado."
+fi
+
+# Opcional: Criar pasta de temas caso queira instalar um depois
+sudo mkdir -p /usr/share/sddm/themes
+
+# ==========================================
+# 4. INSTALAÇÃO DO NIX
+# ==========================================
+if command -v nix &> /dev/null; then
+    warn "Nix já está instalado."
+else
+    log "Instalando Nix..."
+    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --no-confirm
+    if [ -e "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then
+        . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+    fi
+fi
+
+# ==========================================
+# 5. INSTALAÇÃO DO HOME MANAGER
+# ==========================================
+if command -v home-manager &> /dev/null; then
+    warn "Home Manager já instalado."
+else
+    log "Configurando Home Manager..."
+    if ! nix-channel --list | grep -q "home-manager"; then
+        nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+        nix-channel --update
+    fi
+    nix-shell '<home-manager>' -A install
+fi
+
+# ==========================================
+# 6. CONFIGURAÇÃO DE DOTFILES (STOW)
+# ==========================================
+log "Gerenciando Dotfiles..."
+
+mkdir -p "$DOTFILES_DIR/hypr/.config/hypr"
+
+if [ ! -f "$DOTFILES_DIR/hypr/.config/hypr/hyprland.conf" ]; then
+    log "Criando template Hyprland..."
+    cat <<EOF > "$DOTFILES_DIR/hypr/.config/hypr/hyprland.conf"
 monitor=,preferred,auto,1
 exec-once = waybar & dunst
 input {
@@ -66,7 +156,26 @@ dwindle {
     pseudotile = yes
     preserve_split = yes
 }
+misc {
+    disable_hyprland_logo = true
+}
 EOF
+fi
 
-echo ">>> INSTALAÇÃO CONCLUÍDA!"
-echo "Reinicie a máquina ou digite 'Hyprland' para testar."
+TARGET_DIR="$HOME/.config/hypr"
+if [ -d "$TARGET_DIR" ] && [ ! -L "$TARGET_DIR" ]; then
+    warn "Backup da pasta hypr existente..."
+    mv "$TARGET_DIR" "${TARGET_DIR}.backup.$(date +%s)"
+fi
+
+mkdir -p "$HOME/.config"
+cd "$DOTFILES_DIR"
+stow hypr
+
+# ==========================================
+# FINALIZAÇÃO
+# ==========================================
+log ">>> INSTALAÇÃO CONCLUÍDA! <<<"
+echo ""
+echo "Ao reiniciar, você verá a tela de login do SDDM."
+echo "Selecione 'Hyprland' na sessão (canto inferior ou superior da tela)."
