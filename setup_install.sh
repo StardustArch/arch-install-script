@@ -206,5 +206,7 @@ stow hypr
 # ==========================================
 log ">>> INSTALAÇÃO CONCLUÍDA! <<<"
 echo ""
-echo "Ao reiniciar, você verá a tela de login do SDDM."
-echo "Selecione 'Hyprland' na sessão (canto inferior ou superior da tela)."
+echo "O sistema está pronto."
+echo "1. Reinicie: 'sudo reboot'"
+echo "2. O login mostrará apenas seu usuário (Nix users ocultos)."
+echo "3. No Hyprland, use Super+Q para abrir o terminal."
