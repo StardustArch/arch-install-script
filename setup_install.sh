@@ -143,11 +143,21 @@ mkdir -p "$DOTFILES_DIR/hypr/.config/hypr"
 if [ ! -f "$DOTFILES_DIR/hypr/.config/hypr/hyprland.conf" ]; then
     log "Criando template Hyprland..."
     cat <<EOF > "$DOTFILES_DIR/hypr/.config/hypr/hyprland.conf"
+# --- VARIÁVEIS ---
+$mainMod = SUPER
+$terminal = kitty
+$menu = rofi -show drun
+
+# --- INICIALIZAÇÃO ---
 monitor=,preferred,auto,1
 exec-once = waybar & dunst
+
+# --- INPUT ---
 input {
-    kb_layout = br
+    kb_layout = us
 }
+
+# --- VISUAL ---
 general {
     gaps_in = 5
     gaps_out = 10
@@ -164,6 +174,20 @@ dwindle {
 misc {
     disable_hyprland_logo = true
 }
+
+# --- ATALHOS (ESSENCIAIS) ---
+bind = $mainMod, Q, exec, $terminal
+bind = $mainMod, C, killactive,
+bind = $mainMod, M, exit,
+bind = $mainMod, E, exec, thunar
+bind = $mainMod, V, togglefloating,
+bind = $mainMod, SPACE, exec, $menu
+
+# --- MOVIMENTO ---
+bind = $mainMod, left, movefocus, l
+bind = $mainMod, right, movefocus, r
+bind = $mainMod, up, movefocus, u
+bind = $mainMod, down, movefocus, d
 EOF
 fi
 
