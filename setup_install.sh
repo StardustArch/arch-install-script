@@ -75,6 +75,7 @@ PKGS=(
     podman-compose
     stow
     btop
+    flatpak
 )
 
 sudo pacman -S --noconfirm --needed "${PKGS[@]}"
@@ -200,6 +201,7 @@ fi
 mkdir -p "$HOME/.config"
 cd "$DOTFILES_DIR"
 stow hypr
+stow nix
 
 # ==========================================
 # FINALIZAÇÃO
