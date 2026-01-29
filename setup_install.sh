@@ -101,6 +101,11 @@ fi
 # Opcional: Criar pasta de temas caso queira instalar um depois
 sudo mkdir -p /usr/share/sddm/themes
 
+# FIX: Esconder usuários de build do Nix (ID > 29000)
+log "Aplicando correção para esconder usuários Nix do login..."
+sudo mkdir -p /etc/sddm.conf.d
+echo -e "[Users]\nMinimumUid=1000\nMaximumUid=29000" | sudo tee /etc/sddm.conf.d/hide-nix-users.conf > /dev/null
+
 # ==========================================
 # 4. INSTALAÇÃO DO NIX
 # ==========================================
