@@ -1,6 +1,14 @@
 #!/bin/bash
 # install.sh - Arch Eterno Setup
 
+# 1. Instala o reflector (se não tiver)
+sudo pacman -Sy --noconfirm reflector
+
+# 2. Busca os 10 mirrors mais rápidos (focando na região e HTTPS)
+# Dica: Incluí 'South Africa' explicitamente pois é o vizinho mais rápido.
+echo "Otimizando mirrors... isso pode levar alguns segundos..."
+sudo reflector --country 'South Africa,Brazil,Portugal' --latest 10 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+
 echo ">>> 1. Atualizando sistema e criando snapshot de segurança..."
 sudo pacman -Syu --noconfirm
 
