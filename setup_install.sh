@@ -51,6 +51,7 @@ PKGS=(
     base-devel
     hyprland
     hyprpaper
+    swaybg
     xorg-xwayland
     waybar
     dunst

@@ -1,0 +1,77 @@
+/* --- ESTILO NORD-NEON --- */
+
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "JetBrainsMono Nerd Font";
+    font-weight: bold;
+    font-size: 14px;
+    min-height: 0;
+}
+
+window#waybar {
+    /* Fundo semi-transparente para o Blur do Hyprland brilhar */
+    background: rgba(46, 52, 64, 0.7); 
+    color: #eceff4;
+    border-bottom: 2px solid rgba(157, 0, 255, 0.5); /* Borda Neon Purple suave */
+}
+
+tooltip {
+    background: #2e3440;
+    border-radius: 10px;
+    border: 1px solid #88c0d0; /* Nord Frost */
+}
+
+#workspaces button {
+    padding: 0 5px;
+    color: #88c0d0; /* Nord Frost */
+    background: transparent;
+}
+
+/* O Workspace ativo ganha o gradiente Neon */
+#workspaces button.active {
+    color: #2e3440;
+    background: linear-gradient(45deg, #88c0d0, #9d00ff);
+    border-radius: 15px;
+    min-width: 30px;
+    transition: all 0.3s cubic-bezier(.55,-0.68,.48,1.68);
+}
+
+#workspaces button:hover {
+    background: rgba(136, 192, 208, 0.2);
+    color: #ff00ff; /* Neon Pink no hover */
+    border-radius: 15px;
+}
+
+#clock,
+#cpu,
+#memory,
+#pulseaudio,
+#tray {
+    padding: 0 15px;
+    margin: 4px 4px;
+    border-radius: 10px;
+    background: rgba(46, 52, 64, 0.4);
+}
+
+#clock {
+    color: #88c0d0; /* Nord Frost */
+    font-weight: 800;
+}
+
+#cpu {
+    color: #ff00ff; /* Neon Pink */
+}
+
+#memory {
+    color: #00ffff; /* Neon Cyan */
+}
+
+#pulseaudio {
+    color: #9d00ff; /* Neon Purple */
+}
+
+#window {
+    color: #eceff4;
+    opacity: 0.8;
+}
