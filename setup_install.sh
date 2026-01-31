@@ -50,6 +50,7 @@ PKGS=(
     git
     base-devel
     hyprland
+    hyprpaper
     xorg-xwayland
     waybar
     dunst
