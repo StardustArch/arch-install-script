@@ -137,71 +137,42 @@ fi
 # ==========================================
 # 6. CONFIGURAÇÃO DE DOTFILES (STOW)
 # ==========================================
-log "Gerenciando Dotfiles..."
+log "Sincronizando Dotfiles com o sistema..."
 
-mkdir -p "$DOTFILES_DIR/hypr/.config/hypr"
-
-if [ ! -f "$DOTFILES_DIR/hypr/.config/hypr/hyprland.conf" ]; then
-    log "Criando template Hyprland..."
-    cat <<EOF > "$DOTFILES_DIR/hypr/.config/hypr/hyprland.conf"
-# --- VARIÁVEIS ---
-$mainMod = SUPER
-$terminal = kitty
-$menu = rofi -show drun
-
-# --- INICIALIZAÇÃO ---
-monitor=,preferred,auto,1
-exec-once = waybar & dunst
-
-# --- INPUT ---
-input {
-    kb_layout = us
-}
-
-# --- VISUAL ---
-general {
-    gaps_in = 5
-    gaps_out = 10
-    border_size = 2
-    col.active_border = rgba(33ccffee)
-}
-decoration {
-    rounding = 10
-}
-dwindle {
-    pseudotile = yes
-    preserve_split = yes
-}
-misc {
-    disable_hyprland_logo = true
-}
-
-# --- ATALHOS (ESSENCIAIS) ---
-bind = $mainMod, Q, exec, $terminal
-bind = $mainMod, C, killactive,
-bind = $mainMod, M, exit,
-bind = $mainMod, E, exec, thunar
-bind = $mainMod, V, togglefloating,
-bind = $mainMod, SPACE, exec, $menu
-
-# --- MOVIMENTO ---
-bind = $mainMod, left, movefocus, l
-bind = $mainMod, right, movefocus, r
-bind = $mainMod, up, movefocus, u
-bind = $mainMod, down, movefocus, d
-EOF
-fi
-
-TARGET_DIR="$HOME/.config/hypr"
-if [ -d "$TARGET_DIR" ] && [ ! -L "$TARGET_DIR" ]; then
-    warn "Backup da pasta hypr existente..."
-    mv "$TARGET_DIR" "${TARGET_DIR}.backup.$(date +%s)"
-fi
-
+# 1. Garante que as pastas de destino existam para o Stow não falhar
 mkdir -p "$HOME/.config"
+
+# 2. Prepara o terreno: Se as pastas já existirem e NÃO forem links, faz backup
+# Isso evita que o Stow dê erro de "conflito"
+prepare_stow() {
+    local dir="$1"
+    if [ -d "$HOME/$dir" ] && [ ! -L "$HOME/$dir" ]; then
+        warn "Pasta $dir real detectada. Movendo para backup..."
+        mv "$HOME/$dir" "$HOME/${dir}_backup_$(date +%s)"
+    fi
+}
+
+prepare_stow ".config/hypr"
+prepare_stow ".config/home-manager"
+
+# 3. Executa a mágica do Stow
+# O Stow vai linkar as pastas do repo (~/dotfiles/hypr e ~/dotfiles/nix) para o seu $HOME
+log "Criando links simbólicos..."
 cd "$DOTFILES_DIR"
-stow hypr
-stow nix
+
+if [ -d "hypr" ]; then
+    stow hypr
+    log "Hyprland linkado."
+else
+    err "Pasta 'hypr' não encontrada no repositório!"
+fi
+
+if [ -d "nix" ]; then
+    stow nix
+    log "Nix/Home-Manager linkado."
+else
+    err "Pasta 'nix' não encontrada no repositório!"
+fi
 
 # ==========================================
 # FINALIZAÇÃO
