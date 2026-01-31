@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # --- CONFIGURAÇÃO ---
-WALL_DIR="$HOME/Pictures/Wallpapers"
+WALL_DIR="$HOME/.config/hypr/wallpapers"
 INTERVAL=${2:-300} # 300s = 5 minutos
 
 # 1. Detecta o monitor automaticamente (Resolve o erro da VM)
