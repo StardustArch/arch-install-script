@@ -1,37 +1,38 @@
 configuration {
-    modi: "drun,run";
+    modi: "drun";
     show-icons: true;
-    display-drun: "🚀 Apps";
-    display-run: "💻 Run";
-    font: "JetBrainsMono Nerd Font Bold 12";
+    display-drun: " "; /* Ícone de lupa minimalista */
+    drun-display-format: "{name}";
+    font: "JetBrainsMono Nerd Font Bold 11";
 }
 
-/* --- IMPORTANDO CORES (Substitua pelos hex se preferir direto) --- */
+/* --- PALETA NORD OFICIAL --- */
 * {
-    nord0:  #2e3440;
-    nord1:  #3b4252;
+    nord0:  #2e3440; /* Fundo Escuro */
+    nord1:  #3b4252; /* Fundo Ligeiramente mais claro */
     nord2:  #434c5e;
-    nord3:  #4c566a;
-    nord4:  #d8dee9;
-    nord8:  #88c0d0; /* Ciano Gelo */
-    nord11: #bf616a;
+    nord3:  #4c566a; /* Cinza para inativos */
+    nord4:  #d8dee9; /* Texto Principal */
+    nord8:  #88c0d0; /* Ciano Gelo (Destaque) */
+    nord10: #5e81ac; /* Azul Oceano */
     
     background-color: transparent;
     text-color:       @nord4;
     margin:           0;
     padding:          0;
-    spacing:          0;
 }
 
 window {
-    /* Fundo escuro com transparência para o Blur do Hyprland */
-    background-color: #2e3440cc; 
+    /* Fundo escuro real com leve transparência */
+    background-color: #2e3440f2; 
     border:           2px;
-    border-color:     @nord8; /* Borda Ciano Gelo igual ao Hyprland */
-    border-radius:    10px;
-    width:            500px;
+    border-color:     @nord8;
+    border-radius:    12px;
+    width:            600px;
     location:         center;
     anchor:           center;
+    /* Sombra suave */
+    transparency:     "real";
 }
 
 mainbox {
@@ -39,58 +40,64 @@ mainbox {
     children: [inputbar, listview];
 }
 
+/* --- BARRA DE PESQUISA --- */
 inputbar {
     background-color: @nord1;
     border-radius:    8px;
-    padding:          10px;
+    padding:          12px;
     margin:           0 0 15px 0;
     children:         [prompt, entry];
 }
 
 prompt {
-    background-color: transparent;
     text-color:       @nord8;
-    padding:          0 10px 0 0;
+    font:             "JetBrainsMono Nerd Font Bold 14";
+    vertical-align:   0.5;
+    margin:           0 10px 0 0;
 }
 
 entry {
-    background-color: transparent;
+    placeholder:      "O que queres abrir?";
+    placeholder-color:@nord3;
     text-color:       @nord4;
-    placeholder:      "Pesquisar...";
-    placeholder-color: @nord3;
+    vertical-align:   0.5;
 }
 
+/* --- LISTA DE APPS --- */
 listview {
     lines:      8;
     columns:    1;
     scrollbar:  false;
-    spacing:    5px;
+    spacing:    4px; /* Espaço pequeno entre itens */
 }
 
 element {
     padding:       10px;
     border-radius: 8px;
+    /* IMPORTANTE: Remove o fundo bege que estava feio */
+    background-color: transparent; 
 }
 
+/* Item Normal (Não selecionado) */
 element normal.normal {
-    background-color: transparent;
-    text-color:       @nord4;
+    text-color: @nord4;
 }
 
-/* Item Selecionado: Fundo Azul Gelo suave com texto escuro */
+/* Item Selecionado (Foco) */
 element selected.normal {
-    background-color: @nord8;
-    text-color:       @nord0;
+    /* Fundo Azul Oceano suave em vez de Ciano gritante */
+    background-color: @nord2; 
+    text-color:       @nord8; /* Texto fica Ciano */
+    border:           1px;
+    border-color:     @nord8;
 }
 
 element-icon {
     size: 24px;
-    margin: 0 10px 0 0;
-    background-color: transparent;
+    margin: 0 12px 0 0;
+    vertical-align: 0.5;
 }
 
 element-text {
-    background-color: transparent;
-    text-color:       inherit;
-    vertical-align:   0.5;
+    vertical-align: 0.5;
 }
