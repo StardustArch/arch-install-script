@@ -2,24 +2,25 @@
   description = "Configuração Home Manager do Paulo";
 
   inputs = {
-    # Aqui a gente fixa a fonte dos pacotes
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # 1. Adiciona o nix-flatpak aqui
+    nix-flatpak.url = "github:gmodena/nix-flatpak";
   };
 
-  outputs = { nixpkgs, home-manager, ... }:
+  outputs = { nixpkgs, home-manager, nix-flatpak, ... }:
     let
-      system = "x86_64-linux"; # O sistema do seu Latitude
+      system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
     in {
-      # "paulo" é o nome do seu usuário
       homeConfigurations."paulo_" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
-        modules = [ ./home.nix ]; # Ele vai ler o seu home.nix que já existe aí do lado
+        # 2. Passa o nix-flatpak para dentro do home.nix
+        extraSpecialArgs = { inherit nix-flatpak; }; 
+        modules = [ ./home.nix ];
       };
     };
 }

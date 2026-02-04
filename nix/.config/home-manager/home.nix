@@ -1,9 +1,9 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib,nix-flatpak, ... }:
 
 {
 
   imports = [
-	"${fetchTarball "https://github.com/gmodena/nix-flatpak/archive/main.tar.gz"}/modules/home-manager.nix"
+    nix-flatpak.homeManagerModules.nix-flatpak
   ];
 
   # Home Manager needs a bit of information about you and the paths it should
