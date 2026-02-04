@@ -164,14 +164,17 @@ for folder in */; do
 done
 
 # ==========================================
-# APLICAÇÃO INICIAL DO FLAKE
+# GESTÃO DE GIT PARA FLAKES
 # ==========================================
-# Se os arquivos já foram linkados pelo Stow, rodamos o switch
-if [ -f "$HOME/.config/home-manager/flake.nix" ]; then
-    log "Aplicando configuração inicial do Home Manager via Flake..."
-    # Usando paulo_ como definido no teu home.nix
-    home-manager switch --flake "$HOME/.config/home-manager#paulo_"
+if [ -d "$HOME/.config/home-manager/.git" ] || [ -d "$DOTFILES_DIR/.git" ]; then
+    log "Garantindo que os ficheiros estão rastreados pelo Git para o Flake..."
+    cd "$HOME/.config/home-manager"
+    # Adiciona apenas ficheiros novos para o Nix poder vê-los
+    git add flake.nix home.nix 2>/dev/null || true
 fi
+
+# Agora o switch não vai falhar por "uncommitted changes"
+home-manager switch --flake "$HOME/.config/home-manager#paulo_"
 
 
 
