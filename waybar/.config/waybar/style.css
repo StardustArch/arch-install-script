@@ -1,77 +1,91 @@
-/* --- ESTILO NORD-NEON --- */
+/* Importa a paleta oficial */
+@import "colors.css";
 
 * {
     border: none;
     border-radius: 0;
     font-family: "JetBrainsMono Nerd Font";
     font-weight: bold;
-    font-size: 14px;
+    font-size: 13px; /* Reduzi levemente para ser mais elegante */
     min-height: 0;
 }
 
 window#waybar {
-    /* Fundo semi-transparente para o Blur do Hyprland brilhar */
-    background: rgba(46, 52, 64, 0.7); 
-    color: #eceff4;
-    border-bottom: 2px solid rgba(157, 0, 255, 0.5); /* Borda Neon Purple suave */
+    /* Fundo escuro com 85% de opacidade (legível mas com blur atrás) */
+    background: rgba(46, 52, 64, 0.85); 
+    color: @nord4;
+    
+    /* Borda inferior fina e azul (Nord8) em vez de Roxo Neon */
+    border-bottom: 2px solid rgba(136, 192, 208, 0.4); 
 }
 
 tooltip {
-    background: #2e3440;
-    border-radius: 10px;
-    border: 1px solid #88c0d0; /* Nord Frost */
+    background: @nord0;
+    border: 1px solid @nord8;
+    border-radius: 8px;
 }
 
+/* --- WORKSPACES (Limpos) --- */
 #workspaces button {
-    padding: 0 5px;
-    color: #88c0d0; /* Nord Frost */
+    padding: 0 8px;
+    color: @nord3; /* Cinza para inativos */
     background: transparent;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
 }
 
-/* O Workspace ativo ganha o gradiente Neon */
+/* Workspace ativo: Apenas texto brilhante e uma linha azul */
 #workspaces button.active {
-    color: #2e3440;
-    background: linear-gradient(45deg, #88c0d0, #9d00ff);
-    border-radius: 15px;
-    min-width: 30px;
-    transition: all 0.3s cubic-bezier(.55,-0.68,.48,1.68);
+    color: @nord6; /* Branco brilhante */
+    border-bottom: 2px solid @nord8; /* Linha Ciano Gelo */
+    background: rgba(136, 192, 208, 0.1); /* Leve brilho azul */
 }
 
 #workspaces button:hover {
     background: rgba(136, 192, 208, 0.2);
-    color: #ff00ff; /* Neon Pink no hover */
-    border-radius: 15px;
+    color: @nord8;
+    border-bottom: 2px solid @nord8;
 }
 
+/* --- MÓDULOS (Conciso: Sem fundos quadrados) --- */
 #clock,
 #cpu,
 #memory,
 #pulseaudio,
 #tray {
-    padding: 0 15px;
-    margin: 4px 4px;
-    border-radius: 10px;
-    background: rgba(46, 52, 64, 0.4);
+    padding: 0 10px;
+    margin: 4px 0;
+    background: transparent; /* Removemos o fundo cinza blocky */
 }
 
+/* Cores Funcionais (Substituindo o Neon) */
+
 #clock {
-    color: #88c0d0; /* Nord Frost */
+    color: @nord6; /* Branco */
     font-weight: 800;
 }
 
 #cpu {
-    color: #ff00ff; /* Neon Pink */
+    color: @nord11; /* Vermelho Nord (Alerta de carga) */
 }
 
 #memory {
-    color: #00ffff; /* Neon Cyan */
+    color: @nord13; /* Amarelo Nord */
 }
 
 #pulseaudio {
-    color: #9d00ff; /* Neon Purple */
+    color: @nord14; /* Verde Nord (Áudio ok) */
+}
+
+#pulseaudio.muted {
+    color: @nord3; /* Cinza se mudo */
+}
+
+#tray {
+    padding-right: 15px;
 }
 
 #window {
-    color: #eceff4;
+    color: @nord4;
     opacity: 0.8;
 }

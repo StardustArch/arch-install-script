@@ -1,0 +1,43 @@
+1. Polar Night (Fundos e Painéis)
+Usaremos para fundos de janelas, barras e terminais.
+
+#2e3440 (Nord0): Fundo Principal (Wallpaper, Terminal, Waybar).
+
+#3b4252 (Nord1): Fundo Secundário (Menus, Tooltips, Rofi).
+
+#434c5e (Nord2): Seleção/Highlight (Item selecionado no menu).
+
+#4c566a (Nord3): Comentários/Inativo (Bordas de janelas inativas).
+
+2. Snow Storm (Texto e Elementos)
+Usaremos para texto e ícones.
+
+#d8dee9 (Nord4): Texto Padrão (O que você lê na maior parte do tempo).
+
+#e5e9f0 (Nord5): Texto Claro.
+
+#eceff4 (Nord6): Texto Destaque (Títulos, relógio, workspace ativo).
+
+3. Frost (Acentos Principais - O "Brilho" Elegante)
+Usaremos para bordas ativas e foco. É a "alma" do tema.
+
+#8fbcbb (Nord7): Teal (Botões especiais).
+
+#88c0d0 (Nord8): Ciano Gelo (A cor PRINCIPAL de foco/borda).
+
+#81a1c1 (Nord9): Azul Claro (Ícones secundários).
+
+#5e81ac (Nord10): Azul Profundo (Gradientes de borda).
+
+4. Aurora (Status e Funcional)
+Usaremos apenas para indicar estado (Erro, Aviso, Sucesso).
+
+#bf616a (Nord11): Vermelho (Erro, CPU alta, Bateria fraca).
+
+#d08770 (Nord12): Laranja (Avisos).
+
+#ebcb8b (Nord13): Amarelo (Memória média, atualizações).
+
+#a3be8c (Nord14): Verde (Sucesso, Áudio, Wi-Fi conectado).
+
+#b48ead (Nord15): Roxo (Mídia/Vídeo, algo "fancy", mas suave
