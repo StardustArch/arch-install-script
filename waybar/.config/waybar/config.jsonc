@@ -10,8 +10,6 @@
     "modules-center": ["hyprland/window"],
     // ADICIONADO: Novos módulos essenciais na direita
     "modules-right": [
-        "network",
-        "bluetooth",
         "backlight",
         "pulseaudio",
         "battery",
@@ -38,28 +36,6 @@
     },
 
     // --- MÓDULOS NOVOS ---
-
-    "network": {
-        "format-wifi": "  {essid}",
-        "format-ethernet": "󰈀  Wired",
-        "tooltip-format": "{ifname} via {gwaddr}",
-        "format-linked": "{ifname} (No IP)",
-        "format-disconnected": "⚠  Offline",
-        "format-alt": "{ifname}: {ipaddr}/{cidr}",
-        "on-click": "kitty -e nmtui"
-    },
-
-    "bluetooth": {
-	    "format": " {status}",
-	    "format-connected": " {device_alias}",
-	    "format-connected-battery": " {device_alias} {device_battery_percentage}%",
-	    "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
-	    "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
-	    "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
-	    "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%",
-	    "on-click": "blueman-manager"
-    },
-
     "backlight": {
         "device": "intel_backlight",
         "format": "{icon} {percent}%",
