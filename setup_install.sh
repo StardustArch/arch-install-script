@@ -112,20 +112,30 @@ sudo mkdir -p /etc/sddm.conf.d
 echo -e "[Users]\nMinimumUid=1000\nMaximumUid=29000" | sudo tee /etc/sddm.conf.d/hide-nix-users.conf > /dev/null
 
 # ==========================================
-# 5. INSTALAÇÃO DO NIX & HOME MANAGER
+# 5. INSTALAÇÃO DO NIX & ATIVAÇÃO DE FLAKES
 # ==========================================
 if ! command -v nix &> /dev/null; then
-    log "Instalando Nix..."
+    log "Instalando Nix (via Determinate Systems)..."
     curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --no-confirm
+    
+    # Carrega o Nix na sessão atual do script
     [ -e "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ] && . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 fi
 
+log "Habilitando suporte a Flakes..."
+mkdir -p ~/.config/nix
+# Verifica se a linha já existe para não duplicar
+if ! grep -q "flakes" ~/.config/nix/nix.conf 2>/dev/null; then
+    echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+fi
+
 if ! command -v home-manager &> /dev/null; then
-    log "Configurando Home Manager..."
+    log "Instalando Home Manager..."
     nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
     nix-channel --update
     nix-shell '<home-manager>' -A install
 fi
+
 
 # ==========================================
 # 6. CONFIGURAÇÃO DE DOTFILES (STOW)
@@ -152,5 +162,17 @@ for folder in */; do
     stow "${folder%/}"
     log "Linkado: ${folder%/}"
 done
+
+# ==========================================
+# APLICAÇÃO INICIAL DO FLAKE
+# ==========================================
+# Se os arquivos já foram linkados pelo Stow, rodamos o switch
+if [ -f "$HOME/.config/home-manager/flake.nix" ]; then
+    log "Aplicando configuração inicial do Home Manager via Flake..."
+    # Usando paulo_ como definido no teu home.nix
+    home-manager switch --flake "$HOME/.config/home-manager#paulo_"
+fi
+
+
 
 log ">>> SETUP CONCLUÍDO! REINICIE O SISTEMA. <<<"

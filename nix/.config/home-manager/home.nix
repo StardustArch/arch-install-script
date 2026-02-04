@@ -59,7 +59,7 @@
     hms="home-manager switch --flake ~/.config/home-manager#paulo_";
     hmu="nix flake update ~/.config/home-manager && hms";
     nclean="nix-collect-garbage -d";
-    hme="cd ~/.config/home-manager && $EDITOR flake.nix"
+    hme="cd ~/.config/home-manager && $EDITOR flake.nix";
 	};
   };
 
