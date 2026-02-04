@@ -1,0 +1,96 @@
+configuration {
+    modi: "drun,run";
+    show-icons: true;
+    display-drun: "🚀 Apps";
+    display-run: "💻 Run";
+    font: "JetBrainsMono Nerd Font Bold 12";
+}
+
+/* --- IMPORTANDO CORES (Substitua pelos hex se preferir direto) --- */
+* {
+    nord0:  #2e3440;
+    nord1:  #3b4252;
+    nord2:  #434c5e;
+    nord3:  #4c566a;
+    nord4:  #d8dee9;
+    nord8:  #88c0d0; /* Ciano Gelo */
+    nord11: #bf616a;
+    
+    background-color: transparent;
+    text-color:       @nord4;
+    margin:           0;
+    padding:          0;
+    spacing:          0;
+}
+
+window {
+    /* Fundo escuro com transparência para o Blur do Hyprland */
+    background-color: #2e3440cc; 
+    border:           2px;
+    border-color:     @nord8; /* Borda Ciano Gelo igual ao Hyprland */
+    border-radius:    10px;
+    width:            500px;
+    location:         center;
+    anchor:           center;
+}
+
+mainbox {
+    padding: 20px;
+    children: [inputbar, listview];
+}
+
+inputbar {
+    background-color: @nord1;
+    border-radius:    8px;
+    padding:          10px;
+    margin:           0 0 15px 0;
+    children:         [prompt, entry];
+}
+
+prompt {
+    background-color: transparent;
+    text-color:       @nord8;
+    padding:          0 10px 0 0;
+}
+
+entry {
+    background-color: transparent;
+    text-color:       @nord4;
+    placeholder:      "Pesquisar...";
+    placeholder-color: @nord3;
+}
+
+listview {
+    lines:      8;
+    columns:    1;
+    scrollbar:  false;
+    spacing:    5px;
+}
+
+element {
+    padding:       10px;
+    border-radius: 8px;
+}
+
+element normal.normal {
+    background-color: transparent;
+    text-color:       @nord4;
+}
+
+/* Item Selecionado: Fundo Azul Gelo suave com texto escuro */
+element selected.normal {
+    background-color: @nord8;
+    text-color:       @nord0;
+}
+
+element-icon {
+    size: 24px;
+    margin: 0 10px 0 0;
+    background-color: transparent;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+    vertical-align:   0.5;
+}
