@@ -1,0 +1,71 @@
+/* --- SWAYNC NORD THEME --- */
+
+/* Fundo Geral (Escuro com transparência) */
+.control-center .notification-row {
+    background-color: transparent;
+}
+
+.control-center {
+    background: rgba(46, 52, 64, 0.9); /* Nord0 com transparência */
+    border: 2px solid #88c0d0; /* Borda Ciano Gelo */
+    border-radius: 12px;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
+    margin: 18px;
+    padding: 10px;
+}
+
+/* Notificação Individual */
+.notification {
+    border-radius: 10px;
+    margin: 6px 0;
+    box-shadow: none;
+    padding: 0;
+}
+
+/* Conteúdo da notificação */
+.notification-content {
+    background: #3b4252; /* Nord1 */
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #4c566a; /* Borda sutil */
+}
+
+/* Botão "Limpar Tudo" */
+.control-center-dnd {
+    border-radius: 8px;
+    background: #3b4252;
+    border: 1px solid #4c566a;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+.control-center-dnd:checked {
+    background: #bf616a; /* Vermelho quando DND ativo */
+    color: #eceff4;
+}
+
+/* Botão "Limpar Notificações" */
+.control-center-clear-all {
+    background: #5e81ac; /* Azul Oceano */
+    color: #eceff4;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+/* Texto */
+.summary {
+    font-size: 14px;
+    font-weight: bold;
+    color: #88c0d0; /* Título em Ciano */
+}
+
+.body {
+    font-size: 13px;
+    color: #d8dee9; /* Texto claro */
+}
+
+.time {
+    font-size: 11px;
+    color: #d8dee9;
+}

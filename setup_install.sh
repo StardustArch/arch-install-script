@@ -54,7 +54,6 @@ PKGS=(
     swaybg
     xorg-xwayland
     waybar
-    dunst
     kitty
     rofi-wayland
     pipewire
@@ -69,6 +68,7 @@ PKGS=(
     brightnessctl
     blueman
     network-manager-applet
+    swaync
     # --- SDDM e Deps ---
     sddm
     qt5-quickcontrols2

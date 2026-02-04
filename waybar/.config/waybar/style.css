@@ -144,3 +144,9 @@ tooltip {
         color: @nord4;
     }
 }
+
+#custom-notification {
+    color: @nord6; /* Branco Nord */
+    padding: 0 10px;
+    margin-right: 5px;
+}
