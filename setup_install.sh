@@ -66,6 +66,9 @@ PKGS=(
     xdg-desktop-portal-hyprland
     qt5-wayland
     qt6-wayland
+    brightnessctl
+    blueman
+    network-manager-applet
     # --- SDDM e Deps ---
     sddm
     qt5-quickcontrols2

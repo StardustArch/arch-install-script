@@ -89,3 +89,58 @@ tooltip {
     color: @nord4;
     opacity: 0.8;
 }
+
+/* --- NOVOS MÓDULOS (ESTILO CLEAN) --- */
+
+#network {
+    color: @nord8; /* Ciano Gelo (Frost) */
+    background: transparent;
+    padding: 0 10px;
+}
+
+#network.disconnected {
+    color: @nord11; /* Vermelho se desconectado */
+}
+
+#bluetooth {
+    color: @nord9; /* Azul Claro (Frost) */
+    background: transparent;
+    padding: 0 10px;
+}
+
+#bluetooth.connected {
+    color: @nord10; /* Azul Escuro se conectado */
+}
+
+#backlight {
+    color: @nord13; /* Amarelo (Aurora) */
+    background: transparent;
+    padding: 0 10px;
+}
+
+#battery {
+    color: @nord4; /* Texto padrão */
+    background: transparent;
+    padding: 0 10px;
+}
+
+/* Estados da Bateria */
+#battery.charging, #battery.plugged {
+    color: @nord14; /* Verde (Carregando) */
+}
+
+#battery.critical:not(.charging) {
+    color: @nord11; /* Vermelho (Crítico) */
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+/* Animação para bateria crítica */
+@keyframes blink {
+    to {
+        color: @nord4;
+    }
+}
