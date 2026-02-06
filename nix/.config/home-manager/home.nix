@@ -159,10 +159,10 @@ home.file = {
 		cat="bat";
 		update="sudo pacman -Syu";
     # --- NIX & HOME MANAGER ALIASES ---
-    hms = "home-manager switch -b backup --flake ~/.config/home-manager#paulo_";
-    hmu="nix flake update ~/.config/home-manager && hms";
+    hms = "home-manager switch -b backup --flake ~/arch-install-script/nix/.config/home-manager#paulo_";
+    hmu="nix flake update ~/arch-install-script/nix/.config/home-manager && hms";
     nclean="nix-collect-garbage -d";
-    hme="cd ~/.config/home-manager && $EDITOR flake.nix";
+    hme="cd ~/arch-install-script/nix/.config/home-manager && $EDITOR flake.nix";
 	};
   };
 
