@@ -101,13 +101,14 @@ in
   # ============================================================
 
   home.packages = with pkgs; [
-    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22
+    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22 nerd-fonts.jetbrains-mono
   ];
   xdg.configFile."kitty/kitty.conf".force = true;
   programs.kitty = {
     enable = true;
     font = { name = "JetBrainsMono Nerd Font"; size = 12.0; };
     settings = {
+      "font_family" = "JetBrainsMono Nerd Font";
       background_opacity = "0.85";
       window_padding_width = 10;
       confirm_os_window_close = 0;
