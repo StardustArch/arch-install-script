@@ -141,7 +141,6 @@ in
 	enableCompletion=true;
 	autosuggestion.enable=true;
 	syntaxHighlighting.enable=true;
-	dotDir = ".config/zsh";
 	
 	shellAliases ={
 		ll="eza -l -g --icons";
@@ -149,7 +148,7 @@ in
 		cat="bat";
 		update="sudo pacman -Syu";
     # --- NIX & HOME MANAGER ALIASES ---
-    hms="home-manager switch --flake ~/.config/home-manager#paulo_";
+    hms = "home-manager switch -b backup --flake ~/.config/home-manager#paulo_";
     hmu="nix flake update ~/.config/home-manager && hms";
     nclean="nix-collect-garbage -d";
     hme="cd ~/.config/home-manager && $EDITOR flake.nix";
