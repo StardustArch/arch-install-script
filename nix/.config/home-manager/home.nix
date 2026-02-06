@@ -96,6 +96,15 @@ in
     }
   '';
 
+home.file = {
+  # O Nix vai buscar o ficheiro ao teu repo e cria o link em ~/.config/hypr/
+  ".config/hypr/hyprland.conf".source = ../../../hypr/.config/hypr/hyprland.conf;
+  ".config/hypr/keybinds.conf".source = ../../../hypr/.config/hypr/keybinds.conf;
+  ".config/hypr/autostart.conf".source = ../../../hypr/.config/hypr/autostart.conf;
+  ".config/rofi/config.rasi".source = ../../../rofi/.config/rofi/config.conf;
+  ".config/waybar/config.jsonc".source = ../../../waybar/.config/waybar/config.jsonc;
+  ".config/swaync/config.jsonc".source = ../../../swaync/.config/swaync/config.jsonc;
+};
   # ============================================================
   # PROGRAMAS CONFIGURADOS
   # ============================================================
@@ -104,6 +113,7 @@ in
     eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22 nerd-fonts.jetbrains-mono
   ];
   xdg.configFile."kitty/kitty.conf".force = true;
+  fonts.fontconfig.enable = true;
   programs.kitty = {
     enable = true;
     font = { name = "JetBrainsMono Nerd Font"; size = 12.0; };
