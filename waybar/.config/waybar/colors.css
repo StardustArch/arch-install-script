@@ -1,26 +1,23 @@
-/* * NORD PALETTE OFFICIAL 
+/* * PALETA SEMÂNTICA - GERADA PELO NIX 
+ * Mapeamento: Nord -> Semântico
  */
 
-/* Polar Night (Escuros) */
-@define-color nord0  #2e3440;
-@define-color nord1  #3b4252;
-@define-color nord2  #434c5e;
-@define-color nord3  #4c566a;
+@define-color bg0 #2e3440; /* Fundo Principal */
+@define-color bg1 #3b4252; /* Fundo Secundário */
+@define-color bg2 #434c5e; /* Seleção */
+@define-color bg3 #4c566a; /* Muted / Inativo */
 
-/* Snow Storm (Claros) */
-@define-color nord4  #d8dee9;
-@define-color nord5  #e5e9f0;
-@define-color nord6  #eceff4;
+@define-color fg0 #d8dee9; /* Texto Padrão */
+@define-color fg1 #e5e9f0; /* Texto Claro */
+@define-color fg2 #eceff4; /* Texto Destaque */
 
-/* Frost (Acentos Frios) */
-@define-color nord7  #8fbcbb; /* Teal */
-@define-color nord8  #88c0d0; /* Ciano Gelo (Foco) */
-@define-color nord9  #81a1c1; /* Azul Claro */
-@define-color nord10 #5e81ac; /* Azul Oceano */
+@define-color accent0 #8fbcbb; 
+@define-color accent1 #88c0d0; /* COR PRINCIPAL (Ciano/Madeira/Ouro) */
+@define-color accent2 #81a1c1;
+@define-color accent3 #5e81ac;
 
-/* Aurora (Status) */
-@define-color nord11 #bf616a; /* Vermelho */
-@define-color nord12 #d08770; /* Laranja */
-@define-color nord13 #ebcb8b; /* Amarelo */
-@define-color nord14 #a3be8c; /* Verde */
-@define-color nord15 #b48ead; /* Roxo Suave */
+@define-color red    #bf616a;
+@define-color orange #d08770;
+@define-color yellow #ebcb8b;
+@define-color green  #a3be8c;
+@define-color purple #b48ead;

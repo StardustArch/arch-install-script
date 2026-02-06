@@ -1,17 +1,21 @@
-/* --- SWAYNC NORD THEME --- */
+/* ==========================================
+   SWAYNC SEMÂNTICO - MODO ELITE
+   ========================================== */
 
-/* Fundo Geral (Escuro com transparência) */
-.control-center .notification-row {
-    background-color: transparent;
-}
+@import "../waybar/colors.css"; /* Importa as mesmas cores da Waybar */
 
+/* Fundo Geral do Centro de Controlo */
 .control-center {
-    background: rgba(46, 52, 64, 0.9); /* Nord0 com transparência */
-    border: 2px solid #88c0d0; /* Borda Ciano Gelo */
+    background: alpha(@bg0, 0.9); /* bg0 com transparência */
+    border: 2px solid @accent1;   /* Borda Principal (Ciano/Madeira/Ouro) */
     border-radius: 12px;
     box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
     margin: 18px;
     padding: 10px;
+}
+
+.control-center .notification-row {
+    background-color: transparent;
 }
 
 /* Notificação Individual */
@@ -24,48 +28,53 @@
 
 /* Conteúdo da notificação */
 .notification-content {
-    background: #3b4252; /* Nord1 */
+    background: @bg1;            /* Fundo Secundário */
     padding: 10px;
     border-radius: 10px;
-    border: 1px solid #4c566a; /* Borda sutil */
+    border: 1px solid @bg3;      /* Borda inativa/sutil */
 }
 
-/* Botão "Limpar Tudo" */
+/* Botão "Não Incomodar" (DND) */
 .control-center-dnd {
     border-radius: 8px;
-    background: #3b4252;
-    border: 1px solid #4c566a;
+    background: @bg1;
+    border: 1px solid @bg3;
     box-shadow: none;
     text-shadow: none;
 }
 
 .control-center-dnd:checked {
-    background: #bf616a; /* Vermelho quando DND ativo */
-    color: #eceff4;
+    background: @red;            /* Cor de Alerta/Erro quando ativo */
+    color: @fg2;                 /* Texto Brilhante */
 }
 
 /* Botão "Limpar Notificações" */
 .control-center-clear-all {
-    background: #5e81ac; /* Azul Oceano */
-    color: #eceff4;
+    background: @accent3;        /* Azul Profundo / Cor de Profundidade */
+    color: @fg2;
     padding: 10px;
     border-radius: 8px;
     font-weight: bold;
 }
 
-/* Texto */
+.control-center-clear-all:hover {
+    background: @accent1;        /* Brilha com a cor principal no hover */
+    color: @bg0;
+}
+
+/* Estilização do Texto */
 .summary {
     font-size: 14px;
     font-weight: bold;
-    color: #88c0d0; /* Título em Ciano */
+    color: @accent1;             /* Títulos na cor de destaque */
 }
 
 .body {
     font-size: 13px;
-    color: #d8dee9; /* Texto claro */
+    color: @fg0;                 /* Texto padrão */
 }
 
 .time {
     font-size: 11px;
-    color: #d8dee9;
+    color: @fg1;                 /* Texto levemente mais escuro */
 }

@@ -1,33 +1,26 @@
 configuration {
-    modi: "drun";
-    show-icons: true;
-    display-drun: " ";
+    modi:                "drun";
+    show-icons:          true;
+    display-drun:        " ";
     drun-display-format: "{name}";
-    font: "JetBrainsMono Nerd Font Bold 11";
+    font:                "JetBrainsMono Nerd Font Bold 11";
 }
 
-/* --- CORES --- */
+/* IMPORTA AS CORES GERADAS PELO NIX */
+@import "colors.rasi"
+
 * {
-    nord0:  #2e3440;
-    nord1:  #3b4252;
-    nord2:  #434c5e;
-    nord3:  #4c566a;
-    nord4:  #d8dee9;
-    nord8:  #88c0d0;
-    
-    /* Globalmente limpa tudo */
     background-color: transparent;
-    text-color:       @nord4;
+    text-color:       @fg;
     margin:           0;
     padding:          0;
     border:           0;
 }
 
 window {
-    /* Fundo Escuro Real */
-    background-color: #2e3440f2; 
+    background-color: @bg; 
     border:           2px;
-    border-color:     @nord8;
+    border-color:     @accent;
     border-radius:    12px;
     width:            600px;
     location:         center;
@@ -35,12 +28,12 @@ window {
 }
 
 mainbox {
-    padding: 20px;
+    padding:  20px;
     children: [inputbar, listview];
 }
 
 inputbar {
-    background-color: @nord1;
+    background-color: @bg-alt;
     border-radius:    8px;
     padding:          12px;
     margin:           0 0 15px 0;
@@ -48,14 +41,14 @@ inputbar {
 }
 
 prompt {
-    text-color: @nord8;
+    text-color: @accent;
     margin:     0 10px 0 0;
 }
 
 entry {
     placeholder:       "Pesquisar...";
-    placeholder-color: @nord3;
-    text-color:        @nord4;
+    placeholder-color: @muted;
+    text-color:        @fg;
 }
 
 listview {
@@ -70,24 +63,26 @@ element {
     border-radius: 8px;
 }
 
-/* --- A CORREÇÃO: MATAR O BEGE EM TODAS AS VARIAÇÕES --- */
-
-/* Força transparência em linhas normais E alternadas */
-element normal.normal, element alternate.normal {
+/* MATAR O BEGE: Forçar transparência em todos os estados normais */
+element normal.normal, 
+element alternate.normal,
+element normal.active,
+element alternate.active {
     background-color: transparent;
-    text-color:       @nord4;
+    text-color:       @fg;
 }
 
 /* Item Selecionado */
-element selected.normal {
-    background-color: @nord2;
-    text-color:       @nord8;
+element selected.normal,
+element selected.active {
+    background-color: @bg-sel;
+    text-color:       @accent;
     border:           1px;
-    border-color:     @nord8;
+    border-color:     @accent;
 }
 
 element-icon {
-    size: 24px;
+    size:   24px;
     margin: 0 10px 0 0;
 }
 

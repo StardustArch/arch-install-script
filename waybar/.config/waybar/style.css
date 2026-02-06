@@ -1,4 +1,3 @@
-/* Importa a paleta oficial */
 @import "colors.css";
 
 * {
@@ -6,131 +5,71 @@
     border-radius: 0;
     font-family: "JetBrainsMono Nerd Font";
     font-weight: bold;
-    font-size: 13px; /* Reduzi levemente para ser mais elegante */
+    font-size: 13px;
     min-height: 0;
 }
 
 window#waybar {
-    /* Fundo escuro com 85% de opacidade (legível mas com blur atrás) */
-    background: rgba(46, 52, 64, 0.85); 
-    color: @nord4;
+    /* Usa bg0 com 85% de opacidade */
+    background: alpha(@bg0, 0.85); 
+    color: @fg0;
     
-    /* Borda inferior fina e azul (Nord8) em vez de Roxo Neon */
-    border-bottom: 2px solid rgba(136, 192, 208, 0.4); 
+    /* Borda inferior usando a cor de acento principal */
+    border-bottom: 2px solid alpha(@accent1, 0.4); 
 }
 
 tooltip {
-    background: @nord0;
-    border: 1px solid @nord8;
+    background: @bg0;
+    border: 1px solid @accent1;
     border-radius: 8px;
 }
 
-/* --- WORKSPACES (Limpos) --- */
+/* --- WORKSPACES --- */
 #workspaces button {
     padding: 0 8px;
-    color: @nord3; /* Cinza para inativos */
+    color: @bg3; /* Cor inativa */
     background: transparent;
     border-bottom: 2px solid transparent;
     transition: all 0.3s ease;
 }
 
-/* Workspace ativo: Apenas texto brilhante e uma linha azul */
 #workspaces button.active {
-    color: @nord6; /* Branco brilhante */
-    border-bottom: 2px solid @nord8; /* Linha Ciano Gelo */
-    background: rgba(136, 192, 208, 0.1); /* Leve brilho azul */
+    color: @fg2; /* Destaque */
+    border-bottom: 2px solid @accent1; 
+    background: alpha(@accent1, 0.1); 
 }
 
 #workspaces button:hover {
-    background: rgba(136, 192, 208, 0.2);
-    color: @nord8;
-    border-bottom: 2px solid @nord8;
+    background: alpha(@accent1, 0.2);
+    color: @accent1;
+    border-bottom: 2px solid @accent1;
 }
 
-/* --- MÓDULOS (Conciso: Sem fundos quadrados) --- */
-#clock,
-#cpu,
-#memory,
-#pulseaudio,
-#tray {
+/* --- MÓDULOS --- */
+#clock, #cpu, #memory, #pulseaudio, #network, #bluetooth, #backlight, #battery, #tray, #custom-notification {
     padding: 0 10px;
     margin: 4px 0;
-    background: transparent; /* Removemos o fundo cinza blocky */
-}
-
-/* Cores Funcionais (Substituindo o Neon) */
-
-#clock {
-    color: @nord6; /* Branco */
-    font-weight: 800;
-}
-
-#cpu {
-    color: @nord11; /* Vermelho Nord (Alerta de carga) */
-}
-
-#memory {
-    color: @nord13; /* Amarelo Nord */
-}
-
-#pulseaudio {
-    color: @nord14; /* Verde Nord (Áudio ok) */
-}
-
-#pulseaudio.muted {
-    color: @nord3; /* Cinza se mudo */
-}
-
-#tray {
-    padding-right: 15px;
-}
-
-#window {
-    color: @nord4;
-    opacity: 0.8;
-}
-
-/* --- NOVOS MÓDULOS (ESTILO CLEAN) --- */
-
-#network {
-    color: @nord8; /* Ciano Gelo (Frost) */
     background: transparent;
-    padding: 0 10px;
 }
 
-#network.disconnected {
-    color: @nord11; /* Vermelho se desconectado */
-}
+#clock { color: @fg2; font-weight: 800; }
+#cpu { color: @red; }
+#memory { color: @yellow; }
+#pulseaudio { color: @green; }
+#pulseaudio.muted { color: @bg3; }
 
-#bluetooth {
-    color: @nord9; /* Azul Claro (Frost) */
-    background: transparent;
-    padding: 0 10px;
-}
+#network { color: @accent1; }
+#network.disconnected { color: @red; }
 
-#bluetooth.connected {
-    color: @nord10; /* Azul Escuro se conectado */
-}
+#bluetooth { color: @accent2; }
+#bluetooth.connected { color: @accent3; }
 
-#backlight {
-    color: @nord13; /* Amarelo (Aurora) */
-    background: transparent;
-    padding: 0 10px;
-}
+#backlight { color: @yellow; }
 
-#battery {
-    color: @nord4; /* Texto padrão */
-    background: transparent;
-    padding: 0 10px;
-}
-
-/* Estados da Bateria */
-#battery.charging, #battery.plugged {
-    color: @nord14; /* Verde (Carregando) */
-}
-
+#battery { color: @fg0; }
+#battery.charging, #battery.plugged { color: @green; }
 #battery.critical:not(.charging) {
-    color: @nord11; /* Vermelho (Crítico) */
+    color: @red;
     animation-name: blink;
     animation-duration: 0.5s;
     animation-timing-function: linear;
@@ -138,15 +77,7 @@ tooltip {
     animation-direction: alternate;
 }
 
-/* Animação para bateria crítica */
-@keyframes blink {
-    to {
-        color: @nord4;
-    }
-}
+@keyframes blink { to { color: @fg0; } }
 
-#custom-notification {
-    color: @nord6; /* Branco Nord */
-    padding: 0 10px;
-    margin-right: 5px;
-}
+#window { color: @fg0; opacity: 0.8; }
+#custom-notification { color: @fg2; }
