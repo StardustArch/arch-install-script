@@ -129,16 +129,6 @@ in
     };
   };
 
-  programs.zsh = {
-    enable = true;
-    dotDir = ".config/zsh";
-    shellAliases = {
-      ll = "eza -l -g --icons";
-      hms = "home-manager switch --flake ~/.config/home-manager#paulo_";
-      # Atalho para editares o tema rapidamente
-      theme-edit = "nvim ~/.config/home-manager/home.nix";
-    };
-  };
   programs.git = {
 	enable=true;
 	settings.user={
