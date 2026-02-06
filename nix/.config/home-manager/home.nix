@@ -103,7 +103,7 @@ in
   home.packages = with pkgs; [
     eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22
   ];
-
+  xdg.configFile."kitty/kitty.conf".force = true;
   programs.kitty = {
     enable = true;
     font = { name = "JetBrainsMono Nerd Font"; size = 12.0; };
@@ -141,7 +141,7 @@ in
 	enableCompletion=true;
 	autosuggestion.enable=true;
 	syntaxHighlighting.enable=true;
-	
+	dotDir=config.home.homeDirectory;
 	shellAliases ={
 		ll="eza -l -g --icons";
 		ls="eza --icons";
