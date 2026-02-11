@@ -136,7 +136,7 @@ home.file = {
     "cursor_shape"     = "beam";
     "cursor_blink_interval" = "0.5";
     # --- MOUSE & URLS ---
-    "url_color"        = "${colors.accent1}";
+    "url_color"        = "#${colors.accent1}";
     "url_style"        = "curly";
     "detect_urls"      = "yes";
     "copy_on_select"   = "yes";
