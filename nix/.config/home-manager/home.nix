@@ -32,7 +32,65 @@ let
   # Esta variável 'colors' será usada em todo o resto do ficheiro
   colors = themes.${selectedTheme};
 
+  # Definimos o script como uma aplicação gerida pelo Nix
+  wall-script = pkgs.writeShellApplication {
+    name = "wall-manager";
+    # O Nix garante que estas ferramentas estão disponíveis para o script
+    runtimeInputs = with pkgs; [ 
+      hyprpaper 
+      swaybg 
+      coreutils # para o sleep, cat, etc
+      findutils # para o find
+      procps    # para o pgrep/pkill
+    ];
+    
+    text = ''
+      WALL_DIR="$HOME/.config/hypr/wallpapers"
+      INTERVAL=''${2:-300}
+      BACKEND="hyprpaper"
+
+      # --- 1. VERIFICAÇÃO DO BACKEND ---
+      if ! pgrep -x "hyprpaper" > /dev/null; then
+          hyprpaper &
+          sleep 1
+      fi
+
+      if ! hyprctl hyprpaper listloaded > /dev/null 2>&1; then
+          BACKEND="swaybg"
+      fi
+
+      # --- 2. APLICAÇÃO ---
+      apply_wall() {
+          local wall="$1"
+          if [ "$BACKEND" == "hyprpaper" ]; then
+              MONITOR=$(hyprctl monitors | grep "Monitor" | awk '{print $2}' | head -n 1)
+              hyprctl hyprpaper preload "$wall"
+              hyprctl hyprpaper wallpaper "$MONITOR,$wall"
+              hyprctl hyprpaper unload unused
+          else
+              pkill swaybg || true
+              swaybg -i "$wall" -m fill &
+          fi
+      }
+
+      # --- 3. LÓGICA ---
+      case $1 in
+          "static")
+              SELECTED=$(find "$WALL_DIR" -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" \) | shuf -n 1)
+              apply_wall "$SELECTED"
+              ;;
+          "loop")
+              while true; do
+                  SELECTED=$(find "$WALL_DIR" -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" \) | shuf -n 1)
+                  apply_wall "$SELECTED"
+                  sleep "$INTERVAL"
+              done
+              ;;
+      esac
+    '';
+  };
 in
+
 
 {
 
@@ -100,10 +158,11 @@ home.file = {
   # ============================================================
   # PROGRAMAS CONFIGURADOS
   # ============================================================
-
-  home.packages = with pkgs; [
+  home.packages = (with pkgs; [
     eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22 nerd-fonts.jetbrains-mono
-  ];
+  ]) ++ [ wall-script ];
+  
+
   xdg.configFile."kitty/kitty.conf".force = true;
   fonts.fontconfig.enable = true;
   programs.kitty = {
