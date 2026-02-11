@@ -175,7 +175,7 @@ home.file = {
 		cat="bat";
 		update="sudo pacman -Syu";
     # --- NIX & HOME MANAGER ALIASES ---
-    hms = "home-manager switch -b backup --flake ~/arch-install-script/nix/.config/home-manager#paulo_";
+    hms = "home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#paulo_";
     hmu="nix flake update ~/arch-install-script/nix/.config/home-manager && hms";
     nclean="nix-collect-garbage -d";
     hme="cd ~/arch-install-script/nix/.config/home-manager && $EDITOR flake.nix";
