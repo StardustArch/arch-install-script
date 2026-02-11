@@ -84,18 +84,6 @@ in
     @define-color green #${colors.green};
   '';
 
-  # Gera o colors.rasi para o Rofi
-  home.file.".config/rofi/colors.rasi".text = ''
-    * {
-        bg:      #${colors.bg0}f2;
-        bg-alt:  #${colors.bg1};
-        bg-sel:  #${colors.bg2};
-        fg:      #${colors.fg0};
-        accent:  #${colors.accent1};
-        muted:   #${colors.bg3};
-    }
-  '';
-
 home.file = {
   # O Nix vai buscar o ficheiro ao teu repo e cria o link em ~/.config/hypr/
   ".config/hypr/hyprland.conf".source = ../../../hypr/.config/hypr/hyprland.conf;
@@ -104,6 +92,7 @@ home.file = {
   ".config/hypr/hyprlauncher.conf".source = ../../../hypr/.config/hypr/hyprlauncher.conf;
   ".config/hypr/hyprtoolkit.conf".source = ../../../hypr/.config/hypr/hyprtoolkit.conf;
   ".config/waybar/config.jsonc".source = ../../../waybar/.config/waybar/config.jsonc;
+  ".config/waybar/style.css".source = ../../../waybar/.config/waybar/style.css;
   ".config/swaync/config.jsonc".source = ../../../swaync/.config/swaync/config.json;
 };
   # ============================================================
