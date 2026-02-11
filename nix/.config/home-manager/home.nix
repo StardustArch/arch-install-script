@@ -101,7 +101,8 @@ home.file = {
   ".config/hypr/hyprland.conf".source = ../../../hypr/.config/hypr/hyprland.conf;
   ".config/hypr/keybinds.conf".source = ../../../hypr/.config/hypr/keybinds.conf;
   ".config/hypr/autostart.conf".source = ../../../hypr/.config/hypr/autostart.conf;
-  ".config/rofi/config.rasi".source = ../../../rofi/.config/rofi/config.rasi;
+  ".config/hypr/hyprlauncher.conf".source = ../../../hypr/.config/hypr/hyprlauncher.conf;
+  ".config/hypr/hyprtoolkit.conf".source = ../../../hypr/.config/hypr/hyprtoolkit.conf;
   ".config/waybar/config.jsonc".source = ../../../waybar/.config/waybar/config.jsonc;
   ".config/swaync/config.jsonc".source = ../../../swaync/.config/swaync/config.json;
 };
@@ -110,7 +111,7 @@ home.file = {
   # ============================================================
 
   home.packages = with pkgs; [
-    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22 nerd-fonts.jetbrains-mono
+    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22 nerd-fonts.jetbrains-mono hyprlauncher hyprtoolkit
   ];
   xdg.configFile."kitty/kitty.conf".force = true;
   fonts.fontconfig.enable = true;
@@ -170,9 +171,7 @@ home.file = {
 	autosuggestion.enable=true;
 	syntaxHighlighting.enable=true;
 	dotDir=config.home.homeDirectory;
-  initExtra = ''
-      fastfetch
-    '';
+  initContent = "fastfetch";
 	shellAliases ={
 		ll="eza -l -g --icons";
 		ls="eza --icons";
