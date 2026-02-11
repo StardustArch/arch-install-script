@@ -6,7 +6,7 @@ let
   # ============================================================
   
   # 1. Escolhe o teu tema aqui: "nord", "aizome" ou "gruvbox"
-  selectedTheme = "nord"; 
+  selectedTheme = "gruvbox"; 
 
   themes = {
     nord = {
@@ -116,13 +116,28 @@ home.file = {
   fonts.fontconfig.enable = true;
   programs.kitty = {
     enable = true;
-    font = { name = "JetBrainsMono Nerd Font"; size = 12.0; };
     settings = {
-      "font_family" = "JetBrainsMono Nerd Font";
-      background_opacity = "0.85";
-      window_padding_width = 10;
-      confirm_os_window_close = 0;
-      hide_window_decorations = "yes";
+# --- FONTE ---
+    "font_family"      = "JetBrainsMono Nerd Font";
+    "bold_font"        = "auto";
+    "italic_font"      = "auto";
+    "bold_italic_font" = "auto";
+    "font_size"        = "12.0";
+
+    # --- JANELA & VISUAL ---
+    "background_opacity" = "0.85";
+    "window_padding_width" = 10;
+    "hide_window_decorations" = "yes";
+    "confirm_os_window_close" = 0;
+
+    # --- CURSOR ---
+    "cursor_shape"     = "beam";
+    "cursor_blink_interval" = "0.5";
+    # --- MOUSE & URLS ---
+    "url_color"        = "${colors.accent1}";
+    "url_style"        = "curly";
+    "detect_urls"      = "yes";
+    "copy_on_select"   = "yes";
       cursor = "#${colors.accent1}";
       cursor_text_color = "#${colors.bg0}";
       foreground = "#${colors.fg0}";
