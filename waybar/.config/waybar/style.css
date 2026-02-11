@@ -6,78 +6,56 @@
     font-family: "JetBrainsMono Nerd Font";
     font-weight: bold;
     font-size: 13px;
-    min-height: 0;
 }
 
 window#waybar {
-    /* Usa bg0 com 85% de opacidade */
-    background: alpha(@bg0, 0.85); 
+    /* Vidro: mais transparente para o desfoque do Hyprland brilhar */
+    background: alpha(@bg0, 0.65); 
     color: @fg0;
+    transition: all 0.5s;
     
-    /* Borda inferior usando a cor de acento principal */
-    border-bottom: 2px solid alpha(@accent1, 0.4); 
+    /* Borda "Gelo" muito subtil */
+    border-bottom: 1px solid alpha(@accent1, 0.2); 
+    
+    /* Sombreamento para destacar do fundo */
+    box-shadow: 0 4px 6px alpha(#000000, 0.2);
 }
 
-tooltip {
-    background: @bg0;
-    border: 1px solid @accent1;
-    border-radius: 8px;
+/* --- WORKSPACES MODERNOS --- */
+#workspaces {
+    background: alpha(@bg1, 0.3);
+    margin: 5px 10px;
+    border-radius: 12px;
+    border: 1px solid alpha(@accent1, 0.1);
 }
 
-/* --- WORKSPACES --- */
 #workspaces button {
-    padding: 0 8px;
-    color: @bg3; /* Cor inativa */
-    background: transparent;
-    border-bottom: 2px solid transparent;
-    transition: all 0.3s ease;
+    padding: 0 10px;
+    color: @bg3;
+    transition: all 0.3s cubic-bezier(.55,-0.04,.3,1.44);
 }
 
 #workspaces button.active {
-    color: @fg2; /* Destaque */
-    border-bottom: 2px solid @accent1; 
-    background: alpha(@accent1, 0.1); 
-}
-
-#workspaces button:hover {
-    background: alpha(@accent1, 0.2);
     color: @accent1;
-    border-bottom: 2px solid @accent1;
+    background: alpha(@accent1, 0.15);
+    border-radius: 10px;
 }
 
-/* --- MÓDULOS --- */
-#clock, #cpu, #memory, #pulseaudio, #network, #bluetooth, #backlight, #battery, #tray, #custom-notification {
-    padding: 0 10px;
-    margin: 4px 0;
-    background: transparent;
+#workspaces button.urgent {
+    color: @red;
+}
+
+/* --- MÓDULOS CAPSULADOS (Clean) --- */
+#clock, #pulseaudio, #battery, #backlight, #tray, #custom-notification {
+    background: alpha(@bg1, 0.3);
+    margin: 5px 4px;
+    padding: 0 12px;
+    border-radius: 10px;
+    border: 1px solid alpha(@accent1, 0.1);
 }
 
 #clock { color: @fg2; font-weight: 800; }
-#cpu { color: @red; }
-#memory { color: @yellow; }
 #pulseaudio { color: @green; }
-#pulseaudio.muted { color: @bg3; }
-
-#network { color: @accent1; }
-#network.disconnected { color: @red; }
-
-#bluetooth { color: @accent2; }
-#bluetooth.connected { color: @accent3; }
-
+#battery.charging { color: @green; }
+#battery.critical { color: @red; }
 #backlight { color: @yellow; }
-
-#battery { color: @fg0; }
-#battery.charging, #battery.plugged { color: @green; }
-#battery.critical:not(.charging) {
-    color: @red;
-    animation-name: blink;
-    animation-duration: 0.5s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
-}
-
-@keyframes blink { to { color: @fg0; } }
-
-#window { color: @fg0; opacity: 0.8; }
-#custom-notification { color: @fg2; }
