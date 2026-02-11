@@ -35,7 +35,7 @@ let
   # Definimos o script como uma aplicação gerida pelo Nix
  wall-manager = pkgs.writeShellApplication {
   name = "wall-manager";
-  runtimeInputs = with pkgs; [ swaybg coreutils findutils procps ];
+  runtimeInputs = with pkgs; [ swaybg coreutils findutils procps fzf];
   text = ''
     # Usamos quotes e chaves para satisfazer o ShellCheck
     ACTION="''${1:-static}" # Define "static" como padrao se $1 for vazio
@@ -60,6 +60,11 @@ let
             # Agora com aspas para o Nix nao reclamar
             SELECTED=$(find /home/paulo_/arch-install-script/hypr/.config/hypr/wallpapers -type f | shuf -n 1)
             apply_wall "$SELECTED"
+            ;;
+        "select")
+            # Abre o fzf para escolheres o ficheiro visualmente no terminal
+            SELECTED=$(find /home/paulo_/arch-install-script/hypr/.config/hypr/wallpapers -type f -printf "%P\n" | fzf --preview "bash -c 'echo {}'" --height 40%)
+            [ -n "$SELECTED" ] && apply_wall "/home/paulo_/arch-install-script/hypr/.config/hypr/wallpapers/$SELECTED"
             ;;
         "loop")
             while true; do
