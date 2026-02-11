@@ -103,7 +103,7 @@ home.file = {
   ".config/hypr/autostart.conf".source = ../../../hypr/.config/hypr/autostart.conf;
   ".config/rofi/config.rasi".source = ../../../rofi/.config/rofi/config.rasi;
   ".config/waybar/config.jsonc".source = ../../../waybar/.config/waybar/config.jsonc;
-  ".config/swaync/config.jsonc".source = ../../../swaync/.config/swaync/config.jsonc;
+  ".config/swaync/config.jsonc".source = ../../../swaync/.config/swaync/config.json;
 };
   # ============================================================
   # PROGRAMAS CONFIGURADOS
