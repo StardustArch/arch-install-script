@@ -149,7 +149,7 @@ home.file = {
   # ============================================================
   home.packages = (with pkgs; [
     eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22 nerd-fonts.jetbrains-mono
-  ]) ++ [ wall-script ];
+  ]) ++ [ wall-manager ];
   
 
   xdg.configFile."kitty/kitty.conf".force = true;
