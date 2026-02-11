@@ -61,12 +61,12 @@ let
 
     case "$ACTION" in
         "static")
-            SELECTED=$(find $WALL_DIR -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" \) | shuf -n 1)
+            SELECTED=$(find `$WALL_DIR` -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" \) | shuf -n 1)
             apply_wall "$SELECTED"
             ;;
         "loop")
             while true; do
-                SELECTED=$(find $WALL_DIR -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" \) | shuf -n 1)
+                SELECTED=$(find `$WALL_DIR` -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" \) | shuf -n 1)
                 apply_wall "$SELECTED"
                 sleep "$INTERVAL"
             done
