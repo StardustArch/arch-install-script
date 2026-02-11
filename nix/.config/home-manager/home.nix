@@ -101,7 +101,7 @@ home.file = {
   ".config/hypr/hyprland.conf".source = ../../../hypr/.config/hypr/hyprland.conf;
   ".config/hypr/keybinds.conf".source = ../../../hypr/.config/hypr/keybinds.conf;
   ".config/hypr/autostart.conf".source = ../../../hypr/.config/hypr/autostart.conf;
-  ".config/rofi/config.rasi".source = ../../../rofi/.config/rofi/config.conf;
+  ".config/rofi/config.rasi".source = ../../../rofi/.config/rofi/config.rasi;
   ".config/waybar/config.jsonc".source = ../../../waybar/.config/waybar/config.jsonc;
   ".config/swaync/config.jsonc".source = ../../../swaync/.config/swaync/config.jsonc;
 };
