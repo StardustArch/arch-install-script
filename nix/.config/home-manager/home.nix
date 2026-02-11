@@ -111,7 +111,7 @@ home.file = {
   # ============================================================
 
   home.packages = with pkgs; [
-    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22 nerd-fonts.jetbrains-mono hyprlauncher hyprtoolkit
+    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22 nerd-fonts.jetbrains-mono
   ];
   xdg.configFile."kitty/kitty.conf".force = true;
   fonts.fontconfig.enable = true;

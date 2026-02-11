@@ -78,7 +78,7 @@ log "Instalando pacotes base e interface..."
 # Lista unificada (Pacman + AUR via yay)
 PKGS=(
     hyprland hyprpaper swaybg xorg-xwayland
-    waybar kitty
+    waybar kitty hyprlauncher hyprtoolkit
     pipewire pipewire-pulse wireplumber polkit-gnome
     thunar ttf-jetbrains-mono-nerd
     xdg-desktop-portal-hyprland qt5-wayland qt6-wayland
