@@ -116,6 +116,7 @@ home.file = {
   fonts.fontconfig.enable = true;
   programs.kitty = {
     enable = true;
+    package = pkgs.runCommand "dummy" {} "mkdir -p $out/bin";
     settings = {
       "linux_display_server" = "x11";
 # --- FONTE ---
