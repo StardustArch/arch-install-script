@@ -38,7 +38,6 @@ let
   runtimeInputs = with pkgs; [ swaybg coreutils findutils procps ];
   text = ''
     # Usamos quotes e chaves para satisfazer o ShellCheck
-    WALL_DIR="''${HOME}/.config/hypr/wallpapers"
     ACTION="''${1:-static}" # Define "static" como padrao se $1 for vazio
     INTERVAL="''${2:-300}"
 
@@ -59,12 +58,12 @@ let
     case "$ACTION" in
         "static")
             # Agora com aspas para o Nix nao reclamar
-            SELECTED=$(find "$WALL_DIR" -type f | shuf -n 1)
+            SELECTED=$(find /home/paulo_/.config/hypr/wallpapers -type f | shuf -n 1)
             apply_wall "$SELECTED"
             ;;
         "loop")
             while true; do
-                SELECTED=$(find "$WALL_DIR" -type f | shuf -n 1)
+                SELECTED=$(find /home/paulo_/.config/hypr/wallpapers -type f | shuf -n 1)
                 apply_wall "$SELECTED"
                 sleep "$INTERVAL"
             done
