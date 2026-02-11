@@ -143,6 +143,10 @@ home.file = {
   ".config/waybar/config.jsonc".source = ../../../waybar/.config/waybar/config.jsonc;
   ".config/waybar/style.css".source = ../../../waybar/.config/waybar/style.css;
   ".config/swaync/config.jsonc".source = ../../../swaync/.config/swaync/config.json;
+  ".config/hypr/wallpapers" = {
+    source = ../../../hypr/.config/hypr/wallpapers;
+    recursive = true; # Garante que copia subpastas, se existirem
+  };
 };
   # ============================================================
   # PROGRAMAS CONFIGURADOS
