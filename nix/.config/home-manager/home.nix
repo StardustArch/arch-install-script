@@ -37,11 +37,16 @@ let
   name = "wall-manager";
   runtimeInputs = with pkgs; [ swaybg coreutils findutils procps ];
   text = ''
-    WALL_DIR="$HOME/.config/hypr/wallpapers"
+    WALL_DIR="''${HOME}/.config/hypr/wallpapers"
     # Corrigido: usa valor padrão para evitar erro de 'unbound variable'
     ACTION=''${1:-"static"} 
     INTERVAL=''${2:-300}
 
+    # Verifica se o diretório existe antes de continuar
+    if [ ! -d "$WALL_DIR" ]; then
+        echo "Erro: Diretorio $WALL_DIR nao encontrado!"
+        exit 1
+    f
     # O script vai procurar o hyprpaper do teu Arch automaticamente
     if ! pgrep -x "hyprpaper" > /dev/null; then hyprpaper & sleep 1; fi
 
