@@ -58,12 +58,12 @@ let
     case "$ACTION" in
         "static")
             # Agora com aspas para o Nix nao reclamar
-            SELECTED=$(find /home/paulo_/.config/hypr/wallpapers -type f | shuf -n 1)
+            SELECTED=$(find /home/paulo_/arch-install-script/hypr/.config/hypr/wallpapers -type f | shuf -n 1)
             apply_wall "$SELECTED"
             ;;
         "loop")
             while true; do
-                SELECTED=$(find /home/paulo_/.config/hypr/wallpapers -type f | shuf -n 1)
+                SELECTED=$(find /home/paulo_/arch-install-script/hypr/.config/hypr/wallpapers -type f | shuf -n 1)
                 apply_wall "$SELECTED"
                 sleep "$INTERVAL"
             done
