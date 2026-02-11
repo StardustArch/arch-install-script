@@ -46,7 +46,8 @@ let
     if [ ! -d "$WALL_DIR" ]; then
         echo "Erro: Diretorio $WALL_DIR nao encontrado!"
         exit 1
-    f
+    fi
+    
     # O script vai procurar o hyprpaper do teu Arch automaticamente
     if ! pgrep -x "hyprpaper" > /dev/null; then hyprpaper & sleep 1; fi
 
