@@ -117,6 +117,7 @@ home.file = {
   programs.kitty = {
     enable = true;
     settings = {
+      "linux_display_server" = "x11";
 # --- FONTE ---
     "font_family"      = "JetBrainsMono Nerd Font";
     "bold_font"        = "auto";
