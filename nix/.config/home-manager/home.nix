@@ -106,9 +106,11 @@ in
   # Gera o colors.conf para o Hyprland
   home.file.".config/hypr/colors.conf".text = ''
     $bg0 = rgba(${colors.bg0}ff)
+    $bg1 = rgba(${colors.bg1}ff)
     $bg3 = rgba(${colors.bg3}ff)
     $fg0 = rgba(${colors.fg0}ff)
     $accent1 = rgba(${colors.accent1}ff)
+    $accent2 = rgba(${colors.accent2}ff)
     $accent3 = rgba(${colors.accent3}ff)
     $shadow_col = rgba(00000055)
     $tk_bg = 0xff${colors.bg0}
