@@ -10,15 +10,15 @@
 
 window#waybar {
     /* Vidro: mais transparente para o desfoque do Hyprland brilhar */
-    background: alpha(@bg0, 0.65); 
+    background: alpha(@bg0, 0.80); 
     color: @fg0;
     transition: all 0.5s;
     
     /* Borda "Gelo" muito subtil */
-    border-bottom: 1px solid alpha(@accent1, 0.2); 
+    border-bottom: 1px solid alpha(@accent1, 0.3); 
     
     /* Sombreamento para destacar do fundo */
-    box-shadow: 0 4px 6px alpha(#000000, 0.2);
+    box-shadow: 0 4px 10px alpha(#000000, 0.4);
 }
 
 /* --- WORKSPACES MODERNOS --- */
