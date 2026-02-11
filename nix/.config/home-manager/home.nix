@@ -33,62 +33,47 @@ let
   colors = themes.${selectedTheme};
 
   # Definimos o script como uma aplicação gerida pelo Nix
-  wall-script = pkgs.writeShellApplication {
-    name = "wall-manager";
-    # O Nix garante que estas ferramentas estão disponíveis para o script
-    runtimeInputs = with pkgs; [ 
-      hyprpaper 
-      swaybg 
-      coreutils # para o sleep, cat, etc
-      findutils # para o find
-      procps    # para o pgrep/pkill
-    ];
-    
-    text = ''
-      WALL_DIR="$HOME/.config/hypr/wallpapers"
-      INTERVAL=''${2:-300}
-      BACKEND="hyprpaper"
+ wall-manager = pkgs.writeShellApplication {
+  name = "wall-manager";
+  runtimeInputs = with pkgs; [ swaybg coreutils findutils procps ];
+  text = ''
+    WALL_DIR="$HOME/.config/hypr/wallpapers"
+    # Corrigido: usa valor padrão para evitar erro de 'unbound variable'
+    ACTION=''${1:-"static"} 
+    INTERVAL=''${2:-300}
 
-      # --- 1. VERIFICAÇÃO DO BACKEND ---
-      if ! pgrep -x "hyprpaper" > /dev/null; then
-          hyprpaper &
-          sleep 1
-      fi
+    # O script vai procurar o hyprpaper do teu Arch automaticamente
+    if ! pgrep -x "hyprpaper" > /dev/null; then hyprpaper & sleep 1; fi
 
-      if ! hyprctl hyprpaper listloaded > /dev/null 2>&1; then
-          BACKEND="swaybg"
-      fi
+    apply_wall() {
+        local wall="$1"
+        # Deteta se o hyprpaper está funcional ou se deve usar o swaybg
+        if hyprctl hyprpaper listloaded > /dev/null 2>&1; then
+            MONITOR=$(hyprctl monitors | grep "Monitor" | awk '{print $2}' | head -n 1)
+            hyprctl hyprpaper preload "$wall"
+            hyprctl hyprpaper wallpaper "$MONITOR,$wall"
+            hyprctl hyprpaper unload unused
+        else
+            pkill swaybg || true
+            swaybg -i "$wall" -m fill &
+        fi
+    }
 
-      # --- 2. APLICAÇÃO ---
-      apply_wall() {
-          local wall="$1"
-          if [ "$BACKEND" == "hyprpaper" ]; then
-              MONITOR=$(hyprctl monitors | grep "Monitor" | awk '{print $2}' | head -n 1)
-              hyprctl hyprpaper preload "$wall"
-              hyprctl hyprpaper wallpaper "$MONITOR,$wall"
-              hyprctl hyprpaper unload unused
-          else
-              pkill swaybg || true
-              swaybg -i "$wall" -m fill &
-          fi
-      }
-
-      # --- 3. LÓGICA ---
-      case $1 in
-          "static")
-              SELECTED=$(find "$WALL_DIR" -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" \) | shuf -n 1)
-              apply_wall "$SELECTED"
-              ;;
-          "loop")
-              while true; do
-                  SELECTED=$(find "$WALL_DIR" -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" \) | shuf -n 1)
-                  apply_wall "$SELECTED"
-                  sleep "$INTERVAL"
-              done
-              ;;
-      esac
-    '';
-  };
+    case "$ACTION" in
+        "static")
+            SELECTED=$(find "$WALL_DIR" -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" \) | shuf -n 1)
+            apply_wall "$SELECTED"
+            ;;
+        "loop")
+            while true; do
+                SELECTED=$(find "$WALL_DIR" -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" \) | shuf -n 1)
+                apply_wall "$SELECTED"
+                sleep "$INTERVAL"
+            done
+            ;;
+    esac
+  '';
+};
 in
 
 
@@ -126,6 +111,10 @@ in
     $accent1 = rgba(${colors.accent1}ff)
     $accent3 = rgba(${colors.accent3}ff)
     $shadow_col = rgba(00000055)
+    $tk_bg = 0xff${colors.bg0}
+    $tk_base = 0xff${colors.bg1}
+    $tk_accent = 0xff${colors.accent1}
+    $tk_text = 0xff${colors.fg0}
   '';
 
   # Gera o colors.css para Waybar e SwayNC
