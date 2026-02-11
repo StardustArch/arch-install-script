@@ -37,23 +37,14 @@ let
   name = "wall-manager";
   runtimeInputs = with pkgs; [ swaybg coreutils findutils procps ];
   text = ''
+    # Usamos quotes e chaves para satisfazer o ShellCheck
     WALL_DIR="''${HOME}/.config/hypr/wallpapers"
-    # Corrigido: usa valor padrão para evitar erro de 'unbound variable'
-    ACTION=''${1:-"static"} 
-    INTERVAL=''${2:-300}
-
-    # Verifica se o diretório existe antes de continuar
-    if [ ! -d "$WALL_DIR" ]; then
-        echo "Erro: Diretorio $WALL_DIR nao encontrado!"
-        exit 1
-    fi
-    
-    # O script vai procurar o hyprpaper do teu Arch automaticamente
-    if ! pgrep -x "hyprpaper" > /dev/null; then hyprpaper & sleep 1; fi
+    ACTION="''${1:-static}" # Define "static" como padrao se $1 for vazio
+    INTERVAL="''${2:-300}"
 
     apply_wall() {
         local wall="$1"
-        # Deteta se o hyprpaper está funcional ou se deve usar o swaybg
+        # O script deteta se o hyprpaper (do Arch) funciona ou usa o swaybg como backup
         if hyprctl hyprpaper listloaded > /dev/null 2>&1; then
             MONITOR=$(hyprctl monitors | grep "Monitor" | awk '{print $2}' | head -n 1)
             hyprctl hyprpaper preload "$wall"
@@ -67,12 +58,13 @@ let
 
     case "$ACTION" in
         "static")
-            SELECTED=$(find "$WALL_DIR" -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" \) | shuf -n 1)
+            # Agora com aspas para o Nix nao reclamar
+            SELECTED=$(find "$WALL_DIR" -type f | shuf -n 1)
             apply_wall "$SELECTED"
             ;;
         "loop")
             while true; do
-                SELECTED=$(find "$WALL_DIR" -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" \) | shuf -n 1)
+                SELECTED=$(find "$WALL_DIR" -type f | shuf -n 1)
                 apply_wall "$SELECTED"
                 sleep "$INTERVAL"
             done
