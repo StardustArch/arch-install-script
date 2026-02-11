@@ -170,6 +170,9 @@ home.file = {
 	autosuggestion.enable=true;
 	syntaxHighlighting.enable=true;
 	dotDir=config.home.homeDirectory;
+  initExtra = ''
+      fastfetch
+    '';
 	shellAliases ={
 		ll="eza -l -g --icons";
 		ls="eza --icons";
