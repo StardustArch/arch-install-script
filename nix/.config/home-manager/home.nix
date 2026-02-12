@@ -153,12 +153,69 @@ home.file = {
     source = ../../../hypr/.config/hypr/wallpapers;
     recursive = true; # Garante que copia subpastas, se existirem
   };
+
+home.file.".config/hypr/scripts/gamemode.sh" = {
+  executable = true;
+  text = ''
+    #!/bin/bash
+    # Verifica se as animações estão ativas (1 = ativas, 0 = inativas)
+    HYPRGAMEMODE=$(hyprctl getoption animations:enabled | awk 'NR==1{print $2}')
+
+    if [ "$HYPRGAMEMODE" = 1 ] ; then
+        # ====================================================
+        # ATIVAR MODO JOGO (Performance Máxima)
+        # ====================================================
+        
+        # 1. VISUAL: Desliga tudo no Hyprland
+        hyprctl --batch "\
+            keyword animations:enabled 0;\
+            keyword decoration:drop_shadow 0;\
+            keyword decoration:blur:enabled 0;\
+            keyword general:gaps_in 0;\
+            keyword general:gaps_out 0;\
+            keyword decoration:rounding 0"
+        
+        # 2. SISTEMA: Para processos desnecessários
+        pkill -STOP wall-manager
+        pkill waybar || true
+        
+        # 3. HARDWARE: Ativa o Gamemode "forçado"
+        # Iniciamos um processo infinito com gamemoderun e guardamos o ID dele
+        gamemoderun sleep infinity > /dev/null 2>&1 &
+        echo $! > /tmp/gamemode_process.pid
+        
+        notify-send -u low -t 2000 "Game Mode" "⚡ ATIVADO: CPU Turbo & Visual Limpo"
+    else
+        # ====================================================
+        # DESATIVAR MODO JOGO (Restaurar Desktop)
+        # ====================================================
+        
+        # 1. HARDWARE: Desliga o Gamemode
+        # Matamos o processo fantasma; o gamemode desliga-se automaticamente
+        if [ -f /tmp/gamemode_process.pid ]; then
+            kill $(cat /tmp/gamemode_process.pid)
+            rm /tmp/gamemode_process.pid
+        fi
+
+        # 2. VISUAL: Restaura o Hyprland
+        hyprctl reload
+        
+        sleep 0.5
+        
+        # 3. SISTEMA: Retoma processos
+        pkill -CONT wall-manager
+        waybar &
+
+        notify-send -u low -t 2000 "Game Mode" "✨ DESATIVADO: Visuais Restaurados"
+    fi
+  '';
+};
 };
   # ============================================================
   # PROGRAMAS CONFIGURADOS
   # ============================================================
   home.packages = (with pkgs; [
-    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22 nerd-fonts.jetbrains-mono
+    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22 nerd-fonts.jetbrains-mono grim slurp swappy wl-clipboard cliphist gamemode
   ]) ++ [ wall-manager ];
   
 

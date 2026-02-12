@@ -170,33 +170,6 @@ if ! command -v home-manager &> /dev/null; then
     nix-shell '<home-manager>' -A install
 fi
 
-
-# ==========================================
-# 7. CONFIGURAÇÃO DE DOTFILES (STOW)
-# ==========================================
-log "Sincronizando Dotfiles..."
-mkdir -p "$HOME/.config"
-
-prepare_stow() {
-    local dir="$1"
-    if [ -d "$HOME/$dir" ] && [ ! -L "$HOME/$dir" ]; then
-        warn "Pasta $dir real detectada. Fazendo backup..."
-        mv "$HOME/$dir" "$HOME/${dir}_backup_$(date +%s)"
-    fi
-}
-
-# Prepara as pastas para o Stow não conflitar
-for folder in "hypr" "waybar" "kitty" "rofi" "swaync"; do
-    prepare_stow ".config/$folder"
-done
-
-cd "$DOTFILES_DIR"
-# Linka tudo que estiver no diretório de dotfiles
-for folder in */; do
-    stow "${folder%/}"
-    log "Linkado: ${folder%/}"
-done
-
 # ==========================================
 # GESTÃO DE GIT PARA FLAKES
 # ==========================================
