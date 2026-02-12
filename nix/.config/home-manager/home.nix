@@ -6,7 +6,8 @@ let
   # ============================================================
   
   # 1. Escolhe o teu tema aqui: "nord", "aizome" ou "gruvbox"
-  selectedTheme = "aizome"; 
+  rawTheme = builtins.readFile "/home/paulo_/.cache/current_theme";
+  selectedTheme = lib.removeSuffix "\n" rawTheme;
 
   themes = {
     nord = {
@@ -508,8 +509,7 @@ programs.vscode = {
         
         # 1. Altera a variável selectedTheme no teu ficheiro home.nix
         # Nota: Ajustei o caminho para o que aparece no teu alias 'hms'
-        sed -i "s/selectedTheme = \".*\";/selectedTheme = \"$1\";/" ~/arch-install-script/nix/.config/home-manager/home.nix
-        
+        echo "$1" > ~/.cache/current_theme        
         echo "🎨 Tema alterado para $1 no home.nix. A aplicar mudanças..."
         
         # 2. Executa o teu alias hms automaticamente
