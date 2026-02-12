@@ -409,8 +409,9 @@ programs.vscode = {
       charliermarsh.ruff
       
       # 4. Temas
-      jdinhlife.gruvbox-theme
-      arcticicestudio.nord-visual-studio-code
+      jdinhlife.gruvbox
+      daniel-duc.daniel-material-palenight-theme
+      bfrangi.vscode-nightingale-theme
       
       # 5. Utilitários
       bradlc.vscode-tailwindcss
