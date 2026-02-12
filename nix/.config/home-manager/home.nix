@@ -413,7 +413,7 @@ programs.vscode = {
       
       # 4. Temas
       jdinhlife.gruvbox
-      "daniel-duc".daniel-material-palenight-theme
+      arcticicestudio.nord-visual-studio-code
       bfrangi.vscode-nightingale-theme
       
       # 5. Utilitários
