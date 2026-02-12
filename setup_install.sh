@@ -80,7 +80,7 @@ PKGS=(
     hyprland hyprpaper swaybg xorg-xwayland
     waybar kitty hyprlauncher hyprtoolkit hyprlock hypridle
     pipewire pipewire-pulse wireplumber polkit-gnome
-    thunar ttf-jetbrains-mono-nerd fzf chafa
+    thunar ttf-jetbrains-mono-nerd fzf chafa rofi-wayland
     xdg-desktop-portal-hyprland qt5-wayland qt6-wayland
     brightnessctl blueman network-manager-applet swaync
     sddm qt5-quickcontrols2 qt5-graphicaleffects qt5-svg
