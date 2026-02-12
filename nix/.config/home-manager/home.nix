@@ -378,6 +378,12 @@ home.file = {
   '';
 };
 };
+
+home.activation = {
+  restartWaybar = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    $DRY_RUN_CMD pkill -USR2 waybar || $DRY_RUN_CMD waybar &
+  '';
+};
   # ============================================================
   # PROGRAMAS CONFIGURADOS
   # ============================================================
