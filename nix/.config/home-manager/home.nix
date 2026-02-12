@@ -380,9 +380,16 @@ home.file = {
 };
 
 home.activation = {
-  restartWaybar = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    # Usamos o pkill do pacote procps do Nix para garantir que o comando existe
+  restartServices = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    # Reiniciar Waybar (USR2 recarrega sem fechar)
     ${pkgs.procps}/bin/pkill -USR2 waybar || waybar &
+    
+    # Reiniciar SwayNC (Recarregar config e estilo)
+    if ${pkgs.procps}/bin/pgrep -x "swaync" > /dev/null; then
+       swaync-client -R && swaync-client -rs
+    else
+       swaync &
+    fi
   '';
 };
   # ============================================================
