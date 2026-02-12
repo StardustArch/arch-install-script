@@ -515,7 +515,10 @@ programs.vscode = {
         # 2. Executa o teu alias hms automaticamente
         # (Usamos o comando completo do alias para garantir que funciona)
         home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#paulo_
-      }
+        ~/.nix-profile/bin/wall-manager switch "$1"
+            
+        echo "🚀 Sistema atualizado para $1!"
+    }
   '';
 	shellAliases ={
 		ll="eza -l -g --icons";
