@@ -414,7 +414,7 @@ programs.vscode = {
       # 4. Temas
       jdinhlife.gruvbox
       arcticicestudio.nord-visual-studio-code
-      bfrangi.vscode-nightingale-theme
+      vscode-nightingale-theme
       
       # 5. Utilitários
       bradlc.vscode-tailwindcss
