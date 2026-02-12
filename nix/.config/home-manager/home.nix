@@ -396,7 +396,7 @@ programs.vscode = {
     mutableExtensionsDir = true;
 
     # --- EXTENSÕES GERIDAS PELO NIX ---
-    extensions = with pkgs.vscode-extensions; [
+    profiles.default.extensions = with pkgs.vscode-extensions; [
       # 1. Estética (O que pediste)
       pkief.material-icon-theme  # O "Pretty" icons oficial
 
