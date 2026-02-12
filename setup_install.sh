@@ -84,8 +84,7 @@ PKGS=(
     xdg-desktop-portal-hyprland qt5-wayland qt6-wayland
     brightnessctl blueman network-manager-applet swaync
     sddm qt5-quickcontrols2 qt5-graphicaleffects qt5-svg
-    podman distrobox podman-compose stow btop flatpak
-    plymouth
+    podman distrobox podman-compose btop plymouth
     # --- Adições de Estética ---
     nwg-look                # Gerenciador de Temas GTK
     bibata-cursor-theme     # O cursor que você gosta

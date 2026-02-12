@@ -6,7 +6,7 @@ let
   # ============================================================
   
   # 1. Escolhe o teu tema aqui: "nord", "aizome" ou "gruvbox"
-  selectedTheme = "gruvbox"; 
+  selectedTheme = "aizome"; 
 
   themes = {
     nord = {
@@ -33,17 +33,39 @@ let
   colors = themes.${selectedTheme};
 
   # Definimos o script como uma aplicação gerida pelo Nix
-wall-manager = pkgs.writeShellApplication {
+wall-script = pkgs.writeShellApplication {
   name = "wall-manager";
-  runtimeInputs = with pkgs; [ swaybg coreutils findutils procps fzf chafa ];
+  runtimeInputs = with pkgs; [ swaybg coreutils findutils procps fzf chafa gnused ];
   text = ''
-    # Usamos quotes e chaves para satisfazer o ShellCheck
+    # --- CONFIGURAÇÃO ---
+    BASE_DIR="/home/paulo_/arch-install-script/hypr/.config/hypr/wallpapers"
+    THEME_FILE="$HOME/.cache/current_theme"
+    
+    # Argumentos
     ACTION="''${1:-static}" 
-    INTERVAL="''${2:-300}"
+    ARG2="''${2:-}" # Pode ser o intervalo (loop) ou o nome do tema (switch)
 
+    # 1. Detetar tema atual (Lê do ficheiro cache ou define padrão)
+    if [ -f "$THEME_FILE" ]; then
+        CURRENT_THEME=$(cat "$THEME_FILE")
+    else
+        CURRENT_THEME="gruvbox" # Default se nunca escolheste nada
+    fi
+
+    # Garante que a pasta do tema existe, senão volta ao base
+    if [ ! -d "$BASE_DIR/$CURRENT_THEME" ]; then
+        echo "Pasta do tema $CURRENT_THEME não encontrada. Usando raiz."
+        TARGET_DIR="$BASE_DIR"
+    else
+        TARGET_DIR="$BASE_DIR/$CURRENT_THEME"
+    fi
+
+    # --- FUNÇÃO PRINCIPAL ---
     apply_wall() {
         local wall="$1"
-        # O script deteta se o hyprpaper (do Arch) funciona ou usa o swaybg como backup
+        [ -z "$wall" ] && exit 0
+
+        # A. Aplica o Wallpaper (Hyprpaper ou Swaybg)
         if hyprctl hyprpaper listloaded > /dev/null 2>&1; then
             MONITOR=$(hyprctl monitors | grep "Monitor" | awk '{print $2}' | head -n 1)
             hyprctl hyprpaper preload "$wall"
@@ -51,28 +73,70 @@ wall-manager = pkgs.writeShellApplication {
             hyprctl hyprpaper unload unused
         else
             pkill swaybg || true
-            # FIX: Usamos 'nohup' e redirecionamos saida para o swaybg sobreviver ao fecho do terminal
             nohup swaybg -i "$wall" -m fill > /dev/null 2>&1 &
+            sleep 0.5
+        fi
+
+        # B. Lógica de Temas Inteligente
+        # Descobre o tema baseando-se no nome da pasta onde está a imagem
+        # Exemplo: se imagem é .../wallpapers/nord/img.jpg, o tema é "nord"
+        NEW_THEME=$(basename "$(dirname "$wall")")
+        
+        # Se o tema mudou, atualiza a cache e o VSCode
+        if [ "$NEW_THEME" != "$CURRENT_THEME" ] && [ "$NEW_THEME" != "wallpapers" ]; then
+            echo "$NEW_THEME" > "$THEME_FILE"
+            echo "Tema alterado para: $NEW_THEME"
+            
+            # Atualiza o VSCode
+            case "$NEW_THEME" in
+                "nord")
+                    ~/.config/hypr/scripts/vscode-theme.sh nord ;;
+                "gruvbox")
+                    ~/.config/hypr/scripts/vscode-theme.sh gruvbox ;;
+                "aizome")
+                    # Assume que tens um tema aizome ou usa o mais parecido (ex: nord)
+                    ~/.config/hypr/scripts/vscode-theme.sh nord ;; 
+            esac
         fi
     }
 
+    # --- MENU DE AÇÕES ---
     case "$ACTION" in
         "static")
-            # Mantivemos o caminho absoluto exato do teu repo
-            SELECTED=$(find /home/paulo_/arch-install-script/hypr/.config/hypr/wallpapers -type f | shuf -n 1)
+            # Só escolhe aleatório DENTRO da pasta do tema atual
+            SELECTED=$(find "$TARGET_DIR" -type f | shuf -n 1)
             apply_wall "$SELECTED"
             ;;
+            
         "select")
-            # Mantivemos o teu comando com chafa e caminhos absolutos
-            SELECTED=$(find /home/paulo_/arch-install-script/hypr/.config/hypr/wallpapers -type f -printf "%P\n" | fzf --preview "chafa -s 40x20 /home/paulo_/arch-install-script/hypr/.config/hypr/wallpapers/{}" --height 80%)
-            [ -n "$SELECTED" ] && apply_wall "/home/paulo_/arch-install-script/hypr/.config/hypr/wallpapers/$SELECTED"
+            # Só mostra lista DENTRO da pasta do tema atual
+            echo "Selecionando wallpaper para o tema: $CURRENT_THEME"
+            SELECTED=$(find "$TARGET_DIR" -type f -printf "%P\n" | fzf --preview "chafa -s 40x20 $TARGET_DIR/{}" --height 80%)
+            [ -n "$SELECTED" ] && apply_wall "$TARGET_DIR/$SELECTED"
             ;;
+            
         "loop")
             while true; do
-                SELECTED=$(find /home/paulo_/arch-install-script/hypr/.config/hypr/wallpapers -type f | shuf -n 1)
+                SELECTED=$(find "$TARGET_DIR" -type f | shuf -n 1)
                 apply_wall "$SELECTED"
-                sleep "$INTERVAL"
+                sleep "''${ARG2:-300}"
             done
+            ;;
+            
+        "switch")
+            # Comando extra para mudares de tema manualmente
+            # Uso: wall-manager switch nord
+            if [ -n "$ARG2" ] && [ -d "$BASE_DIR/$ARG2" ]; then
+                echo "$ARG2" > "$THEME_FILE"
+                echo "Tema mudado para $ARG2. Na próxima seleção, só verás imagens deste tema."
+                
+                # Aplica logo um wallpaper aleatório do novo tema para confirmar
+                SELECTED=$(find "$BASE_DIR/$ARG2" -type f | shuf -n 1)
+                apply_wall "$SELECTED"
+            else
+                echo "Temas disponíveis:"
+                ls "$BASE_DIR"
+            fi
             ;;
     esac
   '';
@@ -267,14 +331,97 @@ home.file = {
     fi
   '';
 };
+
+".config/hypr/scripts/vscode-theme.sh" = {
+  executable = true;
+  text = ''
+    #!/bin/bash
+    
+    # Caminho do settings.json do VSCodium
+    VSCODE_SETTINGS="$HOME/.config/VSCodium/User/settings.json"
+    
+    # Garante que o ficheiro existe
+    if [ ! -f "$VSCODE_SETTINGS" ]; then
+        mkdir -p "$(dirname "$VSCODE_SETTINGS")"
+        echo "{}" > "$VSCODE_SETTINGS"
+    fi
+
+    update_theme() {
+        local theme="$1"
+        
+        # Usa o 'sed' para substituir a linha do tema no JSON
+        # Se a linha não existir, poderiamos usar 'jq', mas 'sed' é mais universal para replacement simples
+        
+        if grep -q "workbench.colorTheme" "$VSCODE_SETTINGS"; then
+            # Se ja existe, substitui
+            sed -i "s/\"workbench.colorTheme\": \".*\"/\"workbench.colorTheme\": \"$theme\"/" "$VSCODE_SETTINGS"
+        else
+            # Se nao existe, adiciona antes da ultima chaveta
+            sed -i "$ s/}/,\n  \"workbench.colorTheme\": \"$theme\"\n}/" "$VSCODE_SETTINGS"
+        fi
+    }
+
+    case "$1" in
+        "nord")
+            update_theme "Nord"
+            ;;
+        "gruvbox")
+            update_theme "Gruvbox Dark Hard"
+            ;;
+        *)
+            echo "Uso: $0 [nord|gruvbox]"
+            ;;
+    esac
+  '';
+};
 };
   # ============================================================
   # PROGRAMAS CONFIGURADOS
   # ============================================================
   home.packages = (with pkgs; [
-    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22 nerd-fonts.jetbrains-mono grim slurp swappy wl-clipboard cliphist gamemode bottles protonup-qt gamescope mangohud
+    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22 nerd-fonts.jetbrains-mono grim slurp swappy wl-clipboard cliphist gamemode bottles protonup-qt gamescope mangohud ripgrep fd tmux zoxide yazi neovim
   ]) ++ [ wall-manager ];
   
+
+
+programs.vscode = {
+    enable = true;
+    package = pkgs.vscodium;
+    
+    # PERMITE instalar extensões manualmente pela loja (como o cwej)
+    # Sem isto, o Nix apagaria o 'Database Client' sempre que fizesses update.
+    mutableExtensionsDir = true;
+
+    # --- EXTENSÕES GERIDAS PELO NIX ---
+    extensions = with pkgs.vscode-extensions; [
+      # 1. Estética (O que pediste)
+      pkief.material-icon-theme  # O "Pretty" icons oficial
+
+      # 2. Stack Web (Svelte, Vue, etc - Do passo anterior)
+      svelte.svelte-vscode
+      vue.volar
+      dbaeumer.vscode-eslint
+      esbenp.prettier-vscode
+      
+      # 3. Python
+      ms-python.python
+      ms-python.vscode-pylance
+      charliermarsh.ruff
+      
+      # 4. Temas
+      jdinhlife.gruvbox-theme
+      arcticicestudio.nord-visual-studio-code
+      
+      # 5. Utilitários
+      bradlc.vscode-tailwindcss
+      eamodio.gitlens
+      editorconfig.editorconfig
+      
+      # Alternativa Open-Source para SQL (Caso o cwej falhe)
+      # mtxr.sqltools 
+    ];
+  };
+
 
   xdg.configFile."kitty/kitty.conf".force = true;
   fonts.fontconfig.enable = true;
@@ -359,6 +506,49 @@ home.file = {
 	viAlias=true;
 	vimAlias=true;
   };
+
+  # ==========================================
+  # FERRAMENTAS DE TERMINAL (INTEGRADAS)
+  # ==========================================
+
+   # 1. Zoxide: O 'cd' inteligente
+    programs.zoxide = {
+      enable = true;
+      enableZshIntegration = true;
+      # Substitui o comando 'cd' normal pelo zoxide (opcional, mas recomendado)
+      # Se preferires manter o cd normal, remove esta linha e usa 'z' para navegar
+      options = ["--cmd cd"]; 
+    };
+
+    # 2. Yazi: O Gestor de Ficheiros Visual
+    programs.yazi = {
+      enable = true;
+      enableZshIntegration = true;
+      # Configurações de shell wrapper (cria o comando 'y' que muda o diretório ao sair)
+      shellWrapperName = "y";
+    };
+
+    # 3. Tmux: O Multiplexer
+    programs.tmux = {
+      enable = true;
+      mouse = true;       # Permite usar o rato para redimensionar painéis (Essencial!)
+      baseIndex = 1;      # Começa a contar janelas no 1 em vez do 0 (mais lógico)
+      prefix = "C-a";     # Muda o atalho mestre de Ctrl+B para Ctrl+A (mais fácil de carregar)
+      keyMode = "vi";     # Usa teclas do Vim (hjkl) para scroll e seleção
+      
+      # Plugins essenciais para ficar bonito e útil
+      plugins = with pkgs; [
+        tmuxPlugins.cpu
+        tmuxPlugins.yank
+        tmuxPlugins.resurrect # Salva a sessão para não perderes nada se o PC reiniciar
+      ];
+      
+      extraConfig = ''
+        # Abrir novos painéis no diretório atual (e não na home)
+        bind '"' split-window -v -c "#{pane_current_path}"
+        bind % split-window -h -c "#{pane_current_path}"
+      '';
+    };
 
   services.flatpak = {
 	enable=true;
