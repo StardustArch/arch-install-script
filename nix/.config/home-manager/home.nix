@@ -176,20 +176,49 @@ home.file = {
     source = ../../../hypr/.config/hypr/wallpapers;
     recursive = true; # Garante que copia subpastas, se existirem
   };
+  ".config/MangoHud/MangoHud.conf".text = ''
+    preset=3
+    cpu_temp
+    gpu_temp
+    ram
+    vram
+    fps
+    frametime
+    # Atalho para ligar/desligar o HUD (Shift Direito + F12)
+    toggle_hud=Shift_R+F12
+    # Estilo visual
+    round_corners=10
+    background_alpha=0.4
+    font_size=24
+    text_color=ffffff
+    position=top-left
+'';
+".config/gamemode.ini".text = ''
+  [general]
+  removerenice=1
+  desiredgov=performance
+  igpu_power_threshold=-1
+
+  [custom]
+  # Executa o script visual ao entrar no jogo
+  start=sh /home/paulo_/.config/hypr/scripts/gamemode.sh start
+  
+  # Executa o script visual ao sair do jogo
+  end=sh /home/paulo_/.config/hypr/scripts/gamemode.sh end
+'';
 
 ".config/hypr/scripts/gamemode.sh" = {
   executable = true;
   text = ''
     #!/bin/bash
-    # Verifica se as animações estão ativas (1 = ativas, 0 = inativas)
-    HYPRGAMEMODE=$(hyprctl getoption animations:enabled | awk 'NR==1{print $2}')
-
-    if [ "$HYPRGAMEMODE" = 1 ] ; then
-        # ====================================================
-        # ATIVAR MODO JOGO (Performance Máxima)
-        # ====================================================
+    
+    # Função para Modo Jogo (Performance)
+    enable_game_mode() {
+        # 1. Matar Waybar e Wallpaper para poupar recursos
+        pkill waybar || true
+        pkill -STOP wall-manager || true
         
-        # 1. VISUAL: Desliga tudo no Hyprland
+        # 2. Desligar Efeitos Visuais do Hyprland
         hyprctl --batch "\
             keyword animations:enabled 0;\
             keyword decoration:drop_shadow 0;\
@@ -197,39 +226,44 @@ home.file = {
             keyword general:gaps_in 0;\
             keyword general:gaps_out 0;\
             keyword decoration:rounding 0"
-        
-        # 2. SISTEMA: Para processos desnecessários
-        pkill -STOP wall-manager
-        pkill waybar || true
-        
-        # 3. HARDWARE: Ativa o Gamemode "forçado"
-        # Iniciamos um processo infinito com gamemoderun e guardamos o ID dele
-        gamemoderun sleep infinity > /dev/null 2>&1 &
-        echo $! > /tmp/gamemode_process.pid
-        
-        notify-send -u low -t 2000 "Game Mode" "⚡ ATIVADO: CPU Turbo & Visual Limpo"
-    else
-        # ====================================================
-        # DESATIVAR MODO JOGO (Restaurar Desktop)
-        # ====================================================
-        
-        # 1. HARDWARE: Desliga o Gamemode
-        # Matamos o processo fantasma; o gamemode desliga-se automaticamente
-        if [ -f /tmp/gamemode_process.pid ]; then
-            kill $(cat /tmp/gamemode_process.pid)
-            rm /tmp/gamemode_process.pid
-        fi
+            
+        notify-send -u low -t 2000 "Game Mode" "⚡ ATIVADO: Foco Total"
+    }
 
-        # 2. VISUAL: Restaura o Hyprland
+    # Função para Modo Desktop (Beleza)
+    disable_game_mode() {
+        # 1. Restaurar Hyprland (Lê a config original)
         hyprctl reload
         
+        # 2. Restaurar Wallpaper e Waybar
+        pkill -CONT wall-manager || true
         sleep 0.5
-        
-        # 3. SISTEMA: Retoma processos
-        pkill -CONT wall-manager
         waybar &
+        
+        notify-send -u low -t 2000 "Game Mode" "✨ DESATIVADO: Desktop Normal"
+    }
 
-        notify-send -u low -t 2000 "Game Mode" "✨ DESATIVADO: Visuais Restaurados"
+    # Lógica de Controlo
+    if [ "$1" == "start" ]; then
+        enable_game_mode
+    elif [ "$1" == "end" ]; then
+        disable_game_mode
+    else
+        # Se não houver argumentos (Toggle manual via atalho)
+        STATUS=$(hyprctl getoption animations:enabled | awk 'NR==1{print $2}')
+        if [ "$STATUS" = 1 ]; then
+            enable_game_mode
+            # Truque: Se for manual, ativamos o gamemode em background
+            gamemoderun sleep infinity > /dev/null 2>&1 &
+            echo $! > /tmp/gamemode_manual.pid
+        else
+            disable_game_mode
+            # Matar o gamemode manual
+            if [ -f /tmp/gamemode_manual.pid ]; then
+                kill $(cat /tmp/gamemode_manual.pid) 2>/dev/null
+                rm /tmp/gamemode_manual.pid
+            fi
+        fi
     fi
   '';
 };
@@ -238,7 +272,7 @@ home.file = {
   # PROGRAMAS CONFIGURADOS
   # ============================================================
   home.packages = (with pkgs; [
-    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22 nerd-fonts.jetbrains-mono grim slurp swappy wl-clipboard cliphist gamemode
+    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22 nerd-fonts.jetbrains-mono grim slurp swappy wl-clipboard cliphist gamemode bottles protonup-qt gamescope mangohud
   ]) ++ [ wall-manager ];
   
 
