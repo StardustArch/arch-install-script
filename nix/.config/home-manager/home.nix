@@ -33,7 +33,7 @@ let
   colors = themes.${selectedTheme};
 
   # Definimos o script como uma aplicação gerida pelo Nix
-wall-script = pkgs.writeShellApplication {
+wall-manager = pkgs.writeShellApplication {
   name = "wall-manager";
   runtimeInputs = with pkgs; [ swaybg coreutils findutils procps fzf chafa ];
   text = ''
