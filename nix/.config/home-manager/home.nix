@@ -507,18 +507,22 @@ programs.vscode = {
           return 1
         fi
         
-        # 1. Altera a variável selectedTheme no teu ficheiro home.nix
-        # Nota: Ajustei o caminho para o que aparece no teu alias 'hms'
-        echo "$1" > ~/.cache/current_theme        
-        echo "🎨 Tema alterado para $1 no home.nix. A aplicar mudanças..."
+        # 1. Escreve o tema no ficheiro de CACHE (Não mexe no Git!)
+        echo "$1" > ~/.cache/current_theme
         
-        # 2. Executa o teu alias hms automaticamente
-        # (Usamos o comando completo do alias para garantir que funciona)
-        home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#paulo_
-        ~/.nix-profile/bin/wall-manager switch "$1"
-            
-        echo "🚀 Sistema atualizado para $1!"
-    }
+        echo "🎨 Tema definido para $1 na cache. Aplicando mudanças via Nix..."
+        
+        
+        # 3. Executar o hms (Repara que agora não precisamos de 'git add' porque o código não mudou)
+        if home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#paulo_; then
+            # 4. Sincronizar Wallpaper
+            ~/.nix-profile/bin/wall-manager switch "$1"
+            echo "🚀 Sistema atualizado para $1!"
+        else
+            echo "❌ Erro ao aplicar o Nix."
+            return 1
+        fi
+      }
   '';
 	shellAliases ={
 		ll="eza -l -g --icons";
