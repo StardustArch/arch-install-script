@@ -33,12 +33,12 @@ let
   colors = themes.${selectedTheme};
 
   # Definimos o script como uma aplicação gerida pelo Nix
- wall-manager = pkgs.writeShellApplication {
+wall-script = pkgs.writeShellApplication {
   name = "wall-manager";
-  runtimeInputs = with pkgs; [ swaybg coreutils findutils procps fzf chafa];
+  runtimeInputs = with pkgs; [ swaybg coreutils findutils procps fzf chafa ];
   text = ''
     # Usamos quotes e chaves para satisfazer o ShellCheck
-    ACTION="''${1:-static}" # Define "static" como padrao se $1 for vazio
+    ACTION="''${1:-static}" 
     INTERVAL="''${2:-300}"
 
     apply_wall() {
@@ -51,18 +51,19 @@ let
             hyprctl hyprpaper unload unused
         else
             pkill swaybg || true
-            swaybg -i "$wall" -m fill &
+            # FIX: Usamos 'nohup' e redirecionamos saida para o swaybg sobreviver ao fecho do terminal
+            nohup swaybg -i "$wall" -m fill > /dev/null 2>&1 &
         fi
     }
 
     case "$ACTION" in
         "static")
-            # Agora com aspas para o Nix nao reclamar
+            # Mantivemos o caminho absoluto exato do teu repo
             SELECTED=$(find /home/paulo_/arch-install-script/hypr/.config/hypr/wallpapers -type f | shuf -n 1)
             apply_wall "$SELECTED"
             ;;
         "select")
-            # Abre o fzf para escolheres o ficheiro visualmente no terminal
+            # Mantivemos o teu comando com chafa e caminhos absolutos
             SELECTED=$(find /home/paulo_/arch-install-script/hypr/.config/hypr/wallpapers -type f -printf "%P\n" | fzf --preview "chafa -s 40x20 /home/paulo_/arch-install-script/hypr/.config/hypr/wallpapers/{}" --height 80%)
             [ -n "$SELECTED" ] && apply_wall "/home/paulo_/arch-install-script/hypr/.config/hypr/wallpapers/$SELECTED"
             ;;
