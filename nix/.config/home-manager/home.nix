@@ -236,6 +236,7 @@ home.file = {
   ".config/waybar/config.jsonc".source = ../../../waybar/.config/waybar/config.jsonc;
   ".config/waybar/style.css".source = ../../../waybar/.config/waybar/style.css;
   ".config/swaync/config.json".source = ../../../swaync/.config/swaync/config.json;
+  ".config/swaync/style.css".source = ../../../waybar/.config/swaync/style.css;
   ".config/rofi/config.rasi".source = ../../../rofi/.config/rofi/config.rasi;
   ".config/hypr/wallpapers" = {
     source = ../../../hypr/.config/hypr/wallpapers;
