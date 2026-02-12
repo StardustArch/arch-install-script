@@ -154,7 +154,7 @@ home.file = {
     recursive = true; # Garante que copia subpastas, se existirem
   };
 
-home.file.".config/hypr/scripts/gamemode.sh" = {
+".config/hypr/scripts/gamemode.sh" = {
   executable = true;
   text = ''
     #!/bin/bash
