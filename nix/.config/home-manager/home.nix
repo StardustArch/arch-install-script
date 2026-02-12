@@ -384,13 +384,16 @@ home.file = {
 home.activation = {
   restartServices = lib.hm.dag.entryAfter ["writeBoundary"] ''
     # Reiniciar Waybar (USR2 recarrega sem fechar)
-    ${pkgs.procps}/bin/pkill -USR2 waybar || waybar &
+    # Usamos o pkill do Nix para garantir que o comando existe
+    ${pkgs.procps}/bin/pkill -USR2 waybar || /usr/bin/waybar &
     
-    # Reiniciar SwayNC (Recarregar config e estilo)
+    # Reiniciar SwayNC
+    # 1. Verifica se está a correr usando o pgrep do Nix
     if ${pkgs.procps}/bin/pgrep -x "swaync" > /dev/null; then
-       swaync -R && swaync -rs
+       # 2. Usa o swaync-client com caminho absoluto do Arch
+       /usr/bin/swaync-client -R && /usr/bin/swaync-client -rs
     else
-       swaync &
+       /usr/bin/swaync &
     fi
   '';
 };
