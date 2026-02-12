@@ -368,6 +368,9 @@ home.file = {
         "gruvbox")
             update_theme "Gruvbox Dark Hard"
             ;;
+        "aizome")
+            update_theme "Nightingale"
+            ;;
         *)
             echo "Uso: $0 [nord|gruvbox]"
             ;;
@@ -410,7 +413,7 @@ programs.vscode = {
       
       # 4. Temas
       jdinhlife.gruvbox
-      daniel-duc.daniel-material-palenight-theme
+      "daniel-duc".daniel-material-palenight-theme
       bfrangi.vscode-nightingale-theme
       
       # 5. Utilitários
