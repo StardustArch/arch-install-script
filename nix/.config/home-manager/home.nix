@@ -382,7 +382,7 @@ home.file = {
   # PROGRAMAS CONFIGURADOS
   # ============================================================
   home.packages = (with pkgs; [
-    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22 nerd-fonts.jetbrains-mono grim slurp swappy wl-clipboard cliphist gamemode bottles protonup-qt gamescope mangohud ripgrep fd tmux zoxide yazi neovim
+    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22 nerd-fonts.jetbrains-mono grim slurp swappy wl-clipboard cliphist gamemode bottles protonup-qt gamescope mangohud ripgrep fd tmux zoxide yazi
   ]) ++ [ wall-manager ];
   
 nixpkgs.config.allowUnfree = true;
