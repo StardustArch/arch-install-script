@@ -498,7 +498,25 @@ programs.vscode = {
 	autosuggestion.enable=true;
 	syntaxHighlighting.enable=true;
 	dotDir=config.home.homeDirectory;
-  initContent = "fastfetch";
+  initContent = ''
+    fastfetch
+    set-theme() {
+        if [ -z "$1" ]; then
+          echo "Uso: set-theme [nord|aizome|gruvbox]"
+          return 1
+        fi
+        
+        # 1. Altera a variável selectedTheme no teu ficheiro home.nix
+        # Nota: Ajustei o caminho para o que aparece no teu alias 'hms'
+        sed -i "s/selectedTheme = \".*\";/selectedTheme = \"$1\";/" ~/arch-install-script/nix/.config/home-manager/home.nix
+        
+        echo "🎨 Tema alterado para $1 no home.nix. A aplicar mudanças..."
+        
+        # 2. Executa o teu alias hms automaticamente
+        # (Usamos o comando completo do alias para garantir que funciona)
+        home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#paulo_
+      }
+  '';
 	shellAliases ={
 		ll="eza -l -g --icons";
 		ls="eza --icons";
