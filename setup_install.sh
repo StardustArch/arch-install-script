@@ -19,7 +19,7 @@ err()  { echo -e "${RED}[X] $1${NC}"; }
 
 trap 'err "Erro na linha $LINENO. Verifique a saída acima."' ERR
 
-log ">>> INICIANDO SETUP 'ARCH ETERNO' (v2 com SDDM) <<<"
+log ">>> INICIANDO SETUP 'ARCH ETERNO' (v2 com SDDM + Plymouth) <<<"
 
 # ==========================================
 # 1. OTIMIZAÇÃO DE MIRRORS
@@ -85,10 +85,12 @@ PKGS=(
     brightnessctl blueman network-manager-applet swaync
     sddm qt5-quickcontrols2 qt5-graphicaleffects qt5-svg
     podman distrobox podman-compose stow btop flatpak
+    plymouth
     # --- Adições de Estética ---
     nwg-look                # Gerenciador de Temas GTK
     bibata-cursor-theme     # O cursor que você gosta
     papirus-icon-theme      # Ícones consistentes
+    plymouth-theme-arch-charge-big-git # Tema Plymouth Profissional
 )
 
 # Usa o yay para instalar tudo (ele lida com pacotes oficiais e AUR simultaneamente)
@@ -101,7 +103,39 @@ if ! systemctl --user is-active --quiet podman.socket; then
 fi
 
 # ==========================================
-# 4. CONFIGURAÇÃO DO DISPLAY MANAGER (SDDM)
+# 4. CONFIGURAÇÃO DO PLYMOUTH (NOVO)
+# ==========================================
+log "Configurando Plymouth (Animação de Boot)..."
+
+# 4.1 Adicionar Hook ao mkinitcpio
+if ! grep -q "plymouth" /etc/mkinitcpio.conf; then
+    log "Adicionando hook 'plymouth' ao mkinitcpio..."
+    # Insere 'plymouth' logo após 'udev' para garantir a ordem correta
+    sudo sed -i 's/\(udev\)/\1 plymouth/' /etc/mkinitcpio.conf
+else
+    log "Hook do Plymouth já configurado."
+fi
+
+# 4.2 Configurar GRUB para Boot Silencioso (Quiet Splash)
+if [ -f /etc/default/grub ]; then
+    if ! grep -q "quiet splash" /etc/default/grub; then
+        log "Adicionando 'quiet splash' ao GRUB..."
+        # Adiciona os parâmetros à linha GRUB_CMDLINE_LINUX_DEFAULT
+        sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/&quiet splash /' /etc/default/grub
+        log "Atualizando configuração do GRUB..."
+        sudo grub-mkconfig -o /boot/grub/grub.cfg
+    fi
+else
+    warn "GRUB não encontrado (Systemd-boot?). Adicione 'quiet splash' manualmente ao seu bootloader."
+fi
+
+# 4.3 Definir Tema e Gerar Initramfs
+log "Aplicando tema 'arch-charge-big' e gerando imagem de boot..."
+# O flag -R reconstrói o initramfs automaticamente
+sudo plymouth-set-default-theme -R arch-charge-big-git
+
+# ==========================================
+# 5. CONFIGURAÇÃO DO DISPLAY MANAGER (SDDM)
 # ==========================================
 log "Configurando SDDM..."
 if ! systemctl is-enabled --quiet sddm; then
@@ -112,7 +146,7 @@ sudo mkdir -p /etc/sddm.conf.d
 echo -e "[Users]\nMinimumUid=1000\nMaximumUid=29000" | sudo tee /etc/sddm.conf.d/hide-nix-users.conf > /dev/null
 
 # ==========================================
-# 5. INSTALAÇÃO DO NIX & ATIVAÇÃO DE FLAKES
+# 6. INSTALAÇÃO DO NIX & ATIVAÇÃO DE FLAKES
 # ==========================================
 if ! command -v nix &> /dev/null; then
     log "Instalando Nix (via Determinate Systems)..."
@@ -138,7 +172,7 @@ fi
 
 
 # ==========================================
-# 6. CONFIGURAÇÃO DE DOTFILES (STOW)
+# 7. CONFIGURAÇÃO DE DOTFILES (STOW)
 # ==========================================
 log "Sincronizando Dotfiles..."
 mkdir -p "$HOME/.config"
@@ -175,7 +209,5 @@ fi
 
 # Agora o switch não vai falhar por "uncommitted changes"
 home-manager switch --flake "$HOME/.config/home-manager#paulo_"
-
-
 
 log ">>> SETUP CONCLUÍDO! REINICIE O SISTEMA. <<<"
