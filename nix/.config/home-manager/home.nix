@@ -381,7 +381,8 @@ home.file = {
 
 home.activation = {
   restartWaybar = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    $DRY_RUN_CMD pkill -USR2 waybar || $DRY_RUN_CMD waybar &
+    # Usamos o pkill do pacote procps do Nix para garantir que o comando existe
+    ${pkgs.procps}/bin/pkill -USR2 waybar || waybar &
   '';
 };
   # ============================================================
