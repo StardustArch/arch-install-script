@@ -387,7 +387,7 @@ home.activation = {
     
     # Reiniciar SwayNC (Recarregar config e estilo)
     if ${pkgs.procps}/bin/pgrep -x "swaync" > /dev/null; then
-       swaync-client -R && swaync-client -rs
+       swaync -R && swaync -rs
     else
        swaync &
     fi
@@ -508,7 +508,7 @@ programs.vscode = {
         fi
         
         # 1. Escreve o tema no ficheiro de CACHE (Não mexe no Git!)
-        echo "$1" > ~/.cache/current_theme
+        echo "$1" > /home/paulo_/.cache/current_theme
         
         echo "🎨 Tema definido para $1 na cache. Aplicando mudanças via Nix..."
         
