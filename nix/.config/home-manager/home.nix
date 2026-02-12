@@ -502,17 +502,17 @@ programs.vscode = {
   initContent = ''
     fastfetch
     set-theme() {
-        if [ -z "$1" ]; then
-          echo "Uso: set-theme [nord|aizome|gruvbox]"
+        local TEMA=$1
+        if [[ "$TEMA" != "nord" && "$TEMA" != "aizome" && "$TEMA" != "gruvbox" ]]; then
+          echo "❌ Tema inválido! Usa: nord, aizome ou gruvbox"
           return 1
         fi
         
-        # 1. Escreve o tema no ficheiro de CACHE (Não mexe no Git!)
-        echo "$1" > /home/paulo_/.cache/current_theme
+        # Grava na cache (força a criação da pasta se não existir)
+        mkdir -p ~/.cache
+        echo "$TEMA" > "$HOME/.cache/current_theme"
         
-        echo "🎨 Tema definido para $1 na cache. Aplicando mudanças via Nix..."
-        
-        
+        echo "🎨 Cache atualizada para: $(cat ~/.cache/current_theme)"
         # 3. Executar o hms (Repara que agora não precisamos de 'git add' porque o código não mudou)
         if home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#paulo_; then
             # 4. Sincronizar Wallpaper
