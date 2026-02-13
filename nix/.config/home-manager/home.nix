@@ -105,6 +105,15 @@ let
       TARGET_DIR="$BASE_DIR/$CURRENT_THEME"
 
       case "$ACTION" in
+      "static")
+              # Apenas reaplica o wallpaper baseado no tema atual da cache
+              # Ideal para o 'exec-once' no Hyprland
+              log "Aplicando wallpaper estático para o tema: $CURRENT_THEME"
+              RANDOM_WALL=$(find "$TARGET_DIR" -maxdepth 1 -type f | shuf -n 1)
+              if [ -n "$RANDOM_WALL" ]; then
+                  apply_wall "$RANDOM_WALL"
+              fi
+              ;;
           "select")
               # Usa Rofi para listar ficheiros na pasta do tema atual
               # -format 's' retorna a string selecionada
