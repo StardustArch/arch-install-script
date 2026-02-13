@@ -13,8 +13,6 @@ A reproducible Arch Linux environment managed by **Pacman** (System layer) and *
 
 Featuring a custom **Dynamic Theme System** (Aizome, Nord, Gruvbox) that instantly syncs Wallpaper, Waybar, Rofi, GTK and QT.
 
-> **⚠️ CRITICAL WARNING:** The username defined in `bootstrap/UserCredentials.json` (currently: `paulo_`) **MUST MATCH** the username configured in `nix/flake.nix`, `nix/home.nix` and `setup_install.sh`.
-
 ## Features
 
 * **Hybrid Architecture:**
