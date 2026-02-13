@@ -219,7 +219,6 @@ home.file = {
   ".config/hypr/hyprland.conf".source = ../../../hypr/.config/hypr/hyprland.conf;
   ".config/hypr/keybinds.conf".source = ../../../hypr/.config/hypr/keybinds.conf;
   ".config/hypr/autostart.conf".source = ../../../hypr/.config/hypr/autostart.conf;
-  ".config/hypr/hyprlauncher.conf".source = ../../../hypr/.config/hypr/hyprlauncher.conf;
   ".config/hypr/hyprtoolkit.conf".source = ../../../hypr/.config/hypr/hyprtoolkit.conf;
   ".config/hypr/hyprlock.conf".source = ../../../hypr/.config/hypr/hyprlock.conf;
   ".config/hypr/hypridle.conf".source = ../../../hypr/.config/hypr/hypridle.conf;
