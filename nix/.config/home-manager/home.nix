@@ -108,14 +108,14 @@ let
           "select")
               # Usa Rofi para listar ficheiros na pasta do tema atual
               # -format 's' retorna a string selecionada
-              SELECTED=$(ls "$TARGET_DIR" | rofi -dmenu -p "Wallpaper ($CURRENT_THEME)" -format 's')
+              SELECTED=$(find "$TARGET_DIR" -maxdepth 1 -type f -printf "%f\n" | sort | rofi -dmenu -p "Wallpaper ($CURRENT_THEME)" -format 's')
               if [ -n "$SELECTED" ]; then
                   apply_wall "$TARGET_DIR/$SELECTED"
               fi
               ;;
           "switch")
               # Muda o tema inteiro via Rofi
-              NEW_THEME=$(ls "$BASE_DIR" | rofi -dmenu -p "Mudar Tema")
+              NEW_THEME=$(find "$BASE_DIR" -maxdepth 1 -mindepth 1 -type d -printf "%f\n" | sort | rofi -dmenu -p "Mudar Tema")
               if [ -n "$NEW_THEME" ]; then
                   # Chama a função zsh set-theme (precisa ser via zsh -c ou atualizamos a cache aqui)
                   # Vamos atualizar a cache aqui para simplificar
