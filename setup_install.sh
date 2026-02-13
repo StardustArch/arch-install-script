@@ -244,12 +244,12 @@ nix run github:nix-community/home-manager/release-24.11 -- switch --impure --fla
 # ====================================================
 # 4. APLICAÇÃO DO HOME MANAGER (VERSÃO BLINDADA)
 # ====================================================
-log "Aplicando Home Manager..."
+# --- 4. APLICAÇÃO DO HOME MANAGER (VERSÃO FINAL) ---
+log "Aplicando Home Manager com suporte a D-Bus..."
 
 export NIXPKGS_ALLOW_UNFREE=1
 
-# O dbus-run-session garante que o dconf consiga ativar as definições
-# mesmo que a sessão gráfica ainda não esteja 100% pronta.
+# O dbus-run-session resolve o erro 'ServiceUnknown'
 if command -v dbus-run-session &> /dev/null; then
     dbus-run-session -- home-manager switch -b backup --impure --flake "$NIX_CONF_DIR#stardust"
 else

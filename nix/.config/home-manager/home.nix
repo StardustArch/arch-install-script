@@ -386,7 +386,7 @@ home.file = {
             update_theme "Nord"
             ;;
         "gruvbox")
-            update_theme "Gruvbox Dark Hard"
+            update_theme "Gruvbox Dark Soft"
             ;;
         "aizome")
             update_theme "Nightingale"
@@ -470,7 +470,7 @@ home.sessionVariables = {
   # ============================================================
   home.packages = (with pkgs; [
     eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh nerd-fonts.jetbrains-mono grim slurp swappy wl-clipboard cliphist gamemode protonup-qt gamescope mangohud ripgrep fd tmux zoxide yazi dconf
-    
+    glib
     # Motores de Tema (Necessários para GTK funcionar bem)
     gtk-engine-murrine
     gnome-themes-extra
