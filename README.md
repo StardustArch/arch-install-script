@@ -4,7 +4,7 @@ Here is the markdown code. You can create a file named `README.md` in the root o
 
 ---
 
-```markdown
+
 # StardustArch (Hyprland + Nix)
 
 ![Arch Linux](https://img.shields.io/badge/Arch%20Linux-1793D1?logo=arch-linux&logoColor=white) ![Nix](https://img.shields.io/badge/Nix-5277C3?logo=nixos&logoColor=white) ![Hyprland](https://img.shields.io/badge/Hyprland-00A4CC?logo=linux&logoColor=white)
