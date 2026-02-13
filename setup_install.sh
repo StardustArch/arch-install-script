@@ -239,7 +239,7 @@ fi
 # Agora corremos o Home Manager apontando para a pasta exata que contém o flake.nix
 log "Iniciando a configuração via Flake em $NIX_CONF_DIR..."
 
-nix run github:nix-community/home-manager/release-24.11 -- switch --impure --flake "$NIX_CONF_DIR#paulo_"
+nix run github:nix-community/home-manager/release-24.11 -- switch --impure --flake "$NIX_CONF_DIR#stardust"
 
 # --- 4. APLICAÇÃO DO HOME MANAGER ---
 log "Aplicando Home Manager (com Unfree permitida)..."
