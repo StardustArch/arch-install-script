@@ -100,7 +100,7 @@ let
           fi
       }
 
-      ACTION="${1:-select}"
+      ACTION="''${1:-select}"
       CURRENT_THEME=$(cat "$THEME_FILE" 2>/dev/null || echo "aizome")
       TARGET_DIR="$BASE_DIR/$CURRENT_THEME"
 
