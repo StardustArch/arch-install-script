@@ -13,33 +13,32 @@ A reproducible Arch Linux environment managed by **Pacman** (System layer) and *
 
 Featuring a custom **Dynamic Theme System** (Aizome, Nord, Gruvbox) that instantly syncs Wallpaper, Waybar, Rofi, GTK and QT.
 
----
+> **⚠️ CRITICAL WARNING:** The username defined in `bootstrap/UserCredentials.json` (currently: `paulo_`) **MUST MATCH** the username configured in `nix/flake.nix`, `nix/home.nix` and `setup_install.sh`.
 
 ## Features
 
 * **Hybrid Architecture:**
-    * **System Core:** Drivers, Hyprland, Waybar installed via `pacman` (Stability).
-    * **User Space:** Shell, Neovim, CLI tools installed via `Nix` (Portability).
+    * **System Core:** Drivers, Hyprland, and Waybar installed via `pacman` for stability.
+    * **User Space:** Shell, Neovim, and CLI tools managed via `Nix` for portability.
 * **Automated Bootstrap:** `archinstall` JSON configurations for a hands-off base installation.
-* **Theme Engine:** Custom scripts (`wall-manager`) to switch themes on the fly.
+* **Theme Engine:** Custom scripts (`wall-manager`) to switch themes and wallpapers on the fly.
 * **Gaming Ready:** Pre-configured with GameMode, MangoHud, and Steam optimizations.
----
 
 ## 📂 Repository Structure
 
 ```text
 ├── bootstrap/           # JSON configs for the Arch ISO installer
-│   ├── UserConfig.json  # Partition layout (Diskless), Mirrors, Profile
-│   └── UserCredentials.json # user setup
+│   ├── UserConfig.json  # Minimal profile & Btrfs layout (Diskless)
+│   └── UserCredentials.json # User setup (paulo_)
 ├── nix/                 # Nix Home Manager configurations
 │   ├── flake.nix        # Flake entry point
-│   └── home.nix         # User packages & dotfiles generation
+│   └── home.nix         # User packages, Aliases & Dotfiles logic
 ├── hypr/                # Hyprland configs (sourced by Nix)
-├── kitty/               # Kitty configs (sourced by Nix)
-├── rofi/                # Rofi configs (sourced by Nix)
-├── swaync/              # Swaync configs (sourced by Nix)
-├── waybar/              # Waybar configs (sourced by Nix)
-├── setup_install.sh     # Main post-install setup script
+├── kitty/               # Kitty terminal configs (sourced by Nix)
+├── rofi/                # Rofi menus & theme configs (sourced by Nix)
+├── swaync/              # Notification center configs (sourced by Nix)
+├── waybar/              # Waybar status bar configs (sourced by Nix)
+├── setup_install.sh     # Main post-install automation script
 └── README.md
 
 ```
