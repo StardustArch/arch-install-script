@@ -651,21 +651,6 @@ services.flatpak = {
     ];
   };  
 
-services.xdg.portal = {
-  enable = true;
-
-  extraPortals = [
-    pkgs.xdg-desktop-portal-hyprland
-  ];
-
-  config = {
-    common = {
-      default = [ "hyprland" ];
-    };
-  };
-};
-
-
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {

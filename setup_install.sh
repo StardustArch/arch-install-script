@@ -82,6 +82,7 @@ PKGS=(
     pipewire pipewire-pulse wireplumber polkit-gnome
     dolphin ttf-jetbrains-mono-nerd rofi-wayland flatpak
     xdg-desktop-portal-hyprland qt5-wayland qt6-wayland
+    xdg-desktop-portal
     brightnessctl blueman network-manager-applet swaync
     sddm qt5-quickcontrols2 qt5-graphicaleffects qt5-svg
     podman distrobox podman-compose btop plymouth nmtui-go bluetuith
@@ -393,5 +394,8 @@ log "Pontes criadas com sucesso! Thunar e Hyprland agora reconhecem os temas."
 log "Ativando serviços..."
 sudo systemctl enable --now sddm
 sudo systemctl enable --now bluetooth # se tiveres bluetooth
+sudo systemctl --user enable xdg-desktop-portal.service
+sudo systemctl --user enable xdg-desktop-portal-hyprland.service
+
 
 log ">>> SETUP CONCLUÍDO! REINICIE O SISTEMA. <<<"
