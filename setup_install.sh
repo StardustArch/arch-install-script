@@ -189,6 +189,7 @@ log "Preparando Dotfiles..."
 
 # Cria ficheiro de tema padrão se não existir
 mkdir -p ~/.cache
+touch ~/.cache/current_theme
 if [ ! -f ~/.cache/current_theme ]; then
     echo "aizome" > ~/.cache/current_theme
 fi
