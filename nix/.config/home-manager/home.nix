@@ -105,7 +105,7 @@ let
       TARGET_DIR="$BASE_DIR/$CURRENT_THEME"
 
       case "$ACTION" in
-      "static")
+          "static")
               # Apenas reaplica o wallpaper baseado no tema atual da cache
               # Ideal para o 'exec-once' no Hyprland
               log "Aplicando wallpaper estático para o tema: $CURRENT_THEME"
