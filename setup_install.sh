@@ -158,10 +158,9 @@ if ! grep -q "flakes" ~/.config/nix/nix.conf 2>/dev/null; then
 fi
 
 if ! command -v home-manager &> /dev/null; then
-    log "Instalando Home Manager..."
-    nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
-    nix-channel --update
-    nix-shell '<home-manager>' -A install
+    log "Instalando Home Manager (Standalone)..."
+    # Usamos o link direto para o instalador, evitando o erro de 'attribute install'
+    nix-shell https://github.com/nix-community/home-manager/archive/master.tar.gz -A install
 fi
 # --- 3. BOOTSTRAP DOS DOTFILES ---
 log "Preparando Dotfiles..."
