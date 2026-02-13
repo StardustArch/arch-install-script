@@ -456,14 +456,9 @@ home.activation = {
     gtk-engine-murrine
     gnome-themes-extra
     
-    # Os temas em si (Opcional aqui se já estiverem no bloco 'let', 
-    # mas bom ter para garantir disponibilidade)
-    nordic
-    gruvbox-dark-gtk
-    tokyonight-gtk-theme
     bibata-cursors
     papirus-icon-theme
-  ]) ++ [ wall-manager power-menu ];
+  ]) ++ [ wall-manager power-menu currentGtkTheme.pkg];
   
 nixpkgs.config.allowUnfree = true;
 
