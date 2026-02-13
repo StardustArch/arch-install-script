@@ -338,6 +338,7 @@ fi
 sudo chsh -s "$NIX_ZSH_PATH" $(whoami)
 
 echo "Shell changed to Zsh! (You might need to relog to see the effect)"
+
 # ====================================================
 # 7. COMPATIBILIDADE DE TEMAS (NIX -> ARCH BRIDGE)
 # ====================================================
