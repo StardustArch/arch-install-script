@@ -450,9 +450,7 @@ home.activation = {
   # PROGRAMAS CONFIGURADOS
   # ============================================================
   home.packages = (with pkgs; [
-    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh nerd-fonts.jetbrains-mono grim slurp swappy wl-clipboard cliphist gamemode protonup-qt gamescope mangohud ripgrep fd tmux zoxide yazi lutris
-    wine-staging
-    winetricks
+    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh nerd-fonts.jetbrains-mono grim slurp swappy wl-clipboard cliphist gamemode protonup-qt gamescope mangohud ripgrep fd tmux zoxide yazi
     
     # Motores de Tema (Necessários para GTK funcionar bem)
     gtk-engine-murrine
