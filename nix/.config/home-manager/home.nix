@@ -441,10 +441,12 @@ home.activation = {
   };
   
   # Variáveis de ambiente para garantir que o tema pega
-  home.sessionVariables = {
-    GTK_THEME = currentGtkTheme.name;
-    QT_QPA_PLATFORMTHEME = "gtk2";
-  };
+home.sessionVariables = {
+  GTK_THEME = currentGtkTheme.name;
+  QT_QPA_PLATFORMTHEME = "gtk2";
+  # ADICIONA ESTA LINHA:
+  XDG_DATA_DIRS = "$HOME/.nix-profile/share:$XDG_DATA_DIRS";
+};
 
   # ============================================================
   # PROGRAMAS CONFIGURADOS

@@ -276,7 +276,6 @@ EXTENSIONS=(
     
     # --- Python (Agora instala sem pedir licença!) ---
     "ms-python.python"
-    "ms-python.vscode-pylance"
     "charliermarsh.ruff"
     
     # --- Utilitários ---
@@ -285,7 +284,7 @@ EXTENSIONS=(
     
     # --- Opcional: Database ---
     # "mtxr.sqltools" 
-    # "cweijan.vscode-database-client2"
+    "cweijan.vscode-database-client2"
 )
 
 log "Instalando extensões do VS Code..."
@@ -339,6 +338,45 @@ fi
 sudo chsh -s "$NIX_ZSH_PATH" $(whoami)
 
 echo "Shell changed to Zsh! (You might need to relog to see the effect)"
+# ====================================================
+# 7. COMPATIBILIDADE DE TEMAS (NIX -> ARCH BRIDGE)
+# ====================================================
+log "Criando pontes de ícones e temas para compatibilidade com Arch..."
+
+# Pastas onde o Arch e apps GTK procuram recursos por padrão
+LOCAL_ICONS="$HOME/.local/share/icons"
+LOCAL_THEMES="$HOME/.local/share/themes"
+
+# Pastas onde o Nix instala os recursos
+NIX_ICONS="$HOME/.nix-profile/share/icons"
+NIX_THEMES="$HOME/.nix-profile/share/themes"
+
+# 1. Garante que as pastas locais existem
+mkdir -p "$LOCAL_ICONS"
+mkdir -p "$LOCAL_THEMES"
+
+# 2. Linkar Ícones e Cursors (Papirus, Bibata, etc)
+if [ -d "$NIX_ICONS" ]; then
+    log "Linkando pacotes de ícones do perfil Nix..."
+    # O ln -sfn (symbolic, force, no-dereference) é ideal para scripts
+    for icon_dir in "$NIX_ICONS"/*; do
+        if [ -d "$icon_dir" ]; then
+            ln -sfn "$icon_dir" "$LOCAL_ICONS/"
+        fi
+    done
+fi
+
+# 3. Linkar Temas GTK (Nordic, Tokyonight, Gruvbox)
+if [ -d "$NIX_THEMES" ]; then
+    log "Linkando temas GTK do perfil Nix..."
+    for theme_dir in "$NIX_THEMES"/*; do
+        if [ -d "$theme_dir" ]; then
+            ln -sfn "$theme_dir" "$LOCAL_THEMES/"
+        fi
+    done
+fi
+
+log "Pontes criadas com sucesso! Thunar e Hyprland agora reconhecem os temas."
 
 log "Ativando serviços..."
 sudo systemctl enable --now sddm
