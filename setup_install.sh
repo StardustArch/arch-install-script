@@ -244,7 +244,7 @@ nix run github:nix-community/home-manager/release-24.11 -- switch --impure --fla
 # --- 4. APLICAÇÃO DO HOME MANAGER ---
 log "Aplicando Home Manager (com Unfree permitida)..."
 export NIXPKGS_ALLOW_UNFREE=1
-home-manager switch -b backup --impure --flake "~/arch-install-script/nix/.config/home-manager#stardust"
+home-manager switch -b backup --impure --flake "$NIX_CONF_DIR#stardust"
 
 # ==========================================
 # 7. CONFIGURAÇÃO DO VS CODE (AUTOMATIZADA)
