@@ -249,6 +249,7 @@ nix run github:nix-community/home-manager/release-24.11 -- switch --impure --fla
 log "Aplicando Home Manager com suporte a D-Bus..."
 
 export NIXPKGS_ALLOW_UNFREE=1
+export XDG_DATA_DIRS="$HOME/.nix-profile/share:/usr/local/share:/usr/share"
 
 # O dbus-run-session resolve o erro 'ServiceUnknown'
 if command -v dbus-run-session &> /dev/null; then
