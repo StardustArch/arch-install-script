@@ -394,8 +394,8 @@ log "Pontes criadas com sucesso! Thunar e Hyprland agora reconhecem os temas."
 log "Ativando serviços..."
 sudo systemctl enable --now sddm
 sudo systemctl enable --now bluetooth # se tiveres bluetooth
-sudo systemctl --user enable xdg-desktop-portal.service
-sudo systemctl --user enable xdg-desktop-portal-hyprland.service
+systemctl --user enable xdg-desktop-portal.service
+systemctl --user enable xdg-desktop-portal-hyprland.service
 
 
 log ">>> SETUP CONCLUÍDO! REINICIE O SISTEMA. <<<"
