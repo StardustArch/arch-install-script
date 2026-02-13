@@ -254,7 +254,7 @@ log "Instalando e Configurando o VS Code..."
 # 1. Instalar o binário do Arch (Versão OSS oficial)
 # Nota: Usamos 'code' do repo oficial. Se preferires mesmo o VSCodium, usa 'yay -S vscodium-bin'
 if ! command -v codium &> /dev/null; then
-    yay -S vscodium-bin
+    yay -S --noconfirm --needed vscodium-bin
 fi
 
 # 2. Lista de Extensões (IDs do Marketplace)
