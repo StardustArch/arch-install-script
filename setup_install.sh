@@ -185,7 +185,7 @@ fi
 # --- 4. APLICAÇÃO DO HOME MANAGER ---
 log "Aplicando Home Manager (com Unfree permitida)..."
 export NIXPKGS_ALLOW_UNFREE=1
-home-manager switch -b backup --impure --flake "$REPO_DIR/nix/.config/home-manager#paulo_"
+home-manager switch -b backup --impure --flake "$REPO_DIR/nix/.config/home-manager#stardust"
 
 # ==========================================
 # 7. CONFIGURAÇÃO DO VS CODE (AUTOMATIZADA)
@@ -260,8 +260,29 @@ else
     log "settings.json já existe. Mantendo configuração atual."
 fi
 
+# ====================================================
+# DEFINIR ZSH DO NIX COMO DEFAULT
+# ====================================================
+
+echo "Setting Zsh as the default shell..."
+
+# 1. Localiza o binário do Zsh instalado pelo Nix
+NIX_ZSH_PATH=$(which zsh)
+
+# 2. Adiciona o caminho ao /etc/shells se não estiver lá (necessário para o chsh aceitar)
+if ! grep -q "$NIX_ZSH_PATH" /etc/shells; then
+    echo "Adding Nix Zsh to /etc/shells..."
+    echo "$NIX_ZSH_PATH" | sudo tee -a /etc/shells
+fi
+
+# 3. Altera o shell do utilizador paulo_
+# Usamos sudo chsh para evitar o prompt de password e forçar a alteração
+sudo chsh -s "$NIX_ZSH_PATH" $(whoami)
+
+echo "Shell changed to Zsh! (You might need to relog to see the effect)"
+
 log "Ativando serviços..."
 sudo systemctl enable --now sddm
-# sudo systemctl enable --now bluetooth # se tiveres bluetooth
+sudo systemctl enable --now bluetooth # se tiveres bluetooth
 
 log ">>> SETUP CONCLUÍDO! REINICIE O SISTEMA. <<<"

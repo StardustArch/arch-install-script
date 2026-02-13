@@ -16,7 +16,7 @@
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
     in {
-      homeConfigurations."paulo_" = home-manager.lib.homeManagerConfiguration {
+      homeConfigurations."stardust" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
         # 2. Passa o nix-flatpak para dentro do home.nix
         extraSpecialArgs = { inherit nix-flatpak; }; 

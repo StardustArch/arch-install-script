@@ -1,119 +1,171 @@
+This README is designed to be professional, clear, and visually appealing. It documents exactly how your system works: the **Base Install** (via `archinstall` + JSON) and the **Dotfiles/User Configuration** (via `install.sh` + Nix).
 
-# Arch Linux Installer Script
+Here is the markdown code. You can create a file named `README.md` in the root of your repository and paste this content.
 
-![Arch Linux Logo](https://archlinux.org/static/logos/archlinux-logo-dark-1200dpi.b42bd35d5916.png)
+---
 
-Automated installation script for a minimal Arch Linux setup with GNOME, PipeWire, Brave Browser, and Liquorix kernel.
+```markdown
+# StardustArch (Hyprland + Nix)
 
-## ✨ Features
+![Arch Linux](https://img.shields.io/badge/Arch%20Linux-1793D1?logo=arch-linux&logoColor=white) ![Nix](https://img.shields.io/badge/Nix-5277C3?logo=nixos&logoColor=white) ![Hyprland](https://img.shields.io/badge/Hyprland-00A4CC?logo=linux&logoColor=white)
 
-- **Desktop Environment**: GNOME with Wayland
-- **Audio**: PipeWire (replaces PulseAudio)
-- **Browser**: Brave (installed via AUR)
-- **Kernel**: Liquorix (optimized for desktop/gaming)
-- **Memory**: ZRAM configuration
-- **Apps**: Flatpak with Flathub repository
+A reproducible Arch Linux environment managed by **Pacman** (System layer) and **Nix Home Manager** (User layer).
 
-## 🛠 Requirements
+Featuring a custom **Dynamic Theme System** (Aizome, Nord, Gruvbox) that instantly syncs Wallpaper, Waybar, Rofi, GTK and QT.
 
-- Minimal Arch Linux system or live USB
-- Root access or sudo privileges
-- Active internet connection
-- At least 20GB disk space (recommended)
+---
 
-## 🚀 Quick Start
+## Features
 
-```bash
-git clone https://github.com/StardustArch/arch-install-script.git
-cd arch-install-script
-chmod +x arch-install.sh
-sudo ./arch-install.sh
+* **Hybrid Architecture:**
+    * **System Core:** Drivers, Hyprland, Waybar installed via `pacman` (Stability).
+    * **User Space:** Shell, Neovim, CLI tools installed via `Nix` (Portability).
+* **Automated Bootstrap:** `archinstall` JSON configurations for a hands-off base installation.
+* **Theme Engine:** Custom scripts (`wall-manager`) to switch themes on the fly.
+* **Gaming Ready:** Pre-configured with GameMode, MangoHud, and Steam optimizations.
+---
+
+## 📂 Repository Structure
+
+```text
+├── bootstrap/           # JSON configs for the Arch ISO installer
+│   ├── UserConfig.json  # Partition layout (Diskless), Mirrors, Profile
+│   └── UserCredentials.json # user setup
+├── nix/                 # Nix Home Manager configurations
+│   ├── flake.nix        # Flake entry point
+│   └── home.nix         # User packages & dotfiles generation
+├── hypr/                # Hyprland configs (sourced by Nix)
+├── kitty/               # Kitty configs (sourced by Nix)
+├── rofi/                # Rofi configs (sourced by Nix)
+├── swaync/              # Swaync configs (sourced by Nix)
+├── waybar/              # Waybar configs (sourced by Nix)
+├── setup_install.sh     # Main post-install setup script
+└── README.md
+
 ```
 
-## 🔧 Customization
+---
 
-Edit these variables in the script before running:
+## Installation Guide
 
+
+> **⚠️ CRITICAL WARNING:** The username defined in `bootstrap/UserCredentials.json` (default: `stardust`) **MUST MATCH** the username configured in:
+> * `nix/flake.nix`
+> * `nix/home.nix`
+> * `setup_install.sh`
+>
+>
+### Phase 1: Base System (The ISO)
+
+1.  **Boot & Connect:**
+    * Boot into the Arch Linux ISO.
+    * Ensure you have internet access (check with `ping -c 3 google.com`).
+
+2.  **Download Configs:**
+    Fetch the configuration files directly from the repository to the temporary RAM (`/tmp`).
+
+    ```bash
+    cd /tmp
+    curl -O [https://raw.githubusercontent.com/StardustArch/arch-install-script/main/bootstrap/UserConfig.json](https://raw.githubusercontent.com/StardustArch/arch-install-script/main/bootstrap/UserConfig.json)
+    curl -O [https://raw.githubusercontent.com/StardustArch/arch-install-script/main/bootstrap/UserCredentials.json](https://raw.githubusercontent.com/StardustArch/arch-install-script/main/bootstrap/UserCredentials.json)
+    ```
+
+3.  **Run Installer:**
+    Execute the automated installer pointing to the downloaded files:
+
+    ```bash
+    archinstall --config /tmp/UserConfig.json --creds /tmp/UserCredentials.json
+    ```
+
+4. **Select Disk:**
+* Go to **"Disk Configuration"**.
+* Select your target drive (e.g., `/dev/nvme0n1`).
+* Select **Btrfs** (recommended).
+* **Install**.
+
+
+5. **Reboot:**
+Once finished, reboot into your new system and login as `<your_user_name>`.
+---
+
+### Phase 2: User Setup (The Magic)
+
+1. **Clone the Repository:**
 ```bash
-# System configuration
-HOSTNAME="archlinux"
-USERNAME="user"
-TIMEZONE="Africa/Maputo"
-KEYMAP="us"
-LANG="en_US.UTF-8"
-DEFAULT_PASSWORD="123"(You can change it)
+git clone [https://github.com/StardustArch/arch-install-script.git](https://github.com/StardustArch/arch-install-script.git) ~/arch-install-script
+cd ~/arch-install-script
 
-# Disk configuration
-DISK="/dev/sda"
-EFI_SIZE="512M"
-SWAP_SIZE= RAM_SIZE
-DATA_SIZE="100G"
-ROOT/HOME_SIZE=REST_OF_DISK_SPACE
 ```
 
-## 📂 Partition Scheme
 
-| Partition   | Filesystem | Size  | Mount Point     | Subvolume      |
-|-------------|------------|-------|-----------------|----------------|
-| /dev/sda1   | FAT32      | 512M  | /boot/efi       | N/A            |
-| /dev/sda2   | Btrfs      | Remainder  | /               | @              |
-| /dev/sda2   | Btrfs      | Remainder  | /home           | @home          |
-| /dev/sda3   | NTFS       | 100G  | /mnt/ntfs_dados | N/A            |
+2. **Run the Installer:**
+This script will install Hyprland, initialize Nix, and set up your dotfiles.
+```bash
+chmod +x setup_install.sh
+./setup_install.sh
 
-### Explanation:
+```
 
-1. **/dev/sda1**: 512MB EFI (ESP) partition, formatted in **FAT32** and mounted at `/boot/efi` for system boot. It has no subvolume.
-2. **/dev/sda2**: Btrfs partition, which occupies the remaining space after creating the other partitions:
-- **@**: Subvolume for the root system (`/`).
-- **@home**: Subvolume for the `/home` directory.
-3. **/dev/sda3**: Data partition in **NTFS**, 100GB in size, mounted at `/mnt/ntfs_data` for storing files. It has no subvolume.
 
-## 📦 Included Packages
+3. **Finalize:**
+Once the script finishes, **reboot** one last time.
 
-### Core System
-- base base-devel linux-firmware
-- btrfs-progs networkmanager grub efibootmgr
-- sudo nano git reflector
+---
 
-### Desktop Environment
-- gnome gnome-tweaks gdm
-- pipewire pipewire-pulse wireplumber
-- xdg-user-dirs xdg-utils
+## 🎨 Theme Management
 
-### Additional Software
-- brave-bin (from AUR)
-- linux-liquorix linux-liquorix-headers
-- flatpak flathub
+This setup uses a custom logic to sync themes across the entire system.
 
-## ⚙️ Post-Installation
+### Changing Themes
 
-After reboot:
-1. Connect to network using GNOME settings
-2. Install additional Flatpak apps:
-   ```bash
-   flatpak install flathub com.discordapp.Discord
-   flatpak install flathub com.spotify.Client
-   ```
+Use the shortcut `Super + T` to open the Theme Picker, or run via terminal:
 
-## 🛠 Troubleshooting
+```bash
+# Available themes: nord, aizome, gruvbox
+set-theme aizome
 
-### Common Issues
-1. **No internet connection**:
-   ```bash
-   systemctl enable --now NetworkManager
-   ```
+```
 
-2. **Audio not working**:
-   ```bash
-   systemctl enable --now pipewire pipewire-pulse
-   ```
+**What happens when you switch?**
 
-3. **Brave not installing**:
-   Ensure yay is installed and try manually:
-   ```bash
-   yay -S brave-bin
-   ```
+1. **Nix:** Rebuilds GTK/QT configs.
+2. **Wallpaper:** Changes to a random image from the theme folder.
+3. **Waybar/Rofi:** Reloads CSS colors.
+4. **VS Code:** Updates the color theme and icons automatically.
 
-## 📜 License
+### Wallpapers
 
-MIT License - Free to use and modify
+* **Picker:** Press `Super + W` to select a wallpaper visually via Rofi.
+* **Random:** Press `Super + Shift + W` to cycle a random wallpaper from the current theme.
+
+---
+
+## ⌨️ Keybindings
+
+This setup relies on a dedicated configuration file for keybindings. Instead of listing hundreds of shortcuts here, you can view the live configuration directly on your system.
+
+**To view all keybindings:**
+```bash
+cat ~/.config/hypr/keybinds.conf
+```
+---
+
+## 🛠️ Shell Aliases (Power Tools)
+
+The Zsh environment is boosted with these shortcuts for productivity:
+
+| Alias | Command | Description |
+| :--- | :--- | :--- |
+| `ls` / `ll` | `eza` | Modern directory listing with icons |
+| `cat` | `bat` | File preview with syntax highlighting |
+| `update` | `pacman -Syu` | Sync and update system base |
+| `conf` | `cd ~/arch-install-script` | Quick jump to this repository |
+| **`hms`** | `home-manager switch...` | **Apply Nix changes** (Rebuild system) |
+| `hmu` | `nix flake update...` | Update Nix dependencies & apply |
+| `nclean` | `nix-collect-garbage` | Clean old Nix generations (Free space) |
+
+---
+
+<div align="center">
+<sub>Built with ❤️ by StardustArch</sub>
+</div>

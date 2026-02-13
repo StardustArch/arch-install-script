@@ -6,7 +6,7 @@ let
   # ============================================================
   
   # 1. Escolhe o teu tema aqui: "nord", "aizome" ou "gruvbox"
-  rawTheme = builtins.readFile "/home/paulo_/.cache/current_theme";
+  rawTheme = builtins.readFile "/home/stardust/.cache/current_theme";
   selectedTheme = lib.removeSuffix "\n" rawTheme;
 
 # --- 2. MAPEAMENTO DE TEMAS GTK ---
@@ -76,7 +76,7 @@ let
     name = "wall-manager";
     runtimeInputs = with pkgs; [ swaybg coreutils findutils procps gnused ];
     text = ''
-      BASE_DIR="/home/paulo_/arch-install-script/hypr/.config/hypr/wallpapers"
+      BASE_DIR="/home/stardust/arch-install-script/hypr/.config/hypr/wallpapers"
       THEME_FILE="$HOME/.cache/current_theme"
       
       # Função de Aplicação (Mantida igual, só muda a interface)
@@ -143,8 +143,8 @@ in
 
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
-  home.username = "paulo_";
-  home.homeDirectory = "/home/paulo_";
+  home.username = "stardust";
+  home.homeDirectory = "/home/stardust";
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -257,10 +257,10 @@ home.file = {
 
   [custom]
   # Executa o script visual ao entrar no jogo
-  start=sh /home/paulo_/.config/hypr/scripts/gamemode.sh start
+  start=sh /home/stardust/.config/hypr/scripts/gamemode.sh start
   
   # Executa o script visual ao sair do jogo
-  end=sh /home/paulo_/.config/hypr/scripts/gamemode.sh end
+  end=sh /home/stardust/.config/hypr/scripts/gamemode.sh end
 '';
 
 ".config/hypr/scripts/gamemode.sh" = {
@@ -541,7 +541,7 @@ nixpkgs.config.allowUnfree = true;
         
         echo "🎨 Cache atualizada para: $(cat ~/.cache/current_theme)"
         # 3. Executar o hms (Repara que agora não precisamos de 'git add' porque o código não mudou)
-        if home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#paulo_; then
+        if home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#stardust; then
             # 4. Sincronizar Wallpaper
             ~/.nix-profile/bin/wall-manager switch "$1"
             echo "🚀 Sistema atualizado para $1!"
@@ -557,7 +557,7 @@ nixpkgs.config.allowUnfree = true;
 		cat="bat";
 		update="sudo pacman -Syu";
     # --- NIX & HOME MANAGER ALIASES ---
-    hms = "home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#paulo_";
+    hms = "home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#stardust";
     hmu="nix flake update ~/arch-install-script/nix/.config/home-manager && hms";
     nclean="nix-collect-garbage -d";
     hme="cd ~/arch-install-script/nix/.config/home-manager && $EDITOR flake.nix";
@@ -664,7 +664,7 @@ services.flatpak = {
   #
   # or
   #
-  #  /etc/profiles/per-user/paulo_/etc/profile.d/hm-session-vars.sh
+  #  /etc/profiles/per-user/stardust/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
     # EDITOR = "emacs";
