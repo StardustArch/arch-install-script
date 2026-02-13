@@ -182,7 +182,7 @@ if ! command -v home-manager &> /dev/null; then
     # Em vez de instalar, corremos diretamente o Home Manager do GitHub
     # para aplicar o teu repositório local.
     # AJUSTE: Garante que o nome após o '#' é o mesmo do teu flake.nix (ex: stardust)
-    nix run github:nix-community/home-manager/release-24.11 -- switch --flake ~/arch-install-script/nix/.config/home-manager#stardust
+    nix run github:nix-community/home-manager/release-24.11 -- switch --impure --flake ~/arch-install-script/nix/.config/home-manager#stardust
 fi
 # --- 3. BOOTSTRAP DOS DOTFILES ---
 log "Preparando Dotfiles..."
@@ -214,7 +214,7 @@ fi
 # Agora corremos o Home Manager apontando para a pasta exata que contém o flake.nix
 log "Iniciando a configuração via Flake em $NIX_CONF_DIR..."
 
-nix run github:nix-community/home-manager/release-24.11 -- switch --flake "$NIX_CONF_DIR#paulo_"
+nix run github:nix-community/home-manager/release-24.11 -- switch --impure --flake "$NIX_CONF_DIR#paulo_"
 
 # --- 4. APLICAÇÃO DO HOME MANAGER ---
 log "Aplicando Home Manager (com Unfree permitida)..."
