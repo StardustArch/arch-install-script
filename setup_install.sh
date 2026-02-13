@@ -110,6 +110,8 @@ else
     log "Hook do Plymouth já configurado."
 fi
 
+
+
 # 4.2 Configurar GRUB para Boot Silencioso (Quiet Splash)
 if [ -f /etc/default/grub ]; then
     if ! grep -q "quiet splash" /etc/default/grub; then
@@ -147,6 +149,28 @@ fi
 
 sudo mkdir -p /etc/sddm.conf.d
 echo -e "[Users]\nMinimumUid=1000\nMaximumUid=29000" | sudo tee /etc/sddm.conf.d/hide-nix-users.conf > /dev/null
+
+# ====================================================
+# INICIALIZAÇÃO DE CACHE E TEMA
+# ====================================================
+
+# Verifica se o diretório de cache existe
+if [ ! -d "$HOME/.cache" ]; then
+    log "Criando diretório de cache em ~/.cache..."
+    mkdir -p "$HOME/.cache"
+fi
+
+# Verifica se o ficheiro de controlo de tema existe
+if [ ! -f "$HOME/.cache/current_theme" ]; then
+    log "Inicializando ficheiro de persistência de tema..."
+    touch "$HOME/.cache/current_theme"
+else
+    log "Ficheiro de tema já existe. Ignorando inicialização."
+fi
+
+if [ ! -f ~/.cache/current_theme ]; then
+    echo "aizome" > ~/.cache/current_theme
+fi
 
 # ==========================================
 # 6. INSTALAÇÃO DO NIX & ATIVAÇÃO DE FLAKES
@@ -187,12 +211,6 @@ fi
 # --- 3. BOOTSTRAP DOS DOTFILES ---
 log "Preparando Dotfiles..."
 
-# Cria ficheiro de tema padrão se não existir
-mkdir -p ~/.cache
-touch ~/.cache/current_theme
-if [ ! -f ~/.cache/current_theme ]; then
-    echo "aizome" > ~/.cache/current_theme
-fi
 # ==========================================
 # GESTÃO DE GIT PARA FLAKES
 # ==========================================
