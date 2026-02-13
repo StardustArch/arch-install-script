@@ -1,9 +1,3 @@
-This README is designed to be professional, clear, and visually appealing. It documents exactly how your system works: the **Base Install** (via `archinstall` + JSON) and the **Dotfiles/User Configuration** (via `install.sh` + Nix).
-
-Here is the markdown code. You can create a file named `README.md` in the root of your repository and paste this content.
-
----
-
 
 # StardustArch (Hyprland + Nix)
 
@@ -62,9 +56,9 @@ Featuring a custom **Dynamic Theme System** (Aizome, Nord, Gruvbox) that instant
     Fetch the configuration files directly from the repository to the temporary RAM (`/tmp`).
 
     ```bash
-    cd /tmp
-    curl -O [https://raw.githubusercontent.com/StardustArch/arch-install-script/main/bootstrap/UserConfig.json](https://raw.githubusercontent.com/StardustArch/arch-install-script/main/bootstrap/UserConfig.json)
-    curl -O [https://raw.githubusercontent.com/StardustArch/arch-install-script/main/bootstrap/UserCredentials.json](https://raw.githubusercontent.com/StardustArch/arch-install-script/main/bootstrap/UserCredentials.json)
+      cd /tmp
+      curl -O https://raw.githubusercontent.com/StardustArch/arch-install-script/main/bootstrap/UserConfig.json
+      curl -O https://raw.githubusercontent.com/StardustArch/arch-install-script/main/bootstrap/UserCredentials.json
     ```
 
 3.  **Run Installer:**
@@ -89,7 +83,7 @@ Once finished, reboot into your new system and login as `<your_user_name>`.
 
 1. **Clone the Repository:**
 ```bash
-git clone [https://github.com/StardustArch/arch-install-script.git](https://github.com/StardustArch/arch-install-script.git) ~/arch-install-script
+git clone https://github.com/StardustArch/arch-install-script.git
 cd ~/arch-install-script
 
 ```
