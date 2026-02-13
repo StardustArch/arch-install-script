@@ -164,12 +164,18 @@ fi
 if [ ! -f "$HOME/.cache/current_theme" ]; then
     log "Inicializando ficheiro de persistência de tema..."
     touch "$HOME/.cache/current_theme"
+    echo "aizome" > "$HOME/.cache/current_theme"
 else
     log "Ficheiro de tema já existe. Ignorando inicialização."
 fi
 
-if [ ! -f ~/.cache/current_theme ]; then
-    echo "aizome" > ~/.cache/current_theme
+# Verifica se o ficheiro de controlo de tema existe
+if [ ! -s "$HOME/.cache/current_theme" ]; then
+    log "Inicializando tema padrão (aizome)..."
+    # O uso de echo garante que o ficheiro não fica vazio
+    echo "aizome" > "$HOME/.cache/current_theme"
+else
+    log "Ficheiro de tema detetado: $(cat ~/.cache/current_theme)"
 fi
 
 # ==========================================
