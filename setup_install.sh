@@ -173,7 +173,7 @@ if ! command -v home-manager &> /dev/null; then
     # Em vez de instalar, corremos diretamente o Home Manager do GitHub
     # para aplicar o teu repositório local.
     # AJUSTE: Garante que o nome após o '#' é o mesmo do teu flake.nix (ex: stardust)
-    nix run github:nix-community/home-manager/release-24.11 -- switch --flake ~/arch-install-script/nix#stardust
+    nix run github:nix-community/home-manager/release-24.11 -- switch --flake ~/arch-install-script/nix/.config/home-manager#stardust
 fi
 # --- 3. BOOTSTRAP DOS DOTFILES ---
 log "Preparando Dotfiles..."
@@ -186,17 +186,31 @@ fi
 # ==========================================
 # GESTÃO DE GIT PARA FLAKES
 # ==========================================
-if [ -d "$HOME/.config/home-manager/.git" ] || [ -d "$DOTFILES_DIR/.git" ]; then
-    log "Garantindo que os ficheiros estão rastreados pelo Git para o Flake..."
-    cd "$HOME/.config/home-manager"
-    # Adiciona apenas ficheiros novos para o Nix poder vê-los
-    git add flake.nix home.nix 2>/dev/null || true
+# Define o caminho exato onde estão os teus ficheiros Nix
+NIX_CONF_DIR="$HOME/arch-install-script/nix/.config/home-manager"
+REPO_DIR="$HOME/arch-install-script"
+
+if [ -d "$REPO_DIR/.git" ]; then
+    log "Garantindo que os ficheiros em $NIX_CONF_DIR estão rastreados pelo Git..."
+    
+    # Entramos na raiz do repositório para o git add funcionar corretamente
+    cd "$REPO_DIR"
+    
+    # Adicionamos os ficheiros pelo caminho relativo à raiz do repo
+    git add nix/.config/home-manager/flake.nix nix/.config/home-manager/home.nix 2>/dev/null || true
+    
+    log "Ficheiros rastreados. O Nix agora consegue vê-los."
 fi
+
+# Agora corremos o Home Manager apontando para a pasta exata que contém o flake.nix
+log "Iniciando a configuração via Flake em $NIX_CONF_DIR..."
+
+nix run github:nix-community/home-manager/release-24.11 -- switch --flake "$NIX_CONF_DIR#paulo_"
 
 # --- 4. APLICAÇÃO DO HOME MANAGER ---
 log "Aplicando Home Manager (com Unfree permitida)..."
 export NIXPKGS_ALLOW_UNFREE=1
-home-manager switch -b backup --impure --flake "$REPO_DIR/nix/.config/home-manager#stardust"
+home-manager switch -b backup --impure --flake "~/arch-install-script/nix/.config/home-manager#stardust"
 
 # ==========================================
 # 7. CONFIGURAÇÃO DO VS CODE (AUTOMATIZADA)
