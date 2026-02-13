@@ -241,10 +241,21 @@ log "Iniciando a configuração via Flake em $NIX_CONF_DIR..."
 
 nix run github:nix-community/home-manager/release-24.11 -- switch --impure --flake "$NIX_CONF_DIR#stardust"
 
-# --- 4. APLICAÇÃO DO HOME MANAGER ---
-log "Aplicando Home Manager (com Unfree permitida)..."
+# ====================================================
+# 4. APLICAÇÃO DO HOME MANAGER (VERSÃO BLINDADA)
+# ====================================================
+log "Aplicando Home Manager..."
+
 export NIXPKGS_ALLOW_UNFREE=1
-home-manager switch -b backup --impure --flake "$NIX_CONF_DIR#stardust"
+
+# O dbus-run-session garante que o dconf consiga ativar as definições
+# mesmo que a sessão gráfica ainda não esteja 100% pronta.
+if command -v dbus-run-session &> /dev/null; then
+    dbus-run-session -- home-manager switch -b backup --impure --flake "$NIX_CONF_DIR#stardust"
+else
+    home-manager switch -b backup --impure --flake "$NIX_CONF_DIR#stardust"
+fi
+
 
 # ==========================================
 # 7. CONFIGURAÇÃO DO VS CODE (AUTOMATIZADA)

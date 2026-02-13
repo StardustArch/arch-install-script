@@ -124,16 +124,29 @@ let
               ;;
 
           "switch")
-              # Muda o tema inteiro via Rofi
-              NEW_THEME=$(find "$BASE_DIR" -maxdepth 1 -mindepth 1 -type d -printf "%f\n" | sort | rofi -dmenu -p "Mudar Tema")
-              if [ -n "$NEW_THEME" ]; then
-                  echo "$NEW_THEME" > "$THEME_FILE"
-                  
-                  # Escolhe um wallpaper aleatório desse tema
-                  RANDOM_WALL=$(find "$BASE_DIR/$NEW_THEME" -type f | shuf -n 1)
+              # Recebe o tema como segundo argumento
+              NEW_THEME="$2"
+
+              # Verifica se foi passado argumento
+              if [ -z "$NEW_THEME" ]; then
+                  echo "Uso: wall-manager switch <tema>"
+                  exit 1
+              fi
+
+              # Verifica se o diretório do tema existe
+              if [ ! -d "$BASE_DIR/$NEW_THEME" ]; then
+                  echo "Tema '$NEW_THEME' não existe em $BASE_DIR"
+                  exit 1
+              fi
+
+              # Guarda o novo tema
+              echo "$NEW_THEME" > "$THEME_FILE"
+
+              # Escolhe wallpaper aleatório do tema
+              RANDOM_WALL=$(find "$BASE_DIR/$NEW_THEME" -type f | shuf -n 1)
+
+              if [ -n "$RANDOM_WALL" ]; then
                   apply_wall "$RANDOM_WALL"
-                  
-                  notify-send "Tema alterado para $NEW_THEME" "Corre 'set-theme $NEW_THEME' para atualizar cores do sistema."
               fi
               ;;
       esac
@@ -348,7 +361,7 @@ home.file = {
     #!/bin/bash
     
     # Caminho do settings.json do VSCodium
-    VSCODE_SETTINGS="$HOME/.config/VSCodium/User/settings.json"
+    VSCODE_SETTINGS="/home/stardust/.config/VSCodium/User/settings.json"
     
     # Garante que o ficheiro existe
     if [ ! -f "$VSCODE_SETTINGS" ]; then
@@ -471,7 +484,7 @@ home.sessionVariables = {
     bibata-cursors
     papirus-icon-theme
   ]) ++ [ wall-manager power-menu ];
-  
+  dconf.enable = true; # Adiciona isto algures no teu ficheiro
 nixpkgs.config.allowUnfree = true;
 
   xdg.configFile."kitty/kitty.conf".force = true;
