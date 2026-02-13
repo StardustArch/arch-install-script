@@ -124,9 +124,18 @@ else
 fi
 
 # 4.3 Definir Tema e Gerar Initramfs
-log "Aplicando tema 'arch-charge-big' e gerando imagem de boot..."
+log "Aplicando tema 'spinner' e gerando imagem de boot..."
 # O flag -R reconstrói o initramfs automaticamente
-sudo plymouth-set-default-theme -R spinner
+TARGET_THEME="spinner"
+# 1. Verifica qual é o tema atual
+CURRENT_THEME=$(plymouth-set-default-theme)
+
+if [ "$CURRENT_THEME" != "$TARGET_THEME" ]; then
+    log "Tema do Plymouth diferente de $TARGET_THEME. Atualizando..."
+    sudo plymouth-set-default-theme -R "$TARGET_THEME"
+else
+    log "Plymouth já está configurado como $TARGET_THEME. Ignorando reconstrução do boot."
+fi
 
 # ==========================================
 # 5. CONFIGURAÇÃO DO DISPLAY MANAGER (SDDM)
