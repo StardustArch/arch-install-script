@@ -9,6 +9,26 @@ let
   rawTheme = builtins.readFile "/home/paulo_/.cache/current_theme";
   selectedTheme = lib.removeSuffix "\n" rawTheme;
 
+# --- 2. MAPEAMENTO DE TEMAS GTK ---
+  # Aqui definimos qual pacote GTK corresponde ao nosso tema
+  gtkThemeConfig = {
+    nord = {
+      pkg = pkgs.nordic;
+      name = "Nordic";
+    };
+    aizome = {
+      pkg = pkgs.tokyonight-gtk-theme; # O mais parecido com Aizome
+      name = "Tokyonight-Dark";
+    };
+    gruvbox = {
+      pkg = pkgs.gruvbox-dark-gtk;
+      name = "Gruvbox-Dark-B";
+    };
+  };
+
+  # Seleciona a configuração baseada no tema atual
+  currentGtkTheme = gtkThemeConfig.${selectedTheme};
+
   themes = {
     nord = {
       bg0 = "2e3440"; bg1 = "3b4252"; bg2 = "434c5e"; bg3 = "4c566a";
@@ -33,115 +53,85 @@ let
   # Esta variável 'colors' será usada em todo o resto do ficheiro
   colors = themes.${selectedTheme};
 
-  # Definimos o script como uma aplicação gerida pelo Nix
-wall-manager = pkgs.writeShellApplication {
-  name = "wall-manager";
-  runtimeInputs = with pkgs; [ swaybg coreutils findutils procps fzf chafa gnused ];
-  text = ''
-    # --- CONFIGURAÇÃO ---
-    BASE_DIR="/home/paulo_/arch-install-script/hypr/.config/hypr/wallpapers"
-    THEME_FILE="$HOME/.cache/current_theme"
+# --- 2. SCRIPT: POWER MENU (ROFI) ---
+  power-menu = pkgs.writeShellScriptBin "power-menu" ''
+    # Opções com ícones Nerd Fonts
+    shutdown="⏻ Desligar"
+    reboot="⟳ Reiniciar"
+    lock="🔒 Bloquear"
+    logout="⇠ Sair"
     
-    # Argumentos
-    ACTION="''${1:-static}" 
-    ARG2="''${2:-}" # Pode ser o intervalo (loop) ou o nome do tema (switch)
+    # Chama o Rofi
+    selected=$(echo -e "$lock\n$logout\n$reboot\n$shutdown" | rofi -dmenu -p "Energia" -theme-str 'window {width: 300px;}')
 
-    # 1. Detetar tema atual (Lê do ficheiro cache ou define padrão)
-    if [ -f "$THEME_FILE" ]; then
-        CURRENT_THEME=$(cat "$THEME_FILE")
-    else
-        CURRENT_THEME="gruvbox" # Default se nunca escolheste nada
-    fi
-
-    # Garante que a pasta do tema existe, senão volta ao base
-    if [ ! -d "$BASE_DIR/$CURRENT_THEME" ]; then
-        echo "Pasta do tema $CURRENT_THEME não encontrada. Usando raiz."
-        TARGET_DIR="$BASE_DIR"
-    else
-        TARGET_DIR="$BASE_DIR/$CURRENT_THEME"
-    fi
-
-    # --- FUNÇÃO PRINCIPAL ---
-    apply_wall() {
-        local wall="$1"
-        [ -z "$wall" ] && exit 0
-
-        # A. Aplica o Wallpaper (Hyprpaper ou Swaybg)
-        if hyprctl hyprpaper listloaded > /dev/null 2>&1; then
-            MONITOR=$(hyprctl monitors | grep "Monitor" | awk '{print $2}' | head -n 1)
-            hyprctl hyprpaper preload "$wall"
-            hyprctl hyprpaper wallpaper "$MONITOR,$wall"
-            hyprctl hyprpaper unload unused
-        else
-            pkill swaybg || true
-            nohup swaybg -i "$wall" -m fill > /dev/null 2>&1 &
-            sleep 0.5
-        fi
-
-        # B. Lógica de Temas Inteligente
-        # Descobre o tema baseando-se no nome da pasta onde está a imagem
-        # Exemplo: se imagem é .../wallpapers/nord/img.jpg, o tema é "nord"
-        NEW_THEME=$(basename "$(dirname "$wall")")
-        
-        # Se o tema mudou, atualiza a cache e o VSCode
-        if [ "$NEW_THEME" != "$CURRENT_THEME" ] && [ "$NEW_THEME" != "wallpapers" ]; then
-            echo "$NEW_THEME" > "$THEME_FILE"
-            echo "Tema alterado para: $NEW_THEME"
-            
-            # Atualiza o VSCode
-            case "$NEW_THEME" in
-                "nord")
-                    ~/.config/hypr/scripts/vscode-theme.sh nord ;;
-                "gruvbox")
-                    ~/.config/hypr/scripts/vscode-theme.sh gruvbox ;;
-                "aizome")
-                    # Assume que tens um tema aizome ou usa o mais parecido (ex: nord)
-                    ~/.config/hypr/scripts/vscode-theme.sh nord ;; 
-            esac
-        fi
-    }
-
-    # --- MENU DE AÇÕES ---
-    case "$ACTION" in
-        "static")
-            # Só escolhe aleatório DENTRO da pasta do tema atual
-            SELECTED=$(find "$TARGET_DIR" -type f | shuf -n 1)
-            apply_wall "$SELECTED"
-            ;;
-            
-        "select")
-            # Só mostra lista DENTRO da pasta do tema atual
-            echo "Selecionando wallpaper para o tema: $CURRENT_THEME"
-            SELECTED=$(find "$TARGET_DIR" -type f -printf "%P\n" | fzf --preview "chafa -s 40x20 $TARGET_DIR/{}" --height 80%)
-            [ -n "$SELECTED" ] && apply_wall "$TARGET_DIR/$SELECTED"
-            ;;
-            
-        "loop")
-            while true; do
-                SELECTED=$(find "$TARGET_DIR" -type f | shuf -n 1)
-                apply_wall "$SELECTED"
-                sleep "''${ARG2:-300}"
-            done
-            ;;
-            
-        "switch")
-            # Comando extra para mudares de tema manualmente
-            # Uso: wall-manager switch nord
-            if [ -n "$ARG2" ] && [ -d "$BASE_DIR/$ARG2" ]; then
-                echo "$ARG2" > "$THEME_FILE"
-                echo "Tema mudado para $ARG2. Na próxima seleção, só verás imagens deste tema."
-                
-                # Aplica logo um wallpaper aleatório do novo tema para confirmar
-                SELECTED=$(find "$BASE_DIR/$ARG2" -type f | shuf -n 1)
-                apply_wall "$SELECTED"
-            else
-                echo "Temas disponíveis:"
-                ls "$BASE_DIR"
-            fi
-            ;;
+    case $selected in
+      "$shutdown") systemctl poweroff ;;
+      "$reboot") systemctl reboot ;;
+      "$lock") pidof hyprlock || hyprlock ;;
+      "$logout") hyprctl dispatch exit ;;
     esac
   '';
-};
+# --- 3. SCRIPT: WALL MANAGER (Versão ROFI) ---
+  wall-manager = pkgs.writeShellApplication {
+    name = "wall-manager";
+    runtimeInputs = with pkgs; [ swaybg coreutils findutils procps gnused ];
+    text = ''
+      BASE_DIR="/home/paulo_/arch-install-script/hypr/.config/hypr/wallpapers"
+      THEME_FILE="$HOME/.cache/current_theme"
+      
+      # Função de Aplicação (Mantida igual, só muda a interface)
+      apply_wall() {
+          local wall="$1"
+          [ -z "$wall" ] && exit 0
+          
+          # Aplica wallpaper
+          pkill swaybg || true
+          nohup swaybg -i "$wall" -m fill > /dev/null 2>&1 &
+          
+          # Deteta tema pela pasta
+          NEW_THEME=$(basename "$(dirname "$wall")")
+          CURRENT_THEME=$(cat "$THEME_FILE")
+          
+          # Atualiza se mudou
+          if [ "$NEW_THEME" != "$CURRENT_THEME" ]; then
+              echo "$NEW_THEME" > "$THEME_FILE"
+              # Chama o script do VSCode (se existir)
+              ~/.config/hypr/scripts/vscode-theme.sh "$NEW_THEME" || true
+          fi
+      }
+
+      ACTION="''${1:-select}"
+      CURRENT_THEME=$(cat "$THEME_FILE" 2>/dev/null || echo "aizome")
+      TARGET_DIR="$BASE_DIR/$CURRENT_THEME"
+
+      case "$ACTION" in
+          "select")
+              # Usa Rofi para listar ficheiros na pasta do tema atual
+              # -format 's' retorna a string selecionada
+              SELECTED=$(ls "$TARGET_DIR" | rofi -dmenu -p "Wallpaper ($CURRENT_THEME)" -format 's')
+              if [ -n "$SELECTED" ]; then
+                  apply_wall "$TARGET_DIR/$SELECTED"
+              fi
+              ;;
+          "switch")
+              # Muda o tema inteiro via Rofi
+              NEW_THEME=$(ls "$BASE_DIR" | rofi -dmenu -p "Mudar Tema")
+              if [ -n "$NEW_THEME" ]; then
+                  # Chama a função zsh set-theme (precisa ser via zsh -c ou atualizamos a cache aqui)
+                  # Vamos atualizar a cache aqui para simplificar
+                  echo "$NEW_THEME" > "$THEME_FILE"
+                  
+                  # Escolhe um wallpaper aleatório desse tema
+                  RANDOM_WALL=$(find "$BASE_DIR/$NEW_THEME" -type f | shuf -n 1)
+                  apply_wall "$RANDOM_WALL"
+                  
+                  # Avisa o utilizador para correr set-theme se quiser atualizar o Nix
+                  notify-send "Tema alterado para $NEW_THEME" "Corre 'set-theme $NEW_THEME' para atualizar cores do sistema."
+              fi
+              ;;
+      esac
+    '';
+  };
 in
 
 
@@ -333,6 +323,18 @@ home.file = {
     fi
   '';
 };
+".config/hypr/env.conf".text = ''
+    # --- CURSOR (Estático, pois gostas do Bibata) ---
+    env = XCURSOR_THEME,Bibata-Modern-Ice
+    env = XCURSOR_SIZE,24
+
+    # --- TEMAS (Dinâmico gerado pelo Nix) ---
+    # O Nix preenche isto com "Nordic", "Tokyonight-Dark" ou "Gruvbox-Dark-B"
+    env = GTK_THEME,${currentGtkTheme.name}
+    
+    # Força Qt a usar o estilo GTK2 (para ler o tema acima)
+    env = QT_QPA_PLATFORMTHEME,gtk2
+  '';
 
 ".config/hypr/scripts/vscode-theme.sh" = {
   executable = true;
@@ -397,53 +399,74 @@ home.activation = {
     fi
   '';
 };
+
+# ============================================================
+  # ESTÉTICA DO SISTEMA (GTK & QT)
+  # ============================================================
+
+  # 1. Configuração GTK (Thunar, Pavucontrol, Firefox, etc)
+  gtk = {
+    enable = true;
+    
+    theme = {
+      name = currentGtkTheme.name;
+      package = currentGtkTheme.pkg;
+    };
+
+    iconTheme = {
+      name = "Papirus-Dark"; # Vamos padronizar no Papirus que instalaste no Pacman
+      package = pkgs.papirus-icon-theme;
+    };
+
+    cursorTheme = {
+      name = "Bibata-Modern-Ice";
+      package = pkgs.bibata-cursors;
+      size = 24;
+    };
+
+    gtk3.extraConfig = {
+      gtk-application-prefer-dark-theme = 1;
+    };
+    gtk4.extraConfig = {
+      gtk-application-prefer-dark-theme = 1;
+    };
+  };
+
+  # 2. Configuração Qt (Apps KDE, VLC, qBittorrent)
+  qt = {
+    enable = true;
+    
+    # Força apps Qt a usarem o tema GTK (Uniformidade total!)
+    platformTheme.name = "gtk"; 
+    style.name = "gtk2";
+  };
+  
+  # Variáveis de ambiente para garantir que o tema pega
+  home.sessionVariables = {
+    GTK_THEME = currentGtkTheme.name;
+    QT_QPA_PLATFORMTHEME = "gtk2";
+  };
+
   # ============================================================
   # PROGRAMAS CONFIGURADOS
   # ============================================================
   home.packages = (with pkgs; [
-    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22 nerd-fonts.jetbrains-mono grim slurp swappy wl-clipboard cliphist gamemode bottles protonup-qt gamescope mangohud ripgrep fd tmux zoxide yazi
+    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh go nodejs_22 nerd-fonts.jetbrains-mono grim slurp swappy wl-clipboard cliphist gamemode bottles protonup-qt gamescope mangohud ripgrep fd tmux zoxide yazi # ... os teus pacotes ...
+    
+    # Motores de Tema (Necessários para GTK funcionar bem)
+    gtk-engine-murrine
+    gnome-themes-extra
+    
+    # Os temas em si (Opcional aqui se já estiverem no bloco 'let', 
+    # mas bom ter para garantir disponibilidade)
+    nordic
+    gruvbox-dark-gtk
+    tokyonight-gtk-theme
+    bibata-cursors
+    papirus-icon-theme
   ]) ++ [ wall-manager ];
   
 nixpkgs.config.allowUnfree = true;
-
-programs.vscode = {
-    enable = true;
-    package = pkgs.vscodium;
-    
-    # PERMITE instalar extensões manualmente pela loja (como o cwej)
-    # Sem isto, o Nix apagaria o 'Database Client' sempre que fizesses update.
-    mutableExtensionsDir = true;
-
-    # --- EXTENSÕES GERIDAS PELO NIX ---
-    profiles.default.extensions = with pkgs.vscode-extensions; [
-      # 1. Estética (O que pediste)
-      pkief.material-icon-theme  # O "Pretty" icons oficial
-
-      # 2. Stack Web (Svelte, Vue, etc - Do passo anterior)
-      svelte.svelte-vscode
-      vue.volar
-      dbaeumer.vscode-eslint
-      esbenp.prettier-vscode
-      
-      # 3. Python
-      ms-python.python
-      ms-python.vscode-pylance
-      charliermarsh.ruff
-      
-      # 4. Temas
-      jdinhlife.gruvbox
-      arcticicestudio.nord-visual-studio-code
-      
-      # 5. Utilitários
-      bradlc.vscode-tailwindcss
-      eamodio.gitlens
-      editorconfig.editorconfig
-      
-      # Alternativa Open-Source para SQL (Caso o cwej falhe)
-      # mtxr.sqltools 
-    ];
-  };
-
 
   xdg.configFile."kitty/kitty.conf".force = true;
   fonts.fontconfig.enable = true;
@@ -596,16 +619,20 @@ programs.vscode = {
       '';
     };
 
-  services.flatpak = {
-	enable=true;
-	uninstallUnmanaged=true;
-	
-	remotes = lib.mkOptionDefault[{
-		name="flathub";
-		location="https://dl.flathub.org/repo/flathub.flatpakrepo";
-		}];
-	packages = [
-		];
+services.flatpak = {
+    enable = true;
+    uninstallUnmanaged = true; # O "Gari" do sistema: apaga o lixo que não está no código
+    
+    remotes = lib.mkOptionDefault [{
+      name = "flathub";
+      location = "https://dl.flathub.org/repo/flathub.flatpakrepo";
+    }];
+
+    packages = [
+      # "com.spotify.Client"
+      # "com.discordapp.Discord"
+      # Adiciona aqui as tuas apps pesadas
+    ];
   };  
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage

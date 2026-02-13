@@ -80,15 +80,11 @@ PKGS=(
     hyprland hyprpaper swaybg xorg-xwayland
     waybar kitty hyprlauncher hyprtoolkit hyprlock hypridle
     pipewire pipewire-pulse wireplumber polkit-gnome
-    thunar ttf-jetbrains-mono-nerd fzf chafa rofi-wayland
+    dolphin ttf-jetbrains-mono-nerd rofi-wayland flatpak
     xdg-desktop-portal-hyprland qt5-wayland qt6-wayland
     brightnessctl blueman network-manager-applet swaync
     sddm qt5-quickcontrols2 qt5-graphicaleffects qt5-svg
-    podman distrobox podman-compose btop plymouth
-    # --- Adições de Estética ---
-    nwg-look                # Gerenciador de Temas GTK
-    bibata-cursor-theme     # O cursor que você gosta
-    papirus-icon-theme      # Ícones consistentes
+    podman distrobox podman-compose btop plymouth nmtui bluetuith
     plymouth-theme-arch-charge-big-git # Tema Plymouth Profissional
 )
 
@@ -168,7 +164,14 @@ if ! command -v home-manager &> /dev/null; then
     nix-channel --update
     nix-shell '<home-manager>' -A install
 fi
+# --- 3. BOOTSTRAP DOS DOTFILES ---
+log "Preparando Dotfiles..."
 
+# Cria ficheiro de tema padrão se não existir
+mkdir -p ~/.cache
+if [ ! -f ~/.cache/current_theme ]; then
+    echo "aizome" > ~/.cache/current_theme
+fi
 # ==========================================
 # GESTÃO DE GIT PARA FLAKES
 # ==========================================
@@ -179,7 +182,86 @@ if [ -d "$HOME/.config/home-manager/.git" ] || [ -d "$DOTFILES_DIR/.git" ]; then
     git add flake.nix home.nix 2>/dev/null || true
 fi
 
-# Agora o switch não vai falhar por "uncommitted changes"
-home-manager switch --flake "$HOME/.config/home-manager#paulo_"
+# --- 4. APLICAÇÃO DO HOME MANAGER ---
+log "Aplicando Home Manager (com Unfree permitida)..."
+export NIXPKGS_ALLOW_UNFREE=1
+home-manager switch -b backup --impure --flake "$REPO_DIR/nix/.config/home-manager#paulo_"
+
+# ==========================================
+# 7. CONFIGURAÇÃO DO VS CODE (AUTOMATIZADA)
+# ==========================================
+log "Instalando e Configurando o VS Code..."
+
+# 1. Instalar o binário do Arch (Versão OSS oficial)
+# Nota: Usamos 'code' do repo oficial. Se preferires mesmo o VSCodium, usa 'yay -S vscodium-bin'
+if ! command -v codium &> /dev/null; then
+    yay -S vscodium-bin
+fi
+
+# 2. Lista de Extensões (IDs do Marketplace)
+# Aqui traduzimos do Nix para o nome real na loja
+EXTENSIONS=(
+    # --- Estética ---
+    "PKief.material-icon-theme"
+    "jdinhlife.gruvbox"
+    "arcticicestudio.nord-visual-studio-code"
+    # As que o Nix não encontrava:
+    "bfrangi.vscode-nightingale-theme"             # Essencial para o tema Aizome
+    "arcticicestudio.nord-visual-studio-code"    
+    # --- Stack Web (Svelte, Vue) ---
+    "svelte.svelte-vscode"
+    "Vue.volar"
+    "dbaeumer.vscode-eslint"
+    "esbenp.prettier-vscode"
+    "bradlc.vscode-tailwindcss"
+    
+    # --- Python (Agora instala sem pedir licença!) ---
+    "ms-python.python"
+    "ms-python.vscode-pylance"
+    "charliermarsh.ruff"
+    
+    # --- Utilitários ---
+    "eamodio.gitlens"
+    "EditorConfig.EditorConfig"
+    
+    # --- Opcional: Database ---
+    # "mtxr.sqltools" 
+    # "cweijan.vscode-database-client2"
+)
+
+log "Instalando extensões do VS Code..."
+for ext in "${EXTENSIONS[@]}"; do
+    # --force garante que atualiza se já existir
+    codium --install-extension "$ext" --force || warn "Falha ao instalar $ext (pode já estar instalada ou sem internet)"
+done
+
+# 3. Criar settings.json base (Se não existir)
+# Isto é CRÍTICO para o teu script de temas não falhar na primeira execução
+VSCODE_DIR="$HOME/.config/VSCodium/User" # Caminho do 'code' no Arch
+# Se usares vscodium, o caminho é "$HOME/.config/VSCodium/User"
+
+mkdir -p "$VSCODE_DIR"
+SETTINGS_FILE="$VSCODE_DIR/settings.json"
+
+if [ ! -f "$SETTINGS_FILE" ]; then
+    log "Criando settings.json padrão..."
+    cat <<EOF > "$SETTINGS_FILE"
+{
+    "workbench.colorTheme": "Nightingale",
+    "workbench.iconTheme": "material-icon-theme",
+    "editor.fontFamily": "'JetBrainsMono Nerd Font', 'monospace'",
+    "editor.fontLigatures": true,
+    "editor.fontSize": 14,
+    "window.menuBarVisibility": "toggle",
+    "files.autoSave": "afterDelay"
+}
+EOF
+else
+    log "settings.json já existe. Mantendo configuração atual."
+fi
+
+log "Ativando serviços..."
+sudo systemctl enable --now sddm
+# sudo systemctl enable --now bluetooth # se tiveres bluetooth
 
 log ">>> SETUP CONCLUÍDO! REINICIE O SISTEMA. <<<"
