@@ -90,14 +90,11 @@ let
           
           # Deteta tema pela pasta
           NEW_THEME=$(basename "$(dirname "$wall")")
-          CURRENT_THEME=$(cat "$THEME_FILE")
-          
-          # Atualiza se mudou
-          if [ "$NEW_THEME" != "$CURRENT_THEME" ]; then
-              echo "$NEW_THEME" > "$THEME_FILE"
-              # Chama o script do VSCode (se existir)
-              ~/.config/hypr/scripts/vscode-theme.sh "$NEW_THEME" || true
-          fi
+
+          echo "$NEW_THEME" > "$THEME_FILE"
+
+          ~/.config/hypr/scripts/vscode-theme.sh "$NEW_THEME" || true
+
       }
 
       ACTION="''${1:-select}"
