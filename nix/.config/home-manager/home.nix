@@ -108,7 +108,7 @@ let
           "static")
               # Apenas reaplica o wallpaper baseado no tema atual da cache
               # Ideal para o 'exec-once' no Hyprland
-              log "Aplicando wallpaper estático para o tema: $CURRENT_THEME"
+              echo "Aplicando wallpaper estático para o tema: $CURRENT_THEME"
               RANDOM_WALL=$(find "$TARGET_DIR" -maxdepth 1 -type f | shuf -n 1)
               if [ -n "$RANDOM_WALL" ]; then
                   apply_wall "$RANDOM_WALL"
@@ -459,7 +459,7 @@ home.sessionVariables = {
   # PROGRAMAS CONFIGURADOS
   # ============================================================
   home.packages = (with pkgs; [
-    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh nerd-fonts.jetbrains-mono grim slurp swappy wl-clipboard cliphist gamemode protonup-qt gamescope mangohud ripgrep fd tmux zoxide yazi
+    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh nerd-fonts.jetbrains-mono grim slurp swappy wl-clipboard cliphist gamemode protonup-qt gamescope mangohud ripgrep fd tmux zoxide yazi dconf
     
     # Motores de Tema (Necessários para GTK funcionar bem)
     gtk-engine-murrine
