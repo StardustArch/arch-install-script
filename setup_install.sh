@@ -84,8 +84,7 @@ PKGS=(
     xdg-desktop-portal-hyprland qt5-wayland qt6-wayland
     brightnessctl blueman network-manager-applet swaync
     sddm qt5-quickcontrols2 qt5-graphicaleffects qt5-svg
-    podman distrobox podman-compose btop plymouth nmtui bluetuith
-    plymouth-theme-arch-charge-big-git # Tema Plymouth Profissional
+    podman distrobox podman-compose btop plymouth nmtui-go bluetuith
 )
 
 # Usa o yay para instalar tudo (ele lida com pacotes oficiais e AUR simultaneamente)
@@ -127,7 +126,7 @@ fi
 # 4.3 Definir Tema e Gerar Initramfs
 log "Aplicando tema 'arch-charge-big' e gerando imagem de boot..."
 # O flag -R reconstrói o initramfs automaticamente
-sudo plymouth-set-default-theme -R arch-charge-big-git
+sudo plymouth-set-default-theme -R spinner
 
 # ==========================================
 # 5. CONFIGURAÇÃO DO DISPLAY MANAGER (SDDM)
