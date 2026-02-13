@@ -142,25 +142,38 @@ echo -e "[Users]\nMinimumUid=1000\nMaximumUid=29000" | sudo tee /etc/sddm.conf.d
 # ==========================================
 # 6. INSTALAÇÃO DO NIX & ATIVAÇÃO DE FLAKES
 # ==========================================
+# 1. Tenta carregar o Nix caso ele já exista mas não esteja no PATH
+for profile in "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" "$HOME/.nix-profile/etc/profile.d/nix.sh" "/etc/profile.d/nix.sh"; do
+    if [ -e "$profile" ]; then
+        log "Nix detectado no disco. Carregando ambiente..."
+        . "$profile"
+    fi
+done
+
+# 2. Agora sim, verifica se o comando 'nix' está disponível
 if ! command -v nix &> /dev/null; then
-    log "Instalando Nix (via Determinate Systems)..."
+    log "Nix não encontrado. Instalando (via Determinate Systems)..."
     curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --no-confirm
     
-    # Carrega o Nix na sessão atual do script
+    # Carrega imediatamente após instalar
     [ -e "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ] && . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+else
+    log "Nix já está instalado e ativo. Ignorando instalação."
 fi
 
-log "Habilitando suporte a Flakes..."
+# 3. Habilitar suporte a Flakes (apenas se necessário)
 mkdir -p ~/.config/nix
-# Verifica se a linha já existe para não duplicar
 if ! grep -q "flakes" ~/.config/nix/nix.conf 2>/dev/null; then
+    log "Habilitando suporte a Flakes..."
     echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 fi
 
 if ! command -v home-manager &> /dev/null; then
-    log "Instalando Home Manager (Standalone)..."
-    # Usamos o link direto para o instalador, evitando o erro de 'attribute install'
-    nix-shell https://github.com/nix-community/home-manager/archive/master.tar.gz -A install
+    log "Aplicando configuração inicial do Home Manager via Flake..."  
+    # Em vez de instalar, corremos diretamente o Home Manager do GitHub
+    # para aplicar o teu repositório local.
+    # AJUSTE: Garante que o nome após o '#' é o mesmo do teu flake.nix (ex: stardust)
+    nix run github:nix-community/home-manager/release-24.11 -- switch --flake ~/arch-install-script/nix#stardust
 fi
 # --- 3. BOOTSTRAP DOS DOTFILES ---
 log "Preparando Dotfiles..."
@@ -273,7 +286,7 @@ if ! grep -q "$NIX_ZSH_PATH" /etc/shells; then
     echo "$NIX_ZSH_PATH" | sudo tee -a /etc/shells
 fi
 
-# 3. Altera o shell do utilizador paulo_
+# 3. Altera o shell do utilizador stardust
 # Usamos sudo chsh para evitar o prompt de password e forçar a alteração
 sudo chsh -s "$NIX_ZSH_PATH" $(whoami)
 
