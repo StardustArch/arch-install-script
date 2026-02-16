@@ -390,6 +390,12 @@ if [ -d "$NIX_THEMES" ]; then
     done
 fi
 
+log "Linkando esquemas de GSettings para o Arch..."
+mkdir -p ~/.local/share/glib-2.0/schemas
+ln -sfn ~/.nix-profile/share/glib-2.0/schemas/* ~/.local/share/glib-2.0/schemas/
+# Compila os esquemas para o sistema os reconhecer imediatamente
+glib-compile-schemas ~/.local/share/glib-2.0/schemas
+
 log "Pontes criadas com sucesso! Thunar e Hyprland agora reconhecem os temas."
 
 log "Ativando serviços..."

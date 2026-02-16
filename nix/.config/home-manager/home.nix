@@ -461,6 +461,7 @@ home.activation = {
 home.sessionVariables = {
   GTK_THEME = currentGtkTheme.name;
   QT_QPA_PLATFORMTHEME = "gtk2";
+  QT_STYLE_OVERRIDE = "gtk2";
   # ADICIONA ESTA LINHA:
   XDG_DATA_DIRS = "$HOME/.nix-profile/share:$XDG_DATA_DIRS";
 };
@@ -474,7 +475,9 @@ home.sessionVariables = {
     # Motores de Tema (Necessários para GTK funcionar bem)
     gtk-engine-murrine
     gnome-themes-extra
-    
+    gsettings-desktop-schemas
+    adwaita-qt
+  qgnomeplatform
     nordic
     gruvbox-dark-gtk
     tokyonight-gtk-theme
