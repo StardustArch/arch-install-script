@@ -449,21 +449,23 @@ home.activation = {
   };
 
   # 2. Configuração Qt (Apps KDE, VLC, qBittorrent)
+# 2. Configuração Qt (Apps KDE, Dolphin, VLC)
   qt = {
     enable = true;
     
-    # Força apps Qt a usarem o tema GTK (Uniformidade total!)
+    # "gtk" aqui refere-se ao motor de plataforma que lê configs do GTK3
     platformTheme.name = "gtk"; 
-    style.name = "gtk2";
+    
+    # O estilo "gtk2" NÃO EXISTE no Qt6. Usamos "adwaita-dark" como base segura.
+    # O motor de plataforma vai aplicar as cores do teu tema por cima disto.
+    style.name = "adwaita-dark";
   };
   
   # Variáveis de ambiente para garantir que o tema pega
 home.sessionVariables = {
   GTK_THEME = currentGtkTheme.name;
-  QT_QPA_PLATFORMTHEME = "gtk2";
-  QT_STYLE_OVERRIDE = "gtk2";
-  # ADICIONA ESTA LINHA:
-  XDG_DATA_DIRS = "$HOME/.nix-profile/share:$XDG_DATA_DIRS";
+  QT_QPA_PLATFORMTHEME = "gtk3";
+  XDG_DATA_DIRS = "$HOME/.nix-profile/share:$HOME/.local/share:/usr/share:$XDG_DATA_DIRS";
 };
 
   # ============================================================
@@ -477,6 +479,11 @@ home.sessionVariables = {
     gnome-themes-extra
     gsettings-desktop-schemas
     adwaita-qt
+    kdePackages.qt6ct
+    libsForQt5.qt5ct
+    
+    adwaita-qt6  # <--- IMPORTANTE para o Dolphin ter um estilo base escuro
+    qgnomeplatform
   qgnomeplatform
     nordic
     gruvbox-dark-gtk
