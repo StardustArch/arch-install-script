@@ -14,14 +14,14 @@ Featuring a custom **Dynamic Theme System** (Aizome, Nord, Gruvbox) that instant
     * **User Space:** Shell, Neovim, and CLI tools managed via `Nix` for portability.
 * **Automated Bootstrap:** `archinstall` JSON configurations for a hands-off base installation.
 * **Theme Engine:** Custom scripts (`wall-manager`) to switch themes and wallpapers on the fly.
-* **Gaming Ready:** Pre-configured with GameMode, MangoHud, and Steam optimizations.
+* **Gaming Ready:** Pre-configured with GameMode and MangoHud.
 
 ## 📂 Repository Structure
 
 ```text
 ├── bootstrap/           # JSON configs for the Arch ISO installer
 │   ├── UserConfig.json  # Minimal profile & Btrfs layout (Diskless)
-│   └── UserCredentials.json # User setup (paulo_)
+│   └── UserCredentials.json # User setup (stardust)
 ├── nix/                 # Nix Home Manager configurations
 │   ├── flake.nix        # Flake entry point
 │   └── home.nix         # User packages, Aliases & Dotfiles logic
@@ -122,7 +122,7 @@ set-theme aizome
 1. **Nix:** Rebuilds GTK/QT configs.
 2. **Wallpaper:** Changes to a random image from the theme folder.
 3. **Waybar/Rofi:** Reloads CSS colors.
-4. **VS Code:** Updates the color theme and icons automatically.
+4. **VS Code:** Updates the color theme automatically.
 
 ### Wallpapers
 
