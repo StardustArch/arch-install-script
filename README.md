@@ -14,7 +14,7 @@ Featuring a custom **Dynamic Theme System** (Aizome, Nord, Gruvbox) that instant
     * **User Space:** Shell, Neovim, and CLI tools managed via `Nix` for portability.
 * **Automated Bootstrap:** `archinstall` JSON configurations for a hands-off base installation.
 * **Theme Engine:** Custom scripts (`wall-manager`) to switch themes and wallpapers on the fly.
-* **Gaming Ready:** Pre-configured with GameMode, MangoHud, and Steam optimizations.
+* **Gaming Ready:** Pre-configured with GameMode and MangoHud.
 
 ## 📂 Repository Structure
 
