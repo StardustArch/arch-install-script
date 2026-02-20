@@ -58,7 +58,7 @@ Featuring a custom **Dynamic Theme System** (Aizome, Nord, Gruvbox) that instant
 <!-- --- -->
 
 ### 🪵 Gruvbox (Retro Groove)
-*Cores quentes e terrosas para um visual retro e confortável para os olhos.*
+<!-- *Cores quentes e terrosas para um visual retro e confortável para os olhos.* -->
 
 | Desktop (Hyprland) | Kitty Terminal | VS Code / Codium |
 | :---: | :---: | :---: |
