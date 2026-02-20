@@ -35,6 +35,34 @@ Featuring a custom **Dynamic Theme System** (Aizome, Nord, Gruvbox) that instant
 
 ```
 
+## 📸 Showcases (Screenshots)
+
+<!-- O **StardustArch** não é apenas funcional, é estético. Aqui está o visual do sistema nos três modos principais:
+
+### 🌌 Aizome (Deep Blue & Traditional)
+*O tema padrão, focado em tons escuros de azul e contrastes suaves.*
+
+| Desktop (Hyprland) | Kitty Terminal | VS Code / Codium |
+| :---: | :---: | :---: |
+| ![Aizome Desktop](assets/screenshots/aizome_desktop.png) | ![Aizome Kitty](assets/screenshots/aizome_kitty.png) | ![Aizome VSCode](assets/screenshots/aizome_vscode.png) |
+
+---
+
+### ❄️ Nord (Arctic Frost)
+*Inspirado no ártico, com tons de azul gélido e cinza limpo.*
+
+| Desktop (Hyprland) | Kitty Terminal | VS Code / Codium |
+| :---: | :---: | :---: |
+| ![Nord Desktop](assets/screenshots/nord_desktop.png) | ![Nord Kitty](assets/screenshots/nord_kitty.png) | ![Nord VSCode](assets/screenshots/nord_vscode.png) | -->
+
+<!-- --- -->
+
+### 🪵 Gruvbox (Retro Groove)
+*Cores quentes e terrosas para um visual retro e confortável para os olhos.*
+
+| Desktop (Hyprland) | Kitty Terminal | VS Code / Codium |
+| :---: | :---: | :---: |
+| ![Gruvbox Desktop](assets/screenshots/gruvbox/desktop.png) | ![Gruvbox Kitty](assets/screenshots/gruvbox/kitty.png) | ![Gruvbox VSCode](assets/screenshots/gruvbox/vscodium.png) |
 ---
 
 ## Installation Guide
