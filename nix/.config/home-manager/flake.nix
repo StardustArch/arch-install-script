@@ -15,11 +15,13 @@
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
+      # Nome do utilizador detetado do ambiente, com fallback seguro
+      username = if builtins.getEnv "USER" != "" then builtins.getEnv "USER" else "stardust";
     in {
-      homeConfigurations."stardust" = home-manager.lib.homeManagerConfiguration {
+      homeConfigurations."${username}" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
-        # 2. Passa o nix-flatpak para dentro do home.nix
-        extraSpecialArgs = { inherit nix-flatpak; }; 
+        # 2. Passa o nix-flatpak e o username para dentro do home.nix
+        extraSpecialArgs = { inherit nix-flatpak username; }; 
         modules = [ ./home.nix ];
       };
     };

@@ -1,4 +1,4 @@
-{ config, pkgs, lib,nix-flatpak, ... }:
+{ config, pkgs, lib, nix-flatpak, username, ... }:
 
 let
   # ============================================================
@@ -6,7 +6,7 @@ let
   # ============================================================
   
   # 1. Escolhe o teu tema aqui: "nord", "aizome" ou "gruvbox"
-  rawTheme = builtins.readFile "/home/stardust/.cache/current_theme";
+  rawTheme = builtins.readFile "${config.home.homeDirectory}/.cache/current_theme";
   selectedTheme = lib.removeSuffix "\n" rawTheme;
 
 # --- 2. MAPEAMENTO DE TEMAS GTK ---
@@ -76,7 +76,7 @@ let
     name = "wall-manager";
     runtimeInputs = with pkgs; [ swaybg coreutils findutils procps gnused ];
     text = ''
-      BASE_DIR="/home/stardust/arch-install-script/hypr/.config/hypr/wallpapers"
+      BASE_DIR="${config.home.homeDirectory}/arch-install-script/hypr/.config/hypr/wallpapers"
       THEME_FILE="$HOME/.cache/current_theme"
       
       # Função de Aplicação (Mantida igual, só muda a interface)
@@ -93,7 +93,7 @@ let
 
           echo "$NEW_THEME" > "$THEME_FILE"
 
-          ~/.config/hypr/scripts/vscode-theme.sh "$NEW_THEME" || true
+          ${config.home.homeDirectory}/.config/hypr/scripts/vscode-theme.sh "$NEW_THEME" || true
 
       }
 
@@ -160,8 +160,8 @@ in
 
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
-  home.username = "stardust";
-  home.homeDirectory = "/home/stardust";
+  home.username = username;
+  home.homeDirectory = "/home/${username}";
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -273,10 +273,10 @@ home.file = {
 
   [custom]
   # Executa o script visual ao entrar no jogo
-  start=sh /home/stardust/.config/hypr/scripts/gamemode.sh start
+  start=sh ${config.home.homeDirectory}/.config/hypr/scripts/gamemode.sh start
   
   # Executa o script visual ao sair do jogo
-  end=sh /home/stardust/.config/hypr/scripts/gamemode.sh end
+  end=sh ${config.home.homeDirectory}/.config/hypr/scripts/gamemode.sh end
 '';
 
 ".config/hypr/scripts/gamemode.sh" = {
@@ -358,7 +358,7 @@ home.file = {
     #!/bin/bash
     
     # Caminho do settings.json do VSCodium
-    VSCODE_SETTINGS="/home/stardust/.config/VSCodium/User/settings.json"
+    VSCODE_SETTINGS="${config.home.homeDirectory}/.config/VSCodium/User/settings.json"
     
     # Garante que o ficheiro existe
     if [ ! -f "$VSCODE_SETTINGS" ]; then
@@ -567,7 +567,7 @@ nixpkgs.config.allowUnfree = true;
         
         echo "🎨 Cache atualizada para: $(cat ~/.cache/current_theme)"
         # 3. Executar o hms (Repara que agora não precisamos de 'git add' porque o código não mudou)
-        if home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#stardust; then
+        if home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#${username}; then
             # 4. Sincronizar Wallpaper
             ~/.nix-profile/bin/wall-manager switch "$1"
             echo "🚀 Sistema atualizado para $1!"
@@ -583,7 +583,7 @@ nixpkgs.config.allowUnfree = true;
 		cat="bat";
 		update="sudo pacman -Syu";
     # --- NIX & HOME MANAGER ALIASES ---
-    hms = "home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#stardust";
+    hms = "home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#${username}";
     hmu="nix flake update ~/arch-install-script/nix/.config/home-manager && hms";
     nclean="nix-collect-garbage -d";
     hme="cd ~/arch-install-script/nix/.config/home-manager && $EDITOR flake.nix";
@@ -690,7 +690,7 @@ services.flatpak = {
   #
   # or
   #
-  #  /etc/profiles/per-user/stardust/etc/profile.d/hm-session-vars.sh
+  #  /etc/profiles/per-user/${username}/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
     # EDITOR = "emacs";

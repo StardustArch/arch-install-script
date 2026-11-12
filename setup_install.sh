@@ -208,13 +208,6 @@ if ! grep -q "flakes" ~/.config/nix/nix.conf 2>/dev/null; then
     echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 fi
 
-if ! command -v home-manager &> /dev/null; then
-    log "Aplicando configuração inicial do Home Manager via Flake..."  
-    # Em vez de instalar, corremos diretamente o Home Manager do GitHub
-    # para aplicar o teu repositório local.
-    # AJUSTE: Garante que o nome após o '#' é o mesmo do teu flake.nix (ex: stardust)
-    nix run github:nix-community/home-manager/release-24.11 -- switch --impure --flake ~/arch-install-script/nix/.config/home-manager#stardust
-fi
 # --- 3. BOOTSTRAP DOS DOTFILES ---
 log "Preparando Dotfiles..."
 
@@ -237,25 +230,32 @@ if [ -d "$REPO_DIR/.git" ]; then
     log "Ficheiros rastreados. O Nix agora consegue vê-los."
 fi
 
-# Agora corremos o Home Manager apontando para a pasta exata que contém o flake.nix
-log "Iniciando a configuração via Flake em $NIX_CONF_DIR..."
-
-nix run github:nix-community/home-manager/release-24.11 -- switch -b backup --impure --flake "$NIX_CONF_DIR#stardust"
-
 # ====================================================
-# 4. APLICAÇÃO DO HOME MANAGER (VERSÃO BLINDADA)
+# APLICAÇÃO ÚNICA E ROBUSTA DO HOME MANAGER
 # ====================================================
-# --- 4. APLICAÇÃO DO HOME MANAGER (VERSÃO FINAL) ---
-log "Aplicando Home Manager com suporte a D-Bus..."
+log "Aplicando configuração do Home Manager..."
 
 export NIXPKGS_ALLOW_UNFREE=1
 export XDG_DATA_DIRS="$HOME/.nix-profile/share:/usr/local/share:/usr/share:$XDG_DATA_DIRS"
 
-# O dbus-run-session resolve o erro 'ServiceUnknown'
-if command -v dbus-run-session &> /dev/null; then
-    dbus-run-session -- home-manager switch -b backup --impure --flake "$NIX_CONF_DIR#stardust"
+# Utilizador detetado dinamicamente em runtime
+CURRENT_USER="$(whoami)"
+
+# Escolhe o comando home-manager: usa o instalado localmente se disponível,
+# senão executa diretamente do GitHub via nix run (bootstrapping)
+if command -v home-manager &> /dev/null; then
+    HM_CMD="home-manager"
 else
-    home-manager switch -b backup --impure --flake "$NIX_CONF_DIR#stardust"
+    HM_CMD="nix run github:nix-community/home-manager/release-24.11 --"
+fi
+
+log "Aplicando Home Manager para o utilizador '$CURRENT_USER'..."
+
+# O dbus-run-session resolve o erro 'ServiceUnknown' em sessões sem D-Bus
+if command -v dbus-run-session &> /dev/null; then
+    dbus-run-session -- $HM_CMD switch -b backup --impure --flake "$NIX_CONF_DIR#$CURRENT_USER"
+else
+    $HM_CMD switch -b backup --impure --flake "$NIX_CONF_DIR#$CURRENT_USER"
 fi
 
 
