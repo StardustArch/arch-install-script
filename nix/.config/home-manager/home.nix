@@ -236,33 +236,6 @@ in
   # ============================================================
   # PROGRAMAS
   # ============================================================
-  xdg.configFile."kitty/kitty.conf".force = true;
-  programs.kitty = {
-    enable = true;
-    package = pkgs.runCommand "dummy" { } "mkdir -p $out/bin"; # binário vem do pacman
-    settings = {
-      linux_display_server = "x11";
-
-      font_family = "JetBrainsMono Nerd Font";
-      bold_font = "auto";
-      italic_font = "auto";
-      bold_italic_font = "auto";
-      font_size = "12.0";
-
-      background_opacity = "0.85";
-      window_padding_width = 10;
-      hide_window_decorations = "yes";
-      confirm_os_window_close = 0;
-
-      cursor_shape = "beam";
-      cursor_blink_interval = "0.5";
-
-      url_style = "curly";
-      detect_urls = "yes";
-      copy_on_select = "yes";
-    };
-  };
-
   programs.git = {
     enable = true;
     settings.user = {
