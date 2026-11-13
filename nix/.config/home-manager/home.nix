@@ -11,13 +11,8 @@ let
   rawTheme = if builtins.pathExists themeFile then builtins.readFile themeFile else "aizome";
   selectedTheme = lib.removeSuffix "\n" rawTheme;
 
-  # Só o pacote GTK do tema ACTIVO é instalado (antes eram os três)
-  gtkThemeConfig = {
-    nord    = { pkg = pkgs.nordic;               name = "Nordic"; };
-    aizome  = { pkg = pkgs.tokyonight-gtk-theme; name = "Tokyonight-Dark"; };
-    gruvbox = { pkg = pkgs.gruvbox-dark-gtk;     name = "Gruvbox-Dark-B"; };
-  };
-  currentGtkTheme = gtkThemeConfig.${selectedTheme};
+  # Nota: GTK/Qt/ícones/cursor são agora geridos pelo Noctalia;
+  # não há pacotes GTK a instalar aqui via Home Manager.
 
   themes = {
     nord = {
@@ -132,7 +127,7 @@ in
     # ".config/hypr/env.conf".text = ''  -- legacy: env vars agora em config/environment.lua via hl.env()
     #   env = XCURSOR_THEME,Bibata-Modern-Ice
     #   env = XCURSOR_SIZE,24
-    #   env = GTK_THEME,${currentGtkTheme.name}
+    #   env = GTK_THEME,<gerido pelo Noctalia>
     # '';
     # ".config/hypr/hyprland.conf".source = ../../../hypr/.config/hypr/hyprland.conf;  -- legacy, removido após migração
     # ".config/hypr/lua/theme.lua".source = ../../../hypr/.config/hypr/lua/theme.lua;   -- legacy, substituído por config/colors.lua
@@ -195,29 +190,10 @@ in
   '';
 
   # ============================================================
-  # GTK (Qt theming removido: usa qt6ct/qt5ct via pacman se precisares)
+  # GTK/Qt geridos pelo Noctalia (não configurar aqui via Home Manager)
   # ============================================================
-  gtk = {
-    enable = true;
-    theme = {
-      name = currentGtkTheme.name;
-      package = currentGtkTheme.pkg;
-    };
-    iconTheme = {
-      name = "Papirus-Dark";
-      package = pkgs.papirus-icon-theme;
-    };
-    cursorTheme = {
-      name = "Bibata-Modern-Ice";
-      package = pkgs.bibata-cursors;
-      size = 24;
-    };
-    gtk3.extraConfig.gtk-application-prefer-dark-theme = 1;
-    gtk4.extraConfig.gtk-application-prefer-dark-theme = 1;
-  };
 
   home.sessionVariables = {
-    GTK_THEME = currentGtkTheme.name;
     XDG_DATA_DIRS = "$HOME/.nix-profile/share:$HOME/.local/share:/usr/share:$XDG_DATA_DIRS";
   };
 
