@@ -174,29 +174,34 @@ in
       }
     '';
 
-    # --- Dotfiles do repo (Hyprland nativo .conf — estrutura CachyOS espelhada) ---
-    ".config/hypr/hyprland.conf".source = ../../../hypr/.config/hypr/hyprland.conf;
+    # --- Dotfiles do repo (Hyprland 0.55+ Lua — estrutura CachyOS espelhada) ---
+    ".config/hypr/hyprland.lua".source = ../../../hypr/.config/hypr/hyprland.lua;
     ".config/hypr/xdph.conf".source = ../../../hypr/.config/hypr/xdph.conf;
-    ".config/hypr/config/variables.conf".source = ../../../hypr/.config/hypr/config/variables.conf;
-    ".config/hypr/config/colors.conf".source = ../../../hypr/.config/hypr/config/colors.conf;
-    ".config/hypr/config/environment.conf".source = ../../../hypr/.config/hypr/config/environment.conf;
-    ".config/hypr/config/monitors.conf".source = ../../../hypr/.config/hypr/config/monitors.conf;
-    ".config/hypr/config/inputs.conf".source = ../../../hypr/.config/hypr/config/inputs.conf;
-    ".config/hypr/config/decorations.conf".source = ../../../hypr/.config/hypr/config/decorations.conf;
-    ".config/hypr/config/animations.conf".source = ../../../hypr/.config/hypr/config/animations.conf;
-    ".config/hypr/config/misc.conf".source = ../../../hypr/.config/hypr/config/misc.conf;
-    ".config/hypr/config/workspaces.conf".source = ../../../hypr/.config/hypr/config/workspaces.conf;
-    ".config/hypr/config/windowrules.conf".source = ../../../hypr/.config/hypr/config/windowrules.conf;
-    ".config/hypr/config/autostart.conf".source = ../../../hypr/.config/hypr/config/autostart.conf;
-    ".config/hypr/config/binds.conf".source = ../../../hypr/.config/hypr/config/binds.conf;
+    ".config/hypr/config/variables.lua".source = ../../../hypr/.config/hypr/config/variables.lua;
+    ".config/hypr/config/colors.lua".source = ../../../hypr/.config/hypr/config/colors.lua;
+    ".config/hypr/config/environment.lua".source = ../../../hypr/.config/hypr/config/environment.lua;
+    ".config/hypr/config/monitors.lua".source = ../../../hypr/.config/hypr/config/monitors.lua;
+    ".config/hypr/config/inputs.lua".source = ../../../hypr/.config/hypr/config/inputs.lua;
+    ".config/hypr/config/decorations.lua".source = ../../../hypr/.config/hypr/config/decorations.lua;
+    ".config/hypr/config/animations.lua".source = ../../../hypr/.config/hypr/config/animations.lua;
+    ".config/hypr/config/misc.lua".source = ../../../hypr/.config/hypr/config/misc.lua;
+    ".config/hypr/config/workspaces.lua".source = ../../../hypr/.config/hypr/config/workspaces.lua;
+    ".config/hypr/config/windowrules.lua".source = ../../../hypr/.config/hypr/config/windowrules.lua;
+    ".config/hypr/config/autostart.lua".source = ../../../hypr/.config/hypr/config/autostart.lua;
+    ".config/hypr/config/binds.lua".source = ../../../hypr/.config/hypr/config/binds.lua;
 
-    # --- Dotfiles do repo (legacy Lua — DESATIVADO, migração concluída para .conf) ---
-    # ".config/hypr/hyprland.lua".source = ../../../hypr/.config/hypr/hyprland.lua;  -- legacy Lua, desativado
-    # ".config/hypr/lua/theme.lua".source = ../../../hypr/.config/hypr/lua/theme.lua;   -- legacy Lua, desativado
-    # ".config/hypr/lua/general.lua".source = ../../../hypr/.config/hypr/lua/general.lua; -- legacy Lua, desativado
-    # ".config/hypr/lua/keybinds.lua".source = ../../../hypr/.config/hypr/lua/keybinds.lua; -- legacy Lua, desativado
-    # ".config/hypr/lua/autostart.lua".source = ../../../hypr/.config/hypr/lua/autostart.lua; -- legacy Lua, desativado
-    # ".config/hypr/lua/rules.lua".source = ../../../hypr/.config/hypr/lua/rules.lua; -- legacy Lua, desativado
+    # --- Dotfiles do repo (legacy .conf — mantidos temporariamente, DESLIGADOS após migração) ---
+    # ".config/hypr/env.conf".text = ''  -- legacy: env vars agora em config/environment.lua via hl.env()
+    #   env = XCURSOR_THEME,Bibata-Modern-Ice
+    #   env = XCURSOR_SIZE,24
+    #   env = GTK_THEME,${currentGtkTheme.name}
+    # '';
+    # ".config/hypr/hyprland.conf".source = ../../../hypr/.config/hypr/hyprland.conf;  -- legacy, removido após migração
+    # ".config/hypr/lua/theme.lua".source = ../../../hypr/.config/hypr/lua/theme.lua;   -- legacy, substituído por config/colors.lua
+    # ".config/hypr/lua/general.lua".source = ../../../hypr/.config/hypr/lua/general.lua; -- legacy, substituído por config/decorations.lua + misc.lua
+    # ".config/hypr/lua/keybinds.lua".source = ../../../hypr/.config/hypr/lua/keybinds.lua; -- legacy, substituído por config/binds.lua
+    # ".config/hypr/lua/autostart.lua".source = ../../../hypr/.config/hypr/lua/autostart.lua; -- legacy, substituído por config/autostart.lua
+    # ".config/hypr/lua/rules.lua".source = ../../../hypr/.config/hypr/lua/rules.lua; -- legacy, substituído por config/windowrules.lua
     ".config/hypr/hyprtoolkit.conf".source = ../../../hypr/.config/hypr/hyprtoolkit.conf;
     ".config/hypr/hyprlock.conf".source = ../../../hypr/.config/hypr/hyprlock.conf;
     ".config/hypr/hypridle.conf".source = ../../../hypr/.config/hypr/hypridle.conf;
