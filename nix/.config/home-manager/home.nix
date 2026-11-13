@@ -174,16 +174,24 @@ in
       }
     '';
 
-    ".config/hypr/env.conf".text = ''
-      env = XCURSOR_THEME,Bibata-Modern-Ice
-      env = XCURSOR_SIZE,24
-      env = GTK_THEME,${currentGtkTheme.name}
-    '';
+    # --- Dotfiles do repo (legacy .conf — mantidos temporariamente, DESLIGADOS após migração) ---
+    # ".config/hypr/env.conf".text = ''  -- legacy: env vars agora em lua/theme.lua via hl.env()
+    #   env = XCURSOR_THEME,Bibata-Modern-Ice
+    #   env = XCURSOR_SIZE,24
+    #   env = GTK_THEME,${currentGtkTheme.name}
+    # '';
+    # ".config/hypr/hyprland.conf".source = ../../../hypr/.config/hypr/hyprland.conf;  -- legacy, removido após migração
+    ".config/hypr/hyprland.lua".source = ../../../hypr/.config/hypr/hyprland.lua;
+    ".config/hypr/lua/theme.lua".source = ../../../hypr/.config/hypr/lua/theme.lua;
+    ".config/hypr/lua/general.lua".source = ../../../hypr/.config/hypr/lua/general.lua;
+    ".config/hypr/lua/keybinds.lua".source = ../../../hypr/.config/hypr/lua/keybinds.lua;
+    ".config/hypr/lua/autostart.lua".source = ../../../hypr/.config/hypr/lua/autostart.lua;
+    ".config/hypr/lua/rules.lua".source = ../../../hypr/.config/hypr/lua/rules.lua;
 
-    # --- Dotfiles do repo ---
-    ".config/hypr/hyprland.conf".source = ../../../hypr/.config/hypr/hyprland.conf;
-    ".config/hypr/keybinds.conf".source = ../../../hypr/.config/hypr/keybinds.conf;
-    ".config/hypr/autostart.conf".source = ../../../hypr/.config/hypr/autostart.conf;
+    # --- Dotfiles do repo (legacy .conf — mantidos temporariamente, DESLIGADOS após migração) ---
+    # ".config/hypr/hyprland.conf".source = ../../../hypr/.config/hypr/hyprland.conf;  -- legacy, removido após migração
+    # ".config/hypr/keybinds.conf".source = ../../../hypr/.config/hypr/keybinds.conf;   -- legacy, removido após migração
+    # ".config/hypr/autostart.conf".source = ../../../hypr/.config/hypr/autostart.conf; -- legacy, removido após migração
     ".config/hypr/hyprtoolkit.conf".source = ../../../hypr/.config/hypr/hyprtoolkit.conf;
     ".config/hypr/hyprlock.conf".source = ../../../hypr/.config/hypr/hyprlock.conf;
     ".config/hypr/hypridle.conf".source = ../../../hypr/.config/hypr/hypridle.conf;
