@@ -222,17 +222,17 @@ wallpaper_scheme = "m3-fruit-salad"
     community_ids = [ "antigravity", "neovim", "fastfetch", "bat" ]
 
 [wallpaper]
-directory = "/home/sdust/Downloads"
-directory_dark = "/home/sdust/Downloads"
+directory = "${XDG_CONFIG_HOME:-$HOME/.config}/hypr/wallpapers"
+directory_dark = "${XDG_CONFIG_HOME:-$HOME/.config}/hypr/wallpapers"
 
     [wallpaper.default]
-    path = "/home/sdust/Downloads/gruvbox05.png"
+    path = "${XDG_CONFIG_HOME:-$HOME/.config}/hypr/wallpapers/gruvbox/gruvbox05.png"
 
     [wallpaper.last]
-    path = "/home/sdust/Downloads/gruvbox05.png"
+    path = "${XDG_CONFIG_HOME:-$HOME/.config}/hypr/wallpapers/gruvbox/gruvbox05.png"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/sdust/Downloads/gruvbox05.png"
+    path = "${XDG_CONFIG_HOME:-$HOME/.config}/hypr/wallpapers/gruvbox/gruvbox05.png"
 
 [widget.clock]
 color = "secondary"

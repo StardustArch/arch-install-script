@@ -60,69 +60,6 @@ let
     esac
   '';
 
-  wall-manager = pkgs.writeShellApplication {
-    name = "wall-manager";
-    runtimeInputs = with pkgs; [ swaybg coreutils findutils procps gnused ];
-    text = ''
-      BASE_DIR="${home}/arch-install-script/hypr/.config/hypr/wallpapers"
-      THEME_FILE="$HOME/.cache/current_theme"
-
-      apply_wall() {
-          local wall="$1"
-          [ -z "$wall" ] && exit 0
-
-          pkill swaybg || true
-          nohup swaybg -i "$wall" -m fill > /dev/null 2>&1 &
-
-          NEW_THEME=$(basename "$(dirname "$wall")")
-          echo "$NEW_THEME" > "$THEME_FILE"
-
-          ${home}/.config/hypr/scripts/vscode-theme.sh "$NEW_THEME" || true
-      }
-
-      ACTION="''${1:-select}"
-      CURRENT_THEME=$(cat "$THEME_FILE" 2>/dev/null || echo "aizome")
-      TARGET_DIR="$BASE_DIR/$CURRENT_THEME"
-
-      case "$ACTION" in
-          "static")
-              echo "Aplicando wallpaper estático para o tema: $CURRENT_THEME"
-              RANDOM_WALL=$(find "$TARGET_DIR" -maxdepth 1 -type f | shuf -n 1)
-              if [ -n "$RANDOM_WALL" ]; then
-                  apply_wall "$RANDOM_WALL"
-              fi
-              ;;
-
-          "select")
-              SELECTED=$(find "$TARGET_DIR" -maxdepth 1 -type f -printf "%f\n" | sort | rofi -dmenu -p "Wallpaper ($CURRENT_THEME)" -format 's')
-              if [ -n "$SELECTED" ]; then
-                  apply_wall "$TARGET_DIR/$SELECTED"
-              fi
-              ;;
-
-          "switch")
-              NEW_THEME="$2"
-
-              if [ -z "$NEW_THEME" ]; then
-                  echo "Uso: wall-manager switch <tema>"
-                  exit 1
-              fi
-
-              if [ ! -d "$BASE_DIR/$NEW_THEME" ]; then
-                  echo "Tema '$NEW_THEME' não existe em $BASE_DIR"
-                  exit 1
-              fi
-
-              echo "$NEW_THEME" > "$THEME_FILE"
-
-              RANDOM_WALL=$(find "$BASE_DIR/$NEW_THEME" -type f | shuf -n 1)
-              if [ -n "$RANDOM_WALL" ]; then
-                  apply_wall "$RANDOM_WALL"
-              fi
-              ;;
-      esac
-    '';
-  };
 in
 {
   home.username = username;
@@ -290,7 +227,7 @@ in
     eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh
     grim slurp swappy wl-clipboard dconf
     glib gsettings-desktop-schemas
-  ]) ++ [ wall-manager power-menu ];
+  ]) ++ [ power-menu ];
 
   dconf.enable = true;
   nixpkgs.config.allowUnfree = true;
@@ -320,25 +257,9 @@ in
       cursor_shape = "beam";
       cursor_blink_interval = "0.5";
 
-      url_color = "#${colors.accent1}";
       url_style = "curly";
       detect_urls = "yes";
       copy_on_select = "yes";
-
-      cursor = "#${colors.accent1}";
-      cursor_text_color = "#${colors.bg0}";
-      foreground = "#${colors.fg0}";
-      background = "#${colors.bg0}";
-      selection_background = "#${colors.accent1}";
-
-      color0 = "#${colors.bg1}";  color8  = "#${colors.bg3}";
-      color1 = "#${colors.red}";  color9  = "#${colors.red}";
-      color2 = "#${colors.green}"; color10 = "#${colors.green}";
-      color3 = "#${colors.yellow}"; color11 = "#${colors.yellow}";
-      color4 = "#${colors.accent2}"; color12 = "#${colors.accent2}";
-      color5 = "#${colors.purple}"; color13 = "#${colors.purple}";
-      color6 = "#${colors.accent1}"; color14 = "#${colors.accent0}";
-      color7 = "#${colors.fg1}";  color15 = "#${colors.fg2}";
     };
   };
 
@@ -358,25 +279,6 @@ in
     dotDir = config.home.homeDirectory;
     initContent = ''
       fastfetch
-      set-theme() {
-          local TEMA=$1
-          if [[ "$TEMA" != "nord" && "$TEMA" != "aizome" && "$TEMA" != "gruvbox" ]]; then
-            echo "❌ Tema inválido! Usa: nord, aizome ou gruvbox"
-            return 1
-          fi
-
-          mkdir -p ~/.cache
-          echo "$TEMA" > "$HOME/.cache/current_theme"
-          echo "🎨 Cache atualizada para: $(cat ~/.cache/current_theme)"
-
-          if home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#${username}; then
-              ~/.nix-profile/bin/wall-manager switch "$1"
-              echo "🚀 Sistema atualizado para $1!"
-          else
-              echo "❌ Erro ao aplicar o Nix."
-              return 1
-          fi
-      }
     '';
     shellAliases = {
       ll = "eza -l -g --icons";
