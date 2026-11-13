@@ -84,7 +84,7 @@ PKGS=(
     xdg-desktop-portal-hyprland qt5-wayland qt6-wayland
     xdg-desktop-portal
     brightnessctl blueman network-manager-applet
-    sddm qt5-quickcontrols2 qt5-graphicaleffects qt5-svg
+    greetd greetd-tuigreet
     noctalia uwsm adw-gtk-theme qt6ct hyprpicker swash kde-cli-tools
     podman distrobox podman-compose btop plymouth nmtui-go bluetuith
 )
@@ -142,15 +142,33 @@ else
 fi
 
 # ==========================================
-# 5. CONFIGURAÇÃO DO DISPLAY MANAGER (SDDM)
+# 5. CONFIGURAÇÃO DO DISPLAY MANAGER (GREETD + TUI GREET)
 # ==========================================
-log "Configurando SDDM..."
-if ! systemctl is-enabled --quiet sddm; then
-    sudo systemctl enable sddm
+log "Configurando Greetd com tuigreet..."
+
+# Instalar utilizador do greetd se não existir
+if ! id "greeter" &>/dev/null; then
+    sudo useradd -r -s /bin/false greeter
 fi
 
-sudo mkdir -p /etc/sddm.conf.d
-echo -e "[Users]\nMinimumUid=1000\nMaximumUid=29000" | sudo tee /etc/sddm.conf.d/hide-nix-users.conf > /dev/null
+# Criar configuração do greetd
+sudo mkdir -p /etc/greetd
+sudo tee /etc/greetd/config.toml > /dev/null <<'EOF'
+[terminal]
+vt = 1
+
+[default_session]
+command = "tuigreet --time --time-format '%H:%M | %a %h %d' --remember --remember-user-session --cmd Hyprland"
+user = "greeter"
+EOF
+
+# Habilitar e iniciar o serviço greetd
+if ! systemctl is-enabled --quiet greetd; then
+    sudo systemctl enable greetd
+fi
+if ! systemctl is-active --quiet greetd; then
+    sudo systemctl start greetd
+fi
 
 # ====================================================
 # INICIALIZAÇÃO DE CACHE E TEMA
