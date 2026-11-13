@@ -5,10 +5,10 @@ return function(hl, colors)
 	-- MONITOR
 	-- ==========================================
 	-- monitor=,preferred,auto,1  (hyprlang)
-	-- hl.monitor({ ... })  — parâmetros conforme hl.meta.lua
+	-- hl.monitor({ ... }) — parâmetros conforme hl.meta.lua
+	-- TODO: substituir "eDP-1" pelo output real do seu hardware (ex: "HDMI-A-1", "DP-1")
 	hl.monitor({
-		-- TODO: revisar parâmetros exatos de monitor para 0.57
-		-- original: monitor=,preferred,auto,1
+		output = "eDP-1",
 	})
 
 	-- ==========================================
@@ -33,12 +33,13 @@ return function(hl, colors)
 		},
 	})
 
-	-- Borda ativa: gradiente $accent1 $accent3 45deg
+	-- Borda ativa e inativa (cores sólidas — formato RGBA de 8 dígitos aceito pelo parser Lua)
+	-- TODO: restaurar gradiente ($accent1 $accent3 45deg) quando o formato de tabela for confirmado
 	hl.config({
 		general = {
 			col = {
-				active_border   = colors.accent1 .. " " .. colors.accent3 .. " 45deg",
-				inactive_border = colors.bg3,
+				active_border   = colors.accent1,   -- "88c0d0ff"
+				inactive_border = colors.bg3,       -- "4c566aff"
 			},
 		},
 	})
