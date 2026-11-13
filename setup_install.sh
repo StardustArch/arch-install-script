@@ -78,13 +78,14 @@ log "Instalando pacotes base e interface..."
 # Lista unificada (Pacman + AUR via yay)
 PKGS=(
     hyprland hyprpaper swaybg xorg-xwayland
-    waybar kitty hyprtoolkit hyprlock hypridle
+    kitty hyprtoolkit
     pipewire pipewire-pulse wireplumber polkit-gnome
-    dolphin ttf-jetbrains-mono-nerd rofi-wayland flatpak
+    dolphin ttf-jetbrains-mono-nerd flatpak
     xdg-desktop-portal-hyprland qt5-wayland qt6-wayland
     xdg-desktop-portal
-    brightnessctl blueman network-manager-applet swaync
+    brightnessctl blueman network-manager-applet
     sddm qt5-quickcontrols2 qt5-graphicaleffects qt5-svg
+    noctalia uwsm adw-gtk-theme qt6ct hyprpicker swash kde-cli-tools
     podman distrobox podman-compose btop plymouth nmtui-go bluetuith
 )
 

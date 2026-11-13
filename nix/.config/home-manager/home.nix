@@ -203,13 +203,14 @@ in
     # ".config/hypr/lua/autostart.lua".source = ../../../hypr/.config/hypr/lua/autostart.lua; -- legacy, substituído por config/autostart.lua
     # ".config/hypr/lua/rules.lua".source = ../../../hypr/.config/hypr/lua/rules.lua; -- legacy, substituído por config/windowrules.lua
     ".config/hypr/hyprtoolkit.conf".source = ../../../hypr/.config/hypr/hyprtoolkit.conf;
-    ".config/hypr/hyprlock.conf".source = ../../../hypr/.config/hypr/hyprlock.conf;
-    ".config/hypr/hypridle.conf".source = ../../../hypr/.config/hypr/hypridle.conf;
-    ".config/waybar/config.jsonc".source = ../../../waybar/.config/waybar/config.jsonc;
-    ".config/waybar/style.css".source = ../../../waybar/.config/waybar/style.css;
-    ".config/swaync/config.json".source = ../../../swaync/.config/swaync/config.json;
-    ".config/swaync/style.css".source = ../../../swaync/.config/swaync/style.css;
-    ".config/rofi/config.rasi".source = ../../../rofi/.config/rofi/config.rasi;
+    # ".config/hypr/hyprlock.conf".source = ../../../hypr/.config/hypr/hyprlock.conf;  -- legacy: substituído por Noctalia lockscreen
+    # ".config/hypr/hypridle.conf".source = ../../../hypr/.config/hypr/hypridle.conf;   -- legacy: substituído por Noctalia idle
+    # ".config/waybar/config.jsonc".source = ../../../waybar/.config/waybar/config.jsonc; -- legacy: substituído por Noctalia bar
+    # ".config/waybar/style.css".source = ../../../waybar/.config/waybar/style.css;      -- legacy
+    # ".config/swaync/config.json".source = ../../../swaync/.config/swaync/config.json; -- legacy: substituído por Noctalia notifications
+    # ".config/swaync/style.css".source = ../../../swaync/.config/swaync/style.css;      -- legacy
+    # ".config/rofi/config.rasi".source = ../../../rofi/.config/rofi/config.rasi;        -- legacy: substituído por Noctalia launcher
+    ".config/hypr/noctalia/config.toml".source = ../../../hypr/.config/hypr/noctalia/config.toml;
     ".config/hypr/wallpapers" = {
       source = ../../../hypr/.config/hypr/wallpapers;
       recursive = true;
@@ -287,8 +288,9 @@ in
   # ============================================================
   home.packages = (with pkgs; [
     eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh
-    grim slurp swappy wl-clipboard cliphist
-    dconf glib gsettings-desktop-schemas
+    grim slurp swappy wl-clipboard dconf
+    glib gsettings-desktop-schemas
+    noctalia uwsm adw-gtk-theme qt6ct hyprpicker swash kde-cli-tools
   ]) ++ [ wall-manager power-menu ];
 
   dconf.enable = true;

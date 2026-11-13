@@ -71,7 +71,7 @@ hl.bind(mainMod .. " + C",          hl.dsp.exec_cmd(launchPrefix .. CALCULATOR))
 hl.bind("XF86Calculator",           hl.dsp.exec_cmd(launchPrefix .. CALCULATOR))
 hl.bind(mainMod .. " + W",          hl.dsp.exec_cmd(launchPrefix .. BROWSER))
 hl.bind("CONTROL + SHIFT + Escape", hl.dsp.exec_cmd(launchPrefix .. TERMINAL .. " -e btop"))
-hl.bind(mainMod .. " + L",          hl.dsp.exec_cmd("hyprlock"))
+hl.bind(mainMod .. " + L",          hl.dsp.exec_cmd("noctalia msg session lock"))
 
 ---------------------------
 ---- HARDWARE CONTROLS ----
@@ -103,15 +103,15 @@ hl.bind("Print",               hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy
 hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | swappy -f -"))
 
 -- Clipboard
-hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("cliphist list | rofi -dmenu -p \"Clipboard\" | cliphist decode | wl-copy"))
+hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("noctalia msg panel-toggle clipboard"))
 
 -- Wallpaper & Themes
-hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("wall-manager static"))
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("wall-manager select"))
-hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("wall-manager switch"))
+hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("noctalia msg panel-toggle wallpaper"))
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("noctalia msg panel-toggle wallpaper"))
+hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("noctalia msg panel-toggle control-center"))
 
 -- Notifications
-hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("swaync-client -t -sw"))
+hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("noctalia msg panel-toggle control-center notifications"))
 
 -------------------------------
 ---- WORKSPACES & MONITORS ----
