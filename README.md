@@ -1,187 +1,253 @@
+# StardustArch (Hyprland + Nix + Noctalia)
 
-# StardustArch (Hyprland + Nix)
+![Arch Linux](https://img.shields.io/badge/Arch%20Linux-1793D1?logo=arch-linux&logoColor=white) ![Nix](https://img.shields.io/badge/Nix-5277C3?logo=nixos&logoColor=white) ![Hyprland](https://img.shields.io/badge/Hyprland-00A4CC?logo=linux&logoColor=white) ![Noctalia](https://img.shields.io/badge/Noctalia-6C5CE7?logo=wayland&logoColor=white)
 
-![Arch Linux](https://img.shields.io/badge/Arch%20Linux-1793D1?logo=arch-linux&logoColor=white) ![Nix](https://img.shields.io/badge/Nix-5277C3?logo=nixos&logoColor=white) ![Hyprland](https://img.shields.io/badge/Hyprland-00A4CC?logo=linux&logoColor=white)
+A reproducible Arch Linux environment managed by **Pacman** (System layer) and **Nix Home Manager** (User layer), with **Noctalia** as the unified Wayland desktop shell.
 
-A reproducible Arch Linux environment managed by **Pacman** (System layer) and **Nix Home Manager** (User layer).
+Featuring a custom **Dynamic Theme System** (Aizome, Nord, Gruvbox) that instantly syncs Wallpaper, Kitty, GTK, QT and Hyprland borders via **Noctalia** templates.
 
-Featuring a custom **Dynamic Theme System** (Aizome, Nord, Gruvbox) that instantly syncs Wallpaper, Waybar, Rofi, GTK and QT.
+---
 
-## Features
+## ✨ Features
 
 * **Hybrid Architecture:**
-    * **System Core:** Drivers, Hyprland, and Waybar installed via `pacman` for stability.
+    * **System Core:** Drivers, Hyprland, Greetd, and Noctalia installed via `pacman` for stability.
     * **User Space:** Shell, Neovim, and CLI tools managed via `Nix` for portability.
 * **Automated Bootstrap:** `archinstall` JSON configurations for a hands-off base installation.
-* **Theme Engine:** Custom scripts (`wall-manager`) to switch themes and wallpapers on the fly.
-* **Gaming Ready:** Pre-configured with GameMode and MangoHud.
+* **Noctalia Desktop Shell:** Replaces Waybar, SwayNC, Rofi, hyprlock, hypridle, cliphist, and wall-manager with a single unified shell (bar, launcher, notifications, lockscreen, clipboard, wallpaper).
+* **Hyprland 0.55+ Lua Config:** Configuration in Lua (no hyprlang), mirroring the CachyOS structure.
+* **Greetd + tuigreet:** Minimal TTY greeter replacing SDDM.
+* **Theme Palettes:** Aizome (Deep Blue), Nord (Arctic Frost), Gruvbox (Retro Groove) — synced across Kitty, GTK, QT, and Hyprland borders.
+
+---
 
 ## 📂 Repository Structure
 
 ```text
 ├── bootstrap/           # JSON configs for the Arch ISO installer
-│   ├── UserConfig.json  # Minimal profile & Btrfs layout (Diskless)
-│   └── UserCredentials.json # User setup (stardust)
+│   ├── UserConfig.json  # Minimal profile & Btrfs layout
+│   └── UserCredentials.json # User setup (username/password)
+├── cachyos/             # Reference configs from CachyOS Hypr/Noctalia (NOT committed)
+├── noctalia/            # Noctalia shell configuration
+│   └── .config/noctalia/config.toml
 ├── nix/                 # Nix Home Manager configurations
-│   ├── flake.nix        # Flake entry point
+│   ├── flake.nix        # Flake entry point (dynamic username)
 │   └── home.nix         # User packages, Aliases & Dotfiles logic
-├── hypr/                # Hyprland configs (sourced by Nix)
-├── kitty/               # Kitty terminal configs (sourced by Nix)
-├── rofi/                # Rofi menus & theme configs (sourced by Nix)
-├── swaync/              # Notification center configs (sourced by Nix)
-├── waybar/              # Waybar status bar configs (sourced by Nix)
+├── hypr/                # Hyprland configs (Lua 0.55+)
+│   ├── .config/hypr/
+│   │   ├── hyprland.lua     # Entry point (loads all config modules)
+│   │   ├── xdph.conf        # Screencopy config
+│   │   ├── config/          # Lua modules: variables, colors, environment, monitors, inputs, decorations, animations, misc, workspaces, windowrules, autostart, binds
+│   │   ├── wallpapers/      # Theme wallpapers (aizome, nord, gruvbox)
+│   │   └── legacy/          # Old .conf and .lua files (archived, not used)
+├── kitty/               # Kitty terminal config (includes Noctalia theme)
+│   └── .config/kitty/kitty.conf
+├── rofi/                # Rofi configs (legacy, kept for reference)
+├── swaync/              # SwayNC configs (legacy, kept for reference)
+├── waybar/              # Waybar configs (legacy, kept for reference)
 ├── setup_install.sh     # Main post-install automation script
 └── README.md
-
 ```
 
-## 📸 Showcases (Screenshots)
+---
 
-<!-- O **StardustArch** não é apenas funcional, é estético. Aqui está o visual do sistema nos três modos principais:
+## 🎨 Theme Palettes
 
-### 🌌 Aizome (Deep Blue & Traditional)
-*O tema padrão, focado em tons escuros de azul e contrastes suaves.*
+Three palettes are maintained and synced across the system:
 
-| Desktop (Hyprland) | Kitty Terminal | VS Code / Codium |
-| :---: | :---: | :---: |
-| ![Aizome Desktop](assets/screenshots/aizome_desktop.png) | ![Aizome Kitty](assets/screenshots/aizome_kitty.png) | ![Aizome VSCode](assets/screenshots/aizome_vscode.png) |
+| Palette | Style | Best For |
+|---------|-------|----------|
+| **Aizome** | Deep Blue & Traditional | Default, focused dark blue |
+| **Nord** | Arctic Frost | Cold, clean blues and grays |
+| **Gruvbox** | Retro Groove | Warm, earthy tones |
+
+Theme switching is handled by **Noctalia** (Super + Z → Settings → Templates) or via the Noctalia control center. Themes sync to:
+* Hyprland borders and decorations
+* Kitty terminal (`include current-theme.conf`)
+* GTK3/GTK4 applications
+* QT6 applications (via qt6ct)
+* Wallpaper selection
 
 ---
 
-### ❄️ Nord (Arctic Frost)
-*Inspirado no ártico, com tons de azul gélido e cinza limpo.*
+## 🖥️ Installation Guide
 
-| Desktop (Hyprland) | Kitty Terminal | VS Code / Codium |
-| :---: | :---: | :---: |
-| ![Nord Desktop](assets/screenshots/nord_desktop.png) | ![Nord Kitty](assets/screenshots/nord_kitty.png) | ![Nord VSCode](assets/screenshots/nord_vscode.png) | -->
+### ⚠️ CRITICAL WARNING
 
-<!-- --- -->
+The username defined in `bootstrap/UserCredentials.json` **MUST MATCH** the username you create during the Arch ISO installation. The Nix flake detects the username from the `$USER` environment variable at runtime.
 
-### 🪵 Gruvbox (Retro Groove)
-<!-- *Cores quentes e terrosas para um visual retro e confortável para os olhos.* -->
-
-| Desktop (Hyprland) | Kitty Terminal | VS Code / Codium |
-| :---: | :---: | :---: |
-| ![Gruvbox Desktop](assets/screenshots/gruvbox/desktop.png) | ![Gruvbox Kitty](assets/screenshots/gruvbox/kitty.png) | ![Gruvbox VSCode](assets/screenshots/gruvbox/vscodium.png) |
----
-
-## Installation Guide
-
-
-> **⚠️ CRITICAL WARNING:** The username defined in `bootstrap/UserCredentials.json` (default: `stardust`) **MUST MATCH** the username configured in:
-> * `nix/flake.nix`
-> * `nix/home.nix`
-> * `setup_install.sh`
->
->
 ### Phase 1: Base System (The ISO)
 
-1.  **Boot & Connect:**
-    * Boot into the Arch Linux ISO.
-    * Ensure you have internet access (check with `ping -c 3 google.com`).
+1. **Boot & Connect:**
+   * Boot into the Arch Linux ISO.
+   * Ensure you have internet access (`ping -c 3 google.com`).
 
-2.  **Download Configs:**
-    Fetch the configuration files directly from the repository to the temporary RAM (`/tmp`).
+2. **Download Configs:**
+   Fetch the configuration files to temporary RAM (`/tmp`):
 
-    ```bash
-      cd /tmp
-      curl -O https://raw.githubusercontent.com/StardustArch/arch-install-script/main/bootstrap/UserConfig.json
-      curl -O https://raw.githubusercontent.com/StardustArch/arch-install-script/main/bootstrap/UserCredentials.json
-    ```
+   ```bash
+   cd /tmp
+   curl -O https://raw.githubusercontent.com/StardustArch/arch-install-script/main/bootstrap/UserConfig.json
+   curl -O https://raw.githubusercontent.com/StardustArch/arch-install-script/main/bootstrap/UserCredentials.json
+   ```
 
-3.  **Run Installer:**
-    Execute the automated installer pointing to the downloaded files:
+3. **Run Installer:**
+   Execute the automated installer:
 
-    ```bash
-    archinstall --config /tmp/UserConfig.json --creds /tmp/UserCredentials.json
-    ```
+   ```bash
+   archinstall --config /tmp/UserConfig.json --creds /tmp/UserCredentials.json
+   ```
 
 4. **Select Disk:**
-* Go to **"Disk Configuration"**.
-* Select your target drive (e.g., `/dev/nvme0n1`).
-* Select **Btrfs** (recommended).
-* **Install**.
-
+   * Go to **"Disk Configuration"**.
+   * Select your target drive (e.g., `/dev/nvme0n1`).
+   * Select **Btrfs** (recommended).
+   * **Install**.
 
 5. **Reboot:**
-Once finished, reboot into your new system and login as `<your_user_name>`.
----
+   Once finished, reboot into your new system and login as your chosen username.
 
 ### Phase 2: User Setup (The Magic)
 
 1. **Clone the Repository:**
-```bash
-git clone https://github.com/StardustArch/arch-install-script.git
-cd ~/arch-install-script
 
-```
-
+   ```bash
+   git clone https://github.com/StardustArch/arch-install-script.git
+   cd ~/arch-install-script
+   ```
 
 2. **Run the Installer:**
-This script will install Hyprland, initialize Nix, and set up your dotfiles.
-```bash
-chmod +x setup_install.sh
-./setup_install.sh
+   This script installs Hyprland, Greetd, Noctalia, initializes Nix, and sets up your dotfiles.
 
-```
-
+   ```bash
+   chmod +x setup_install.sh
+   ./setup_install.sh
+   ```
 
 3. **Finalize:**
-Once the script finishes, **reboot** one last time.
+   Once the script finishes, **reboot** one last time. You will be greeted by **tuigreet** (Greetd) — log in and Hyprland with Noctalia will start automatically.
 
 ---
 
-## 🎨 Theme Management
+## 🖥️ Display Manager: Greetd + tuigreet
 
-This setup uses a custom logic to sync themes across the entire system.
+The system uses **Greetd** as the display manager with **tuigreet** as the greeter frontend (replacing SDDM).
 
-### Changing Themes
+* Config file: `/etc/greetd/config.toml`
+* Greeter: `tuigreet --time --time-format '%H:%M | %a %h %d' --remember --remember-user-session --cmd 'uwsm start hyprland-uwsm.desktop'`
+* Greeter user: `greeter`
 
-Use the shortcut `Super + T` to open the Theme Picker, or run via terminal:
+To reconfigure the greeter, edit `/etc/greetd/config.toml` and restart the service:
 
 ```bash
-# Available themes: nord, aizome, gruvbox
-set-theme aizome
-
+sudo systemctl restart greetd
 ```
-
-**What happens when you switch?**
-
-1. **Nix:** Rebuilds GTK/QT configs.
-2. **Wallpaper:** Changes to a random image from the theme folder.
-3. **Waybar/Rofi:** Reloads CSS colors.
-4. **VS Code:** Updates the color theme automatically.
-
-### Wallpapers
-
-* **Picker:** Press `Super + W` to select a wallpaper visually via Rofi.
-* **Random:** Press `Super + Shift + W` to cycle a random wallpaper from the current theme.
 
 ---
 
-## ⌨️ Keybindings
+## 🐚 Noctalia Desktop Shell
 
-This setup relies on a dedicated configuration file for keybindings. Instead of listing hundreds of shortcuts here, you can view the live configuration directly on your system.
+Noctalia replaces the traditional patchwork of Waybar + SwayNC + Rofi + hyprlock + hypridle + cliphist + wall-manager with a single unified shell.
 
-**To view all keybindings:**
-```bash
-cat ~/.config/hypr/keybinds.conf
-```
+### What Noctalia Provides
+
+| Component | Replaces |
+|-----------|----------|
+| Bar (workspaces, clock, media, tray, notifications) | Waybar |
+| Launcher (app search) | Rofi / dmenu |
+| Notifications & Control Center | SwayNC / mako |
+| Lockscreen | hyprlock |
+| Idle handling | hypridle |
+| Clipboard history | cliphist |
+| Wallpaper | wall-manager / swaybg |
+
+### Keybindings (Noctalia IPC)
+
+All Noctalia commands are invoked via `noctalia msg <command>` from Hyprland Lua keybinds:
+
+| Key | Action |
+|-----|--------|
+| `Super + Space` | Open launcher |
+| `Super + V` | Clipboard history |
+| `Super + W` | Wallpaper picker |
+| `Super + T` | Control Center |
+| `Super + A` | Notifications |
+| `Super + L` | Lock screen |
+| `Super + Z` | Noctalia Settings |
+
+### Noctalia Configuration
+
+Main config: `noctalia/.config/noctalia/config.toml`
+
+This TOML file controls the bar layout, widgets, theme, lockscreen, idle behavior, and more. It is deployed via Home Manager to `~/.config/noctalia/config.toml`.
+
 ---
 
-## 🛠️ Shell Aliases (Power Tools)
+## 🐱 Kitty Terminal
 
-The Zsh environment is boosted with these shortcuts for productivity:
+Kitty is configured to receive its theme dynamically from Noctalia:
+
+* Config: `kitty/.config/kitty/kitty.conf`
+* Includes `current-theme.conf` (generated by Noctalia's Kitty template)
+* No hardcoded colors — all colors are injected by Noctalia at theme switch time
+
+---
+
+## ⌨️ Shell Aliases (Power Tools)
+
+The Zsh environment includes these shortcuts:
 
 | Alias | Command | Description |
-| :--- | :--- | :--- |
+|-------|---------|-------------|
 | `ls` / `ll` | `eza` | Modern directory listing with icons |
 | `cat` | `bat` | File preview with syntax highlighting |
 | `update` | `pacman -Syu` | Sync and update system base |
 | `conf` | `cd ~/arch-install-script` | Quick jump to this repository |
-| **`hms`** | `home-manager switch...` | **Apply Nix changes** (Rebuild system) |
+| **`hms`** | `home-manager switch...` | **Apply Nix changes** (Rebuild user space) |
 | `hmu` | `nix flake update...` | Update Nix dependencies & apply |
-| `nclean` | `nix-collect-garbage` | Clean old Nix generations (Free space) |
+| `nclean` | `nix-collect-garbage` | Clean old Nix generations |
+
+---
+
+## 🗑️ Removed / Deprecated Components
+
+The following components were intentionally removed from the stack:
+
+| Component | Reason | Replaced By |
+|-----------|--------|-------------|
+| SDDM | Heavy, Qt-based | Greetd + tuigreet |
+| Waybar | Separate bar process | Noctalia Bar |
+| SwayNC | Separate notification daemon | Noctalia Notifications |
+| Rofi | Separate launcher | Noctalia Launcher |
+| hyprlock | Separate lockscreen | Noctalia Lockscreen |
+| hypridle | Separate idle handler | Noctalia Idle |
+| cliphist | Separate clipboard manager | Noctalia Clipboard |
+| wall-manager | Custom wallpaper script | Noctalia Wallpaper |
+| GameMode / MangoHud / Gamescope | Gaming bloat | Removed (no gaming support) |
+| Flatpak / Podman / Distrobox | Container bloat | Removed |
+
+---
+
+## 🔧 Troubleshooting
+
+**Noctalia doesn't start on login:**
+* Ensure Greetd is enabled: `sudo systemctl enable --now greetd`
+* Check tuigreet config: `cat /etc/greetd/config.toml`
+* Verify Noctalia is installed: `which noctalia`
+
+**Theme doesn't sync to Kitty:**
+* Verify Kitty includes the theme: `grep include ~/.config/kitty/kitty.conf`
+* Restart Kitty after theme change in Noctalia Settings
+
+**Hyprland Lua config errors:**
+* Check Hyprland version: `hyprland --version` (must be 0.55+)
+* Check Lua syntax: `hyprctl reload` and watch for errors in the terminal
+
+---
+
+## 📜 License
+
+MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
