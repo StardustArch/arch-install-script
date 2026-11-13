@@ -158,7 +158,7 @@ sudo tee /etc/greetd/config.toml > /dev/null <<'EOF'
 vt = 1
 
 [default_session]
-command = "tuigreet --time --time-format '%H:%M | %a %h %d' --remember --remember-user-session --cmd Hyprland"
+command = "tuigreet --time --time-format '%H:%M | %a %h %d' --remember --remember-user-session --cmd 'uwsm start hyprland-uwsm.desktop'"
 user = "greeter"
 EOF
 
