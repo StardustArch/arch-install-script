@@ -1,17 +1,17 @@
 {
-  description = "Configuração Home Manager do Paulo";
+  description = "Configuração Home Manager do Stardust";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    # Canal estável, alinhado com home.stateVersion = "25.11".
+    # O flake.lock fixa o commit exacto; só muda com `nix flake update`.
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # 1. Adiciona o nix-flatpak aqui
-    nix-flatpak.url = "github:gmodena/nix-flatpak";
   };
 
-  outputs = { nixpkgs, home-manager, nix-flatpak, ... }:
+  outputs = { nixpkgs, home-manager, ... }:
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
@@ -20,8 +20,7 @@
     in {
       homeConfigurations."${username}" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
-        # 2. Passa o nix-flatpak e o username para dentro do home.nix
-        extraSpecialArgs = { inherit nix-flatpak username; }; 
+        extraSpecialArgs = { inherit username; };
         modules = [ ./home.nix ];
       };
     };

@@ -1,32 +1,22 @@
-{ config, pkgs, lib, nix-flatpak, username, ... }:
+{ config, pkgs, lib, username, ... }:
 
 let
+  home = config.home.homeDirectory;
+
   # ============================================================
-  # CENTRAL DE TEMAS (O teu "Switch" de cores)
+  # CENTRAL DE TEMAS
   # ============================================================
-  
-  # 1. Escolhe o teu tema aqui: "nord", "aizome" ou "gruvbox"
-  rawTheme = builtins.readFile "${config.home.homeDirectory}/.cache/current_theme";
+  # Lê o tema da cache; se não existir, usa "aizome" (evita falhar a avaliação)
+  themeFile = "${home}/.cache/current_theme";
+  rawTheme = if builtins.pathExists themeFile then builtins.readFile themeFile else "aizome";
   selectedTheme = lib.removeSuffix "\n" rawTheme;
 
-# --- 2. MAPEAMENTO DE TEMAS GTK ---
-  # Aqui definimos qual pacote GTK corresponde ao nosso tema
+  # Só o pacote GTK do tema ACTIVO é instalado (antes eram os três)
   gtkThemeConfig = {
-    nord = {
-      pkg = pkgs.nordic;
-      name = "Nordic";
-    };
-    aizome = {
-      pkg = pkgs.tokyonight-gtk-theme; # O mais parecido com Aizome
-      name = "Tokyonight-Dark";
-    };
-    gruvbox = {
-      pkg = pkgs.gruvbox-dark-gtk;
-      name = "Gruvbox-Dark-B";
-    };
+    nord    = { pkg = pkgs.nordic;               name = "Nordic"; };
+    aizome  = { pkg = pkgs.tokyonight-gtk-theme; name = "Tokyonight-Dark"; };
+    gruvbox = { pkg = pkgs.gruvbox-dark-gtk;     name = "Gruvbox-Dark-B"; };
   };
-
-  # Seleciona a configuração baseada no tema atual
   currentGtkTheme = gtkThemeConfig.${selectedTheme};
 
   themes = {
@@ -49,19 +39,17 @@ let
       red = "ea6962"; orange = "e78a4e"; yellow = "d8a657"; green = "a9b665"; purple = "d3869b";
     };
   };
-
-  # Esta variável 'colors' será usada em todo o resto do ficheiro
   colors = themes.${selectedTheme};
 
-# --- 2. SCRIPT: POWER MENU (ROFI) ---
+  # ============================================================
+  # SCRIPTS
+  # ============================================================
   power-menu = pkgs.writeShellScriptBin "power-menu" ''
-    # Opções com ícones Nerd Fonts
     shutdown="⏻ Desligar"
     reboot="⟳ Reiniciar"
     lock="🔒 Bloquear"
     logout="⇠ Sair"
-    
-    # Chama o Rofi
+
     selected=$(echo -e "$lock\n$logout\n$reboot\n$shutdown" | rofi -dmenu -p "Energia" -theme-str 'window {width: 300px;}')
 
     case $selected in
@@ -71,30 +59,25 @@ let
       "$logout") hyprctl dispatch exit ;;
     esac
   '';
-# --- 3. SCRIPT: WALL MANAGER (Versão ROFI) ---
+
   wall-manager = pkgs.writeShellApplication {
     name = "wall-manager";
     runtimeInputs = with pkgs; [ swaybg coreutils findutils procps gnused ];
     text = ''
-      BASE_DIR="${config.home.homeDirectory}/arch-install-script/hypr/.config/hypr/wallpapers"
+      BASE_DIR="${home}/arch-install-script/hypr/.config/hypr/wallpapers"
       THEME_FILE="$HOME/.cache/current_theme"
-      
-      # Função de Aplicação (Mantida igual, só muda a interface)
+
       apply_wall() {
           local wall="$1"
           [ -z "$wall" ] && exit 0
-          
-          # Aplica wallpaper
+
           pkill swaybg || true
           nohup swaybg -i "$wall" -m fill > /dev/null 2>&1 &
-          
-          # Deteta tema pela pasta
-          NEW_THEME=$(basename "$(dirname "$wall")")
 
+          NEW_THEME=$(basename "$(dirname "$wall")")
           echo "$NEW_THEME" > "$THEME_FILE"
 
-          ${config.home.homeDirectory}/.config/hypr/scripts/vscode-theme.sh "$NEW_THEME" || true
-
+          ${home}/.config/hypr/scripts/vscode-theme.sh "$NEW_THEME" || true
       }
 
       ACTION="''${1:-select}"
@@ -103,8 +86,6 @@ let
 
       case "$ACTION" in
           "static")
-              # Apenas reaplica o wallpaper baseado no tema atual da cache
-              # Ideal para o 'exec-once' no Hyprland
               echo "Aplicando wallpaper estático para o tema: $CURRENT_THEME"
               RANDOM_WALL=$(find "$TARGET_DIR" -maxdepth 1 -type f | shuf -n 1)
               if [ -n "$RANDOM_WALL" ]; then
@@ -113,7 +94,6 @@ let
               ;;
 
           "select")
-              # Usa Rofi para listar ficheiros na pasta do tema atual
               SELECTED=$(find "$TARGET_DIR" -maxdepth 1 -type f -printf "%f\n" | sort | rofi -dmenu -p "Wallpaper ($CURRENT_THEME)" -format 's')
               if [ -n "$SELECTED" ]; then
                   apply_wall "$TARGET_DIR/$SELECTED"
@@ -121,27 +101,21 @@ let
               ;;
 
           "switch")
-              # Recebe o tema como segundo argumento
               NEW_THEME="$2"
 
-              # Verifica se foi passado argumento
               if [ -z "$NEW_THEME" ]; then
                   echo "Uso: wall-manager switch <tema>"
                   exit 1
               fi
 
-              # Verifica se o diretório do tema existe
               if [ ! -d "$BASE_DIR/$NEW_THEME" ]; then
                   echo "Tema '$NEW_THEME' não existe em $BASE_DIR"
                   exit 1
               fi
 
-              # Guarda o novo tema
               echo "$NEW_THEME" > "$THEME_FILE"
 
-              # Escolhe wallpaper aleatório do tema
               RANDOM_WALL=$(find "$BASE_DIR/$NEW_THEME" -type f | shuf -n 1)
-
               if [ -n "$RANDOM_WALL" ]; then
                   apply_wall "$RANDOM_WALL"
               fi
@@ -150,459 +124,293 @@ let
     '';
   };
 in
-
-
 {
-
-  imports = [
-    nix-flatpak.homeManagerModules.nix-flatpak
-  ];
-
-  # Home Manager needs a bit of information about you and the paths it should
-  # manage.
   home.username = username;
   home.homeDirectory = "/home/${username}";
+  home.stateVersion = "25.11"; # Não alterar sem ler as release notes.
 
-  # This value determines the Home Manager release that your configuration is
-  # compatible with. This helps avoid breakage when a new Home Manager release
-  # introduces backwards incompatible changes.
-  #
-  # You should not change this value, even if you update Home Manager. If you do
-  # want to update the value, then make sure to first check the Home Manager
-  # release notes.
-  home.stateVersion = "25.11"; # Please read the comment before changing.
-
-  # The home.packages option allows you to install Nix packages into your
-  # environment.
   # ============================================================
-  # GERAÇÃO DE FICHEIROS DE CORES (Hyprland, Waybar, Rofi)
+  # FICHEIROS (cores geradas + dotfiles do repo)
   # ============================================================
-  
-  # Gera o colors.conf para o Hyprland
-  home.file.".config/hypr/colors.conf".text = ''
-    $bg0 = rgba(${colors.bg0}ff)
-    $bg1 = rgba(${colors.bg1}ff)
-    $bg3 = rgba(${colors.bg3}ff)
-    $fg0 = rgba(${colors.fg0}ff)
-    $fg2 = rgba(${colors.fg2}ff)
-    $accent1 = rgba(${colors.accent1}ff)
-    $accent2 = rgba(${colors.accent2}ff)
-    $accent3 = rgba(${colors.accent3}ff)
-    $shadow_col = rgba(00000055)
-    $tk_bg = 0xff${colors.bg0}
-    $tk_base = 0xff${colors.bg1}
-    $tk_accent = 0xff${colors.accent1}
-    $tk_text = 0xff${colors.fg0}
-  '';
+  home.file = {
+    # --- Cores geradas a partir do tema activo ---
+    ".config/hypr/colors.conf".text = ''
+      $bg0 = rgba(${colors.bg0}ff)
+      $bg1 = rgba(${colors.bg1}ff)
+      $bg3 = rgba(${colors.bg3}ff)
+      $fg0 = rgba(${colors.fg0}ff)
+      $fg2 = rgba(${colors.fg2}ff)
+      $accent1 = rgba(${colors.accent1}ff)
+      $accent2 = rgba(${colors.accent2}ff)
+      $accent3 = rgba(${colors.accent3}ff)
+      $shadow_col = rgba(00000055)
+      $tk_bg = 0xff${colors.bg0}
+      $tk_base = 0xff${colors.bg1}
+      $tk_accent = 0xff${colors.accent1}
+      $tk_text = 0xff${colors.fg0}
+    '';
 
-  # Gera o colors.css para Waybar e SwayNC
-  home.file.".config/waybar/colors.css".text = ''
-    @define-color bg0 #${colors.bg0};
-    @define-color bg1 #${colors.bg1};
-    @define-color bg3 #${colors.bg3};
-    @define-color fg0 #${colors.fg0};
-    @define-color fg2 #${colors.fg2};
-    @define-color accent1 #${colors.accent1};
-    @define-color accent3 #${colors.accent3};
-    @define-color red #${colors.red};
-    @define-color yellow #${colors.yellow};
-    @define-color green #${colors.green};
-  '';
+    ".config/waybar/colors.css".text = ''
+      @define-color bg0 #${colors.bg0};
+      @define-color bg1 #${colors.bg1};
+      @define-color bg3 #${colors.bg3};
+      @define-color fg0 #${colors.fg0};
+      @define-color fg2 #${colors.fg2};
+      @define-color accent1 #${colors.accent1};
+      @define-color accent3 #${colors.accent3};
+      @define-color red #${colors.red};
+      @define-color yellow #${colors.yellow};
+      @define-color green #${colors.green};
+    '';
 
-# Gera o colors.rasi para o Rofi
+    ".config/rofi/colors.rasi".text = ''
+      * {
+        bg: #${colors.bg0}f2;
+        bg-alt: #${colors.bg1};
+        bg-sel: #${colors.bg2};
+        fg: #${colors.fg0};
+        accent: #${colors.accent1};
+        muted: #${colors.bg3};
+      }
+    '';
 
-home.file.".config/rofi/colors.rasi".text = ''
+    ".config/hypr/env.conf".text = ''
+      env = XCURSOR_THEME,Bibata-Modern-Ice
+      env = XCURSOR_SIZE,24
+      env = GTK_THEME,${currentGtkTheme.name}
+    '';
 
-* {
+    # --- Dotfiles do repo ---
+    ".config/hypr/hyprland.conf".source = ../../../hypr/.config/hypr/hyprland.conf;
+    ".config/hypr/keybinds.conf".source = ../../../hypr/.config/hypr/keybinds.conf;
+    ".config/hypr/autostart.conf".source = ../../../hypr/.config/hypr/autostart.conf;
+    ".config/hypr/hyprtoolkit.conf".source = ../../../hypr/.config/hypr/hyprtoolkit.conf;
+    ".config/hypr/hyprlock.conf".source = ../../../hypr/.config/hypr/hyprlock.conf;
+    ".config/hypr/hypridle.conf".source = ../../../hypr/.config/hypr/hypridle.conf;
+    ".config/waybar/config.jsonc".source = ../../../waybar/.config/waybar/config.jsonc;
+    ".config/waybar/style.css".source = ../../../waybar/.config/waybar/style.css;
+    ".config/swaync/config.json".source = ../../../swaync/.config/swaync/config.json;
+    ".config/swaync/style.css".source = ../../../swaync/.config/swaync/style.css;
+    ".config/rofi/config.rasi".source = ../../../rofi/.config/rofi/config.rasi;
+    ".config/hypr/wallpapers" = {
+      source = ../../../hypr/.config/hypr/wallpapers;
+      recursive = true;
+    };
 
-bg: #${colors.bg0}f2;
+    ".config/hypr/scripts/vscode-theme.sh" = {
+      executable = true;
+      text = ''
+        #!/bin/bash
+        VSCODE_SETTINGS="${home}/.config/VSCodium/User/settings.json"
 
-bg-alt: #${colors.bg1};
-
-bg-sel: #${colors.bg2};
-
-fg: #${colors.fg0};
-
-accent: #${colors.accent1};
-
-muted: #${colors.bg3};
-
-}
-
-'';
-
-home.file = {
-  # O Nix vai buscar o ficheiro ao teu repo e cria o link em ~/.config/hypr/
-  ".config/hypr/hyprland.conf".source = ../../../hypr/.config/hypr/hyprland.conf;
-  ".config/hypr/keybinds.conf".source = ../../../hypr/.config/hypr/keybinds.conf;
-  ".config/hypr/autostart.conf".source = ../../../hypr/.config/hypr/autostart.conf;
-  ".config/hypr/hyprtoolkit.conf".source = ../../../hypr/.config/hypr/hyprtoolkit.conf;
-  ".config/hypr/hyprlock.conf".source = ../../../hypr/.config/hypr/hyprlock.conf;
-  ".config/hypr/hypridle.conf".source = ../../../hypr/.config/hypr/hypridle.conf;
-  ".config/waybar/config.jsonc".source = ../../../waybar/.config/waybar/config.jsonc;
-  ".config/waybar/style.css".source = ../../../waybar/.config/waybar/style.css;
-  ".config/swaync/config.json".source = ../../../swaync/.config/swaync/config.json;
-  ".config/swaync/style.css".source = ../../../swaync/.config/swaync/style.css;
-  ".config/rofi/config.rasi".source = ../../../rofi/.config/rofi/config.rasi;
-  ".config/hypr/wallpapers" = {
-    source = ../../../hypr/.config/hypr/wallpapers;
-    recursive = true; # Garante que copia subpastas, se existirem
-  };
-".config/hypr/env.conf".text = ''
-    # --- CURSOR (Estático, pois gostas do Bibata) ---
-    env = XCURSOR_THEME,Bibata-Modern-Ice
-    env = XCURSOR_SIZE,24
-
-    # --- TEMAS (Dinâmico gerado pelo Nix) ---
-    # O Nix preenche isto com "Nordic", "Tokyonight-Dark" ou "Gruvbox-Dark-B"
-    env = GTK_THEME,${currentGtkTheme.name}
-    
-    # Força Qt a usar o estilo GTK2 (para ler o tema acima)
-    env = QT_QPA_PLATFORMTHEME,gtk2
-  '';
-
-".config/hypr/scripts/vscode-theme.sh" = {
-  executable = true;
-  text = ''
-    #!/bin/bash
-    
-    # Caminho do settings.json do VSCodium
-    VSCODE_SETTINGS="${config.home.homeDirectory}/.config/VSCodium/User/settings.json"
-    
-    # Garante que o ficheiro existe
-    if [ ! -f "$VSCODE_SETTINGS" ]; then
-        mkdir -p "$(dirname "$VSCODE_SETTINGS")"
-        echo "{}" > "$VSCODE_SETTINGS"
-    fi
-
-    update_theme() {
-        local theme="$1"
-        
-        # Usa o 'sed' para substituir a linha do tema no JSON
-        # Se a linha não existir, poderiamos usar 'jq', mas 'sed' é mais universal para replacement simples
-        
-        if grep -q "workbench.colorTheme" "$VSCODE_SETTINGS"; then
-            # Se ja existe, substitui
-            sed -i "s/\"workbench.colorTheme\": \".*\"/\"workbench.colorTheme\": \"$theme\"/" "$VSCODE_SETTINGS"
-        else
-            # Se nao existe, adiciona antes da ultima chaveta
-            sed -i "$ s/}/,\n  \"workbench.colorTheme\": \"$theme\"\n}/" "$VSCODE_SETTINGS"
+        if [ ! -f "$VSCODE_SETTINGS" ]; then
+            mkdir -p "$(dirname "$VSCODE_SETTINGS")"
+            echo "{}" > "$VSCODE_SETTINGS"
         fi
-    }
 
-    case "$1" in
-        "nord")
-            update_theme "Nord"
-            ;;
-        "gruvbox")
-            update_theme "Gruvbox Dark Soft"
-            ;;
-        "aizome")
-            update_theme "Nightingale"
-            ;;
-        *)
-            echo "Uso: $0 [nord|gruvbox]"
-            ;;
-    esac
-  '';
-};
-};
+        update_theme() {
+            local theme="$1"
+            if grep -q "workbench.colorTheme" "$VSCODE_SETTINGS"; then
+                sed -i "s/\"workbench.colorTheme\": \".*\"/\"workbench.colorTheme\": \"$theme\"/" "$VSCODE_SETTINGS"
+            else
+                sed -i "$ s/}/,\n  \"workbench.colorTheme\": \"$theme\"\n}/" "$VSCODE_SETTINGS"
+            fi
+        }
 
-home.activation = {
-  restartServices = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    # Reiniciar Waybar (USR2 recarrega sem fechar)
-    # Usamos o pkill do Nix para garantir que o comando existe
+        case "$1" in
+            "nord")    update_theme "Nord" ;;
+            "gruvbox") update_theme "Gruvbox Dark Soft" ;;
+            "aizome")  update_theme "Nightingale" ;;
+            *)         echo "Uso: $0 [nord|gruvbox|aizome]" ;;
+        esac
+      '';
+    };
+  };
+
+  home.activation.restartServices = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     ${pkgs.procps}/bin/pkill -USR2 waybar || /usr/bin/waybar &
-    
-    # Reiniciar SwayNC
-    # 1. Verifica se está a correr usando o pgrep do Nix
+
     if ${pkgs.procps}/bin/pgrep -x "swaync" > /dev/null; then
-       # 2. Usa o swaync-client com caminho absoluto do Arch
        /usr/bin/swaync-client -R && /usr/bin/swaync-client -rs
     else
        /usr/bin/swaync &
     fi
   '';
-};
 
-# ============================================================
-  # ESTÉTICA DO SISTEMA (GTK & QT)
   # ============================================================
-
-  # 1. Configuração GTK (Thunar, Pavucontrol, Firefox, etc)
+  # GTK (Qt theming removido: usa qt6ct/qt5ct via pacman se precisares)
+  # ============================================================
   gtk = {
     enable = true;
-    
     theme = {
       name = currentGtkTheme.name;
       package = currentGtkTheme.pkg;
     };
-
     iconTheme = {
-      name = "Papirus-Dark"; # Vamos padronizar no Papirus que instalaste no Pacman
+      name = "Papirus-Dark";
       package = pkgs.papirus-icon-theme;
     };
-
     cursorTheme = {
       name = "Bibata-Modern-Ice";
       package = pkgs.bibata-cursors;
       size = 24;
     };
-
-    gtk3.extraConfig = {
-      gtk-application-prefer-dark-theme = 1;
-    };
-    gtk4.extraConfig = {
-      gtk-application-prefer-dark-theme = 1;
-    };
+    gtk3.extraConfig.gtk-application-prefer-dark-theme = 1;
+    gtk4.extraConfig.gtk-application-prefer-dark-theme = 1;
   };
 
-  # 2. Configuração Qt (Apps KDE, VLC, qBittorrent)
-# 2. Configuração Qt (Apps KDE, Dolphin, VLC)
-  qt = {
-    enable = true;
-    
-    # Motor de plataforma Qt que lê configs do GTK3
-    platformTheme.name = "gtk3"; 
-    
-    # O estilo "gtk2" NÃO EXISTE no Qt6. Usamos "adwaita-dark" como base segura.
-    # O motor de plataforma vai aplicar as cores do teu tema por cima disto.
-    style.name = "adwaita-dark";
+  home.sessionVariables = {
+    GTK_THEME = currentGtkTheme.name;
+    XDG_DATA_DIRS = "$HOME/.nix-profile/share:$HOME/.local/share:/usr/share:$XDG_DATA_DIRS";
   };
-  
-  # Variáveis de ambiente para garantir que o tema pega
-home.sessionVariables = {
-  GTK_THEME = currentGtkTheme.name;
-  QT_QPA_PLATFORMTHEME = lib.mkForce "gtk3";
-  XDG_DATA_DIRS = "$HOME/.nix-profile/share:$HOME/.local/share:/usr/share:$XDG_DATA_DIRS";
-};
 
   # ============================================================
-  # PROGRAMAS CONFIGURADOS
+  # PACOTES (só CLI e o essencial; fonte Nerd vem do pacman)
   # ============================================================
   home.packages = (with pkgs; [
-    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh nerd-fonts.jetbrains-mono grim slurp swappy wl-clipboard cliphist ripgrep fd tmux zoxide yazi dconf
-    glib
-    # Motores de Tema (Necessários para GTK funcionar bem)
-    gsettings-desktop-schemas
-    adwaita-qt
-    kdePackages.qt6ct
-    libsForQt5.qt5ct
-    
-    adwaita-qt6  # <--- IMPORTANTE para o Dolphin ter um estilo base escuro
-    qgnomeplatform
-  qgnomeplatform
-    nordic
-    gruvbox-dark-gtk
-    tokyonight-gtk-theme
-    bibata-cursors
-    papirus-icon-theme
+    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh
+    grim slurp swappy wl-clipboard cliphist
+    dconf glib gsettings-desktop-schemas
   ]) ++ [ wall-manager power-menu ];
-  dconf.enable = true; # Adiciona isto algures no teu ficheiro
-nixpkgs.config.allowUnfree = true;
 
-  xdg.configFile."kitty/kitty.conf".force = true;
+  dconf.enable = true;
+  nixpkgs.config.allowUnfree = true;
   fonts.fontconfig.enable = true;
+
+  # ============================================================
+  # PROGRAMAS
+  # ============================================================
+  xdg.configFile."kitty/kitty.conf".force = true;
   programs.kitty = {
     enable = true;
-    package = pkgs.runCommand "dummy" {} "mkdir -p $out/bin";
+    package = pkgs.runCommand "dummy" { } "mkdir -p $out/bin"; # binário vem do pacman
     settings = {
-      "linux_display_server" = "x11";
-# --- FONTE ---
-    "font_family"      = "JetBrainsMono Nerd Font";
-    "bold_font"        = "auto";
-    "italic_font"      = "auto";
-    "bold_italic_font" = "auto";
-    "font_size"        = "12.0";
+      linux_display_server = "x11";
 
-    # --- JANELA & VISUAL ---
-    "background_opacity" = "0.85";
-    "window_padding_width" = 10;
-    "hide_window_decorations" = "yes";
-    "confirm_os_window_close" = 0;
+      font_family = "JetBrainsMono Nerd Font";
+      bold_font = "auto";
+      italic_font = "auto";
+      bold_italic_font = "auto";
+      font_size = "12.0";
 
-    # --- CURSOR ---
-    "cursor_shape"     = "beam";
-    "cursor_blink_interval" = "0.5";
-    # --- MOUSE & URLS ---
-    "url_color"        = "#${colors.accent1}";
-    "url_style"        = "curly";
-    "detect_urls"      = "yes";
-    "copy_on_select"   = "yes";
+      background_opacity = "0.85";
+      window_padding_width = 10;
+      hide_window_decorations = "yes";
+      confirm_os_window_close = 0;
+
+      cursor_shape = "beam";
+      cursor_blink_interval = "0.5";
+
+      url_color = "#${colors.accent1}";
+      url_style = "curly";
+      detect_urls = "yes";
+      copy_on_select = "yes";
+
       cursor = "#${colors.accent1}";
       cursor_text_color = "#${colors.bg0}";
       foreground = "#${colors.fg0}";
       background = "#${colors.bg0}";
       selection_background = "#${colors.accent1}";
-      # Paleta ANSI
-      color0 = "#${colors.bg1}"; color8 = "#${colors.bg3}";
-      color1 = "#${colors.red}"; color9 = "#${colors.red}";
+
+      color0 = "#${colors.bg1}";  color8  = "#${colors.bg3}";
+      color1 = "#${colors.red}";  color9  = "#${colors.red}";
       color2 = "#${colors.green}"; color10 = "#${colors.green}";
       color3 = "#${colors.yellow}"; color11 = "#${colors.yellow}";
       color4 = "#${colors.accent2}"; color12 = "#${colors.accent2}";
       color5 = "#${colors.purple}"; color13 = "#${colors.purple}";
       color6 = "#${colors.accent1}"; color14 = "#${colors.accent0}";
-      color7 = "#${colors.fg1}"; color15 = "#${colors.fg2}";
+      color7 = "#${colors.fg1}";  color15 = "#${colors.fg2}";
     };
   };
 
   programs.git = {
-	enable=true;
-	settings.user={
-		name="StardustArch";
-		email="paulojoaocandrinho4@gmail.com";
-	};
+    enable = true;
+    settings.user = {
+      name = "StardustArch";
+      email = "paulojoaocandrinho4@gmail.com";
+    };
   };
+
   programs.zsh = {
-	enable=true;
-	enableCompletion=true;
-	autosuggestion.enable=true;
-	syntaxHighlighting.enable=true;
-	dotDir=config.home.homeDirectory;
-  initContent = ''
-    fastfetch
-    set-theme() {
-        local TEMA=$1
-        if [[ "$TEMA" != "nord" && "$TEMA" != "aizome" && "$TEMA" != "gruvbox" ]]; then
-          echo "❌ Tema inválido! Usa: nord, aizome ou gruvbox"
-          return 1
-        fi
-        
-        # Grava na cache (força a criação da pasta se não existir)
-        mkdir -p ~/.cache
-        echo "$TEMA" > "$HOME/.cache/current_theme"
-        
-        echo "🎨 Cache atualizada para: $(cat ~/.cache/current_theme)"
-        # 3. Executar o hms (Repara que agora não precisamos de 'git add' porque o código não mudou)
-        if home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#${username}; then
-            # 4. Sincronizar Wallpaper
-            ~/.nix-profile/bin/wall-manager switch "$1"
-            echo "🚀 Sistema atualizado para $1!"
-        else
-            echo "❌ Erro ao aplicar o Nix."
+    enable = true;
+    enableCompletion = true;
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+    dotDir = config.home.homeDirectory;
+    initContent = ''
+      fastfetch
+      set-theme() {
+          local TEMA=$1
+          if [[ "$TEMA" != "nord" && "$TEMA" != "aizome" && "$TEMA" != "gruvbox" ]]; then
+            echo "❌ Tema inválido! Usa: nord, aizome ou gruvbox"
             return 1
-        fi
+          fi
+
+          mkdir -p ~/.cache
+          echo "$TEMA" > "$HOME/.cache/current_theme"
+          echo "🎨 Cache atualizada para: $(cat ~/.cache/current_theme)"
+
+          if home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#${username}; then
+              ~/.nix-profile/bin/wall-manager switch "$1"
+              echo "🚀 Sistema atualizado para $1!"
+          else
+              echo "❌ Erro ao aplicar o Nix."
+              return 1
+          fi
       }
-  '';
-	shellAliases ={
-		ll="eza -l -g --icons";
-		ls="eza --icons";
-		cat="bat";
-		update="sudo pacman -Syu";
-    # --- NIX & HOME MANAGER ALIASES ---
-    hms = "home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#${username}";
-    hmu="nix flake update ~/arch-install-script/nix/.config/home-manager && hms";
-    nclean="nix-collect-garbage -d";
-    hme="cd ~/arch-install-script/nix/.config/home-manager && $EDITOR flake.nix";
-	};
+    '';
+    shellAliases = {
+      ll = "eza -l -g --icons";
+      ls = "eza --icons";
+      cat = "bat";
+      update = "sudo pacman -Syu";
+      hms = "home-manager switch -b backup --impure --flake ~/arch-install-script/nix/.config/home-manager#${username}";
+      hmu = "nix flake update --flake ~/arch-install-script/nix/.config/home-manager && hms";
+      nclean = "nix-collect-garbage -d";
+      hme = "cd ~/arch-install-script/nix/.config/home-manager && $EDITOR flake.nix";
+    };
   };
 
   programs.starship = {
-	enable=true;
-	enableZshIntegration=true;
+    enable = true;
+    enableZshIntegration = true;
   };
 
   programs.neovim = {
-	enable=true;
-	defaultEditor=true;
-	viAlias=true;
-	vimAlias=true;
-  };
-
-  # ==========================================
-  # FERRAMENTAS DE TERMINAL (INTEGRADAS)
-  # ==========================================
-
-   # 1. Zoxide: O 'cd' inteligente
-    programs.zoxide = {
-      enable = true;
-      enableZshIntegration = true;
-      # Substitui o comando 'cd' normal pelo zoxide (opcional, mas recomendado)
-      # Se preferires manter o cd normal, remove esta linha e usa 'z' para navegar
-      options = ["--cmd cd"]; 
-    };
-
-    # 2. Yazi: O Gestor de Ficheiros Visual
-    programs.yazi = {
-      enable = true;
-      enableZshIntegration = true;
-      # Configurações de shell wrapper (cria o comando 'y' que muda o diretório ao sair)
-      shellWrapperName = "y";
-    };
-
-    # 3. Tmux: O Multiplexer
-    programs.tmux = {
-      enable = true;
-      mouse = true;       # Permite usar o rato para redimensionar painéis (Essencial!)
-      baseIndex = 1;      # Começa a contar janelas no 1 em vez do 0 (mais lógico)
-      prefix = "C-a";     # Muda o atalho mestre de Ctrl+B para Ctrl+A (mais fácil de carregar)
-      keyMode = "vi";     # Usa teclas do Vim (hjkl) para scroll e seleção
-      
-      # Plugins essenciais para ficar bonito e útil
-      plugins = with pkgs; [
-        tmuxPlugins.cpu
-        tmuxPlugins.yank
-        tmuxPlugins.resurrect # Salva a sessão para não perderes nada se o PC reiniciar
-      ];
-      
-      extraConfig = ''
-        # Abrir novos painéis no diretório atual (e não na home)
-        bind '"' split-window -v -c "#{pane_current_path}"
-        bind % split-window -h -c "#{pane_current_path}"
-      '';
-    };
-
-services.flatpak = {
     enable = true;
-    uninstallUnmanaged = true; # O "Gari" do sistema: apaga o lixo que não está no código
-    
-    remotes = lib.mkOptionDefault [{
-      name = "flathub";
-      location = "https://dl.flathub.org/repo/flathub.flatpakrepo";
-    }];
+    defaultEditor = true;
+    viAlias = true;
+    vimAlias = true;
+  };
 
-    packages = [
-      # "com.spotify.Client"
-      # "com.discordapp.Discord"
-      # Adiciona aqui as tuas apps pesadas
+  programs.zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+    options = [ "--cmd cd" ];
+  };
+
+  programs.yazi = {
+    enable = true;
+    enableZshIntegration = true;
+    shellWrapperName = "y";
+  };
+
+  programs.tmux = {
+    enable = true;
+    mouse = true;
+    baseIndex = 1;
+    prefix = "C-a";
+    keyMode = "vi";
+    plugins = with pkgs; [
+      tmuxPlugins.cpu
+      tmuxPlugins.yank
+      tmuxPlugins.resurrect
     ];
-  };  
-
-  # Home Manager is pretty good at managing dotfiles. The primary way to manage
-  # plain files is through 'home.file'.
-  home.file = {
-    # # Building this configuration will create a copy of 'dotfiles/screenrc' in
-    # # the Nix store. Activating the configuration will then make '~/.screenrc' a
-    # # symlink to the Nix store copy.
-    # ".screenrc".source = dotfiles/screenrc;
-
-    # # You can also set the file content immediately.
-    # ".gradle/gradle.properties".text = ''
-    #   org.gradle.console=verbose
-    #   org.gradle.daemon.idletimeout=3600000
-    # '';
+    extraConfig = ''
+      bind '"' split-window -v -c "#{pane_current_path}"
+      bind % split-window -h -c "#{pane_current_path}"
+    '';
   };
 
-  # Home Manager can also manage your environment variables through
-  # 'home.sessionVariables'. These will be explicitly sourced when using a
-  # shell provided by Home Manager. If you don't want to manage your shell
-  # through Home Manager then you have to manually source 'hm-session-vars.sh'
-  # located at either
-  #
-  #  ~/.nix-profile/etc/profile.d/hm-session-vars.sh
-  #
-  # or
-  #
-  #  ~/.local/state/nix/profiles/profile/etc/profile.d/hm-session-vars.sh
-  #
-  # or
-  #
-  #  /etc/profiles/per-user/${username}/etc/profile.d/hm-session-vars.sh
-  #
-  home.sessionVariables = {
-    # EDITOR = "emacs";
-  };
-
-  # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 }
