@@ -362,8 +362,8 @@ home.activation = {
   qt = {
     enable = true;
     
-    # "gtk" aqui refere-se ao motor de plataforma que lê configs do GTK3
-    platformTheme.name = "gtk"; 
+    # Motor de plataforma Qt que lê configs do GTK3
+    platformTheme.name = "gtk3"; 
     
     # O estilo "gtk2" NÃO EXISTE no Qt6. Usamos "adwaita-dark" como base segura.
     # O motor de plataforma vai aplicar as cores do teu tema por cima disto.
@@ -384,8 +384,6 @@ home.sessionVariables = {
     eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh nerd-fonts.jetbrains-mono grim slurp swappy wl-clipboard cliphist ripgrep fd tmux zoxide yazi dconf
     glib
     # Motores de Tema (Necessários para GTK funcionar bem)
-    gtk-engine-murrine
-    gnome-themes-extra
     gsettings-desktop-schemas
     adwaita-qt
     kdePackages.qt6ct
