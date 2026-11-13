@@ -290,7 +290,6 @@ in
     eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh
     grim slurp swappy wl-clipboard dconf
     glib gsettings-desktop-schemas
-    noctalia uwsm adw-gtk-theme qt6ct hyprpicker swash kde-cli-tools
   ]) ++ [ wall-manager power-menu ];
 
   dconf.enable = true;
