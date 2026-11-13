@@ -210,7 +210,7 @@ in
     # ".config/swaync/config.json".source = ../../../swaync/.config/swaync/config.json; -- legacy: substituído por Noctalia notifications
     # ".config/swaync/style.css".source = ../../../swaync/.config/swaync/style.css;      -- legacy
     # ".config/rofi/config.rasi".source = ../../../rofi/.config/rofi/config.rasi;        -- legacy: substituído por Noctalia launcher
-    ".config/hypr/noctalia/config.toml".source = ../../../hypr/.config/hypr/noctalia/config.toml;
+    ".config/noctalia/config.toml".source = ../../../noctalia/.config/noctalia/config.toml;
     ".config/hypr/wallpapers" = {
       source = ../../../hypr/.config/hypr/wallpapers;
       recursive = true;
