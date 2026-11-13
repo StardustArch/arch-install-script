@@ -126,6 +126,7 @@ in
     ".config/hypr/config/windowrules.lua".source = ../../../hypr/.config/hypr/config/windowrules.lua;
     ".config/hypr/config/autostart.lua".source = ../../../hypr/.config/hypr/config/autostart.lua;
     ".config/hypr/config/binds.lua".source = ../../../hypr/.config/hypr/config/binds.lua;
+    ".config/kitty/kitty.conf".source = ../../../kitty/.config/kitty/kitty.conf;
 
     # --- Dotfiles do repo (legacy .conf — mantidos temporariamente, DESLIGADOS após migração) ---
     # ".config/hypr/env.conf".text = ''  -- legacy: env vars agora em config/environment.lua via hl.env()
