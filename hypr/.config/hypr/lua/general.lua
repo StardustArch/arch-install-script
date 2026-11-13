@@ -33,13 +33,13 @@ return function(hl, colors)
 		},
 	})
 
-	-- Borda ativa e inativa (cores sólidas — formato RGBA de 8 dígitos aceito pelo parser Lua)
+	-- Borda ativa e inativa (cores sólidas — formato 0xRRGGBBAA aceito pelo parser Lua do Hyprland)
 	-- TODO: restaurar gradiente ($accent1 $accent3 45deg) quando o formato de tabela for confirmado
 	hl.config({
 		general = {
 			col = {
-				active_border   = colors.accent1,   -- "88c0d0ff"
-				inactive_border = colors.bg3,       -- "4c566aff"
+				active_border   = "0xff88c0d0",
+				inactive_border = "0xff4c566a",
 			},
 		},
 	})
@@ -75,7 +75,6 @@ return function(hl, colors)
 	-- ==========================================
 	hl.config({
 		dwindle = {
-			pseudotile    = true,   -- hyprlang: yes → true; NOTA: removido em 0.55+ (ver breaking changes)
 			preserve_split = true,
 		},
 	})
