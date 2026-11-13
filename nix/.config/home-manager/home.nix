@@ -248,97 +248,6 @@ home.file = {
     source = ../../../hypr/.config/hypr/wallpapers;
     recursive = true; # Garante que copia subpastas, se existirem
   };
-  ".config/MangoHud/MangoHud.conf".text = ''
-    preset=3
-    cpu_temp
-    gpu_temp
-    ram
-    vram
-    fps
-    frametime
-    # Atalho para ligar/desligar o HUD (Shift Direito + F12)
-    toggle_hud=Shift_R+F12
-    # Estilo visual
-    round_corners=10
-    background_alpha=0.4
-    font_size=24
-    text_color=ffffff
-    position=top-left
-'';
-".config/gamemode.ini".text = ''
-  [general]
-  removerenice=1
-  desiredgov=performance
-  igpu_power_threshold=-1
-
-  [custom]
-  # Executa o script visual ao entrar no jogo
-  start=sh ${config.home.homeDirectory}/.config/hypr/scripts/gamemode.sh start
-  
-  # Executa o script visual ao sair do jogo
-  end=sh ${config.home.homeDirectory}/.config/hypr/scripts/gamemode.sh end
-'';
-
-".config/hypr/scripts/gamemode.sh" = {
-  executable = true;
-  text = ''
-    #!/bin/bash
-    
-    # Função para Modo Jogo (Performance)
-    enable_game_mode() {
-        # 1. Matar Waybar e Wallpaper para poupar recursos
-        pkill waybar || true
-        pkill -STOP wall-manager || true
-        
-        # 2. Desligar Efeitos Visuais do Hyprland
-        hyprctl --batch "\
-            keyword animations:enabled 0;\
-            keyword decoration:drop_shadow 0;\
-            keyword decoration:blur:enabled 0;\
-            keyword general:gaps_in 0;\
-            keyword general:gaps_out 0;\
-            keyword decoration:rounding 0"
-            
-        notify-send -u low -t 2000 "Game Mode" "⚡ ATIVADO: Foco Total"
-    }
-
-    # Função para Modo Desktop (Beleza)
-    disable_game_mode() {
-        # 1. Restaurar Hyprland (Lê a config original)
-        hyprctl reload
-        
-        # 2. Restaurar Wallpaper e Waybar
-        pkill -CONT wall-manager || true
-        sleep 0.5
-        waybar &
-        
-        notify-send -u low -t 2000 "Game Mode" "✨ DESATIVADO: Desktop Normal"
-    }
-
-    # Lógica de Controlo
-    if [ "$1" == "start" ]; then
-        enable_game_mode
-    elif [ "$1" == "end" ]; then
-        disable_game_mode
-    else
-        # Se não houver argumentos (Toggle manual via atalho)
-        STATUS=$(hyprctl getoption animations:enabled | awk 'NR==1{print $2}')
-        if [ "$STATUS" = 1 ]; then
-            enable_game_mode
-            # Truque: Se for manual, ativamos o gamemode em background
-            gamemoderun sleep infinity > /dev/null 2>&1 &
-            echo $! > /tmp/gamemode_manual.pid
-        else
-            disable_game_mode
-            # Matar o gamemode manual
-            if [ -f /tmp/gamemode_manual.pid ]; then
-                kill $(cat /tmp/gamemode_manual.pid) 2>/dev/null
-                rm /tmp/gamemode_manual.pid
-            fi
-        fi
-    fi
-  '';
-};
 ".config/hypr/env.conf".text = ''
     # --- CURSOR (Estático, pois gostas do Bibata) ---
     env = XCURSOR_THEME,Bibata-Modern-Ice
@@ -472,7 +381,7 @@ home.sessionVariables = {
   # PROGRAMAS CONFIGURADOS
   # ============================================================
   home.packages = (with pkgs; [
-    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh nerd-fonts.jetbrains-mono grim slurp swappy wl-clipboard cliphist gamemode protonup-qt gamescope mangohud ripgrep fd tmux zoxide yazi dconf
+    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh nerd-fonts.jetbrains-mono grim slurp swappy wl-clipboard cliphist ripgrep fd tmux zoxide yazi dconf
     glib
     # Motores de Tema (Necessários para GTK funcionar bem)
     gtk-engine-murrine
