@@ -11,7 +11,7 @@ end
 ---------------------------
 
 -- Window manipulation
-hl.bind(mainMod .. " + Escape",      hl.exec_cmd("hyprctl kill"))
+hl.bind(mainMod .. " + Escape",      hl.dsp.exec_cmd("hyprctl kill"))
 hl.bind(mainMod .. " + Q",           hl.dsp.window.close())
 hl.bind(mainMod .. " + ALT + Space", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + D",           hl.dsp.window.fullscreen({ mode = 1 }))
@@ -64,54 +64,54 @@ hl.bind(mainMod .. " + code:86", function() zoomfunction(0.3) end, { repeating =
 ---- LAUNCHER ----
 ------------------
 
-hl.bind(mainMod .. " + Return",     hl.exec_cmd(launchPrefix .. TERMINAL))
-hl.bind(mainMod .. " + E",          hl.exec_cmd(launchPrefix .. FILE_MANAGER))
-hl.bind(mainMod .. " + T",          hl.exec_cmd(launchPrefix .. EDITOR))
-hl.bind(mainMod .. " + C",          hl.exec_cmd(launchPrefix .. CALCULATOR))
-hl.bind("XF86Calculator",           hl.exec_cmd(launchPrefix .. CALCULATOR))
-hl.bind(mainMod .. " + W",          hl.exec_cmd(launchPrefix .. BROWSER))
-hl.bind("CONTROL + SHIFT + Escape", hl.exec_cmd(launchPrefix .. TERMINAL .. " -e btop"))
-hl.bind(mainMod .. " + L",          hl.exec_cmd("hyprlock"))
+hl.bind(mainMod .. " + Return",     hl.dsp.exec_cmd(launchPrefix .. TERMINAL))
+hl.bind(mainMod .. " + E",          hl.dsp.exec_cmd(launchPrefix .. FILE_MANAGER))
+hl.bind(mainMod .. " + T",          hl.dsp.exec_cmd(launchPrefix .. EDITOR))
+hl.bind(mainMod .. " + C",          hl.dsp.exec_cmd(launchPrefix .. CALCULATOR))
+hl.bind("XF86Calculator",           hl.dsp.exec_cmd(launchPrefix .. CALCULATOR))
+hl.bind(mainMod .. " + W",          hl.dsp.exec_cmd(launchPrefix .. BROWSER))
+hl.bind("CONTROL + SHIFT + Escape", hl.dsp.exec_cmd(launchPrefix .. TERMINAL .. " -e btop"))
+hl.bind(mainMod .. " + L",          hl.dsp.exec_cmd("hyprlock"))
 
 ---------------------------
 ---- HARDWARE CONTROLS ----
 ---------------------------
 
 -- Audio
-hl.bind("XF86AudioRaiseVolume", hl.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"),   { locked = true, repeating = true })
-hl.bind("XF86AudioLowerVolume", hl.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"), { locked = true, repeating = true })
-hl.bind("XF86AudioMute",        hl.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
-hl.bind("XF86AudioMicMute",     hl.exec_cmd("pactl set-source-mute @DEFAULT_SOURCE@ toggle"),    { locked = true })
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"),   { locked = true, repeating = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"), { locked = true, repeating = true })
+hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
+hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd("pactl set-source-mute @DEFAULT_SOURCE@ toggle"),    { locked = true })
 
 -- Media
-hl.bind("XF86AudioPlay",  hl.exec_cmd("playerctl play-pause"),   { locked = true })
-hl.bind("XF86AudioPause", hl.exec_cmd("playerctl play-pause"),   { locked = true })
-hl.bind("XF86AudioNext",  hl.exec_cmd("playerctl next"),     { locked = true })
-hl.bind("XF86AudioPrev",  hl.exec_cmd("playerctl previous"), { locked = true })
+hl.bind("XF86AudioPlay",  hl.dsp.exec_cmd("playerctl play-pause"),   { locked = true })
+hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"),   { locked = true })
+hl.bind("XF86AudioNext",  hl.dsp.exec_cmd("playerctl next"),     { locked = true })
+hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"), { locked = true })
 
 -- Brightness
-hl.bind("XF86MonBrightnessUp",   hl.exec_cmd("brightnessctl set 5%+"),   { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessDown", hl.exec_cmd("brightnessctl set 5%-"), { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("brightnessctl set 5%+"),   { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"), { locked = true, repeating = true })
 
 -------------------
 ---- UTILITIES ----
 -------------------
 
 -- Screen Capture
-hl.bind(mainMod .. " + P",     hl.exec_cmd("grim -g \"$(slurp)\" - | wl-copy"))
-hl.bind("Print",               hl.exec_cmd("grim -g \"$(slurp)\" - | wl-copy"))
-hl.bind(mainMod .. " + Print", hl.exec_cmd("grim -g \"$(slurp)\" - | swappy -f -"))
+hl.bind(mainMod .. " + P",     hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy"))
+hl.bind("Print",               hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy"))
+hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | swappy -f -"))
 
 -- Clipboard
-hl.bind(mainMod .. " + V", hl.exec_cmd("cliphist list | rofi -dmenu -p \"Clipboard\" | cliphist decode | wl-copy"))
+hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("cliphist list | rofi -dmenu -p \"Clipboard\" | cliphist decode | wl-copy"))
 
 -- Wallpaper & Themes
-hl.bind(mainMod .. " + SHIFT + W", hl.exec_cmd("wall-manager static"))
-hl.bind(mainMod .. " + W", hl.exec_cmd("wall-manager select"))
-hl.bind(mainMod .. " + T", hl.exec_cmd("wall-manager switch"))
+hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("wall-manager static"))
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("wall-manager select"))
+hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("wall-manager switch"))
 
 -- Notifications
-hl.bind(mainMod .. " + A", hl.exec_cmd("swaync-client -t -sw"))
+hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("swaync-client -t -sw"))
 
 -------------------------------
 ---- WORKSPACES & MONITORS ----
