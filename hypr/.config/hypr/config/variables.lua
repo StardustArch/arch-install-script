@@ -1,7 +1,7 @@
 -- Hyprland default apps (StardustArch - mantido do projeto original)
 TERMINAL     = "kitty"
-FILE_MANAGER = "dolphin"
-BROWSER      = "firefox"
+FILE_MANAGER = "thunar"
+BROWSER      = "brave"
 EDITOR       = "kitty -e nvim"
 CALCULATOR   = "qalculate-gtk"
 
@@ -12,4 +12,4 @@ MONITOR3 = ""
 PRIMARY_MONITOR = MONITOR1
 
 -- Workspaces
-NUM_WPM = 3 -- Number of workspaces per monitor (Max 10)
+NUM_WPM = 10 -- Number of workspaces per monitor (Max 10)

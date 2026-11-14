@@ -243,6 +243,13 @@ The following components were intentionally removed from the stack:
 * Check Hyprland version: `hyprland --version` (must be 0.55+)
 * Check Lua syntax: `hyprctl reload` and watch for errors in the terminal
 
+**Cursor disappears on bare metal (works in VM):**
+* Cause 1 — theme not installed: `bibata-cursor-theme` and `papirus-icon-theme` are now in the install list (`setup_install.sh`). Verify the directory exists: `ls /usr/share/icons/Bibata-Modern-Ice`.
+* Cause 2 — hardware cursor failure on integrated Intel/AMD GPUs: `no_hardware_cursors = 1` was added to `hypr/.config/hypr/config/misc.lua` to force software-rendered cursors.
+* Cause 3 — variables not exported before UWSM starts the compositor: `~/.config/uwsm/env` now exports `XCURSOR_THEME=Bibata-Modern-Ice` and `XCURSOR_SIZE=24` (deployed via Home Manager).
+* Cause 4 — GTK cursor mismatch: `~/.config/gtk-3.0/4.0/settings.ini` now set `gtk-cursor-theme-name = Bibata-Modern-Ice`.
+* Apply the cursor theme at startup: `hyprctl setcursor Bibata-Modern-Ice 24` runs on `hyprland.start` in `hypr/.config/hypr/config/autostart.lua`.
+
 ---
 
 ## 📜 License

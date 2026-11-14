@@ -4,7 +4,8 @@
 
 hl.env("XCURSOR_THEME", "Bibata-Modern-Ice")
 hl.env("XCURSOR_SIZE", "24")
-hl.env("GTK_THEME", "Nordic")
+-- hl.env("GTK_THEME", "Nordic")
+hl.env("GTK_THEME", "adw-gtk3-dark")
 hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
 hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
 hl.env("XDG_SESSION_TYPE", "wayland")
