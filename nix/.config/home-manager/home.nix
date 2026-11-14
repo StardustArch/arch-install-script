@@ -36,25 +36,6 @@ let
   };
   colors = themes.${selectedTheme};
 
-  # ============================================================
-  # SCRIPTS
-  # ============================================================
-  power-menu = pkgs.writeShellScriptBin "power-menu" ''
-    shutdown="⏻ Desligar"
-    reboot="⟳ Reiniciar"
-    lock="🔒 Bloquear"
-    logout="⇠ Sair"
-
-    selected=$(echo -e "$lock\n$logout\n$reboot\n$shutdown" | rofi -dmenu -p "Energia" -theme-str 'window {width: 300px;}')
-
-    case $selected in
-      "$shutdown") systemctl poweroff ;;
-      "$reboot") systemctl reboot ;;
-      "$lock") pidof hyprlock || hyprlock ;;
-      "$logout") hyprctl dispatch exit ;;
-    esac
-  '';
-
 in
 {
   home.username = username;
@@ -201,7 +182,7 @@ in
     eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh
     grim slurp swappy wl-clipboard dconf
     glib gsettings-desktop-schemas
-  ]) ++ [ power-menu ];
+  ]);
 
   dconf.enable = true;
   nixpkgs.config.allowUnfree = true;
