@@ -11,8 +11,9 @@ let
   rawTheme = if builtins.pathExists themeFile then builtins.readFile themeFile else "aizome";
   selectedTheme = lib.removeSuffix "\n" rawTheme;
 
-  # Nota: GTK/Qt/ícones/cursor são agora geridos pelo Noctalia;
-  # não há pacotes GTK a instalar aqui via Home Manager.
+  # Noctalia gera as cores (noctalia.css). Aqui o Home Manager apenas
+  # fixa gtk-theme-name=adw-gtk3, gtk-icon-theme-name=Papirus-Dark e o
+  # cursor (ver modules/theming.nix).
 
   themes = {
     nord = {
@@ -138,7 +139,7 @@ in
   };
 
   # ============================================================
-  # GTK/Qt geridos pelo Noctalia (não configurar aqui via Home Manager)
+  # GTK/Qt: fixo mínimo no Home Manager (cores vêm do Noctalia)
   # ============================================================
 
   home.sessionVariables = {
