@@ -121,6 +121,7 @@ in
       gtk-theme-name = adw-gtk3
       gtk-cursor-theme-name = Bibata-Modern-Ice
       gtk-cursor-theme-size = 24
+      gtk-icon-theme-name = Papirus-Dark
     '';
 
     ".config/gtk-4.0/settings.ini".text = ''
@@ -128,6 +129,7 @@ in
       gtk-theme-name = adw-gtk3
       gtk-cursor-theme-name = Bibata-Modern-Ice
       gtk-cursor-theme-size = 24
+      gtk-icon-theme-name = Papirus-Dark
     '';
 
     # --- Dotfiles do repo (Hyprland 0.55+ Lua — estrutura CachyOS espelhada) ---
