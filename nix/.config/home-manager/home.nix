@@ -45,6 +45,7 @@ in
 
   imports = [
     ./modules/packages.nix
+    ./modules/git.nix
   ];
 
   # ============================================================
@@ -157,14 +158,6 @@ in
   # ============================================================
   # PROGRAMAS
   # ============================================================
-  programs.git = {
-    enable = true;
-    settings.user = {
-      name = "StardustArch";
-      email = "paulojoaocandrinho4@gmail.com";
-    };
-  };
-
   programs.zsh = {
     enable = true;
     enableCompletion = true;
