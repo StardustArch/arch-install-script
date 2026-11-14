@@ -55,36 +55,6 @@ in
       $fg2 = rgba(${colors.fg2}ff)
       $accent1 = rgba(${colors.accent1}ff)
       $accent2 = rgba(${colors.accent2}ff)
-      $accent3 = rgba(${colors.accent3}ff)
-      $shadow_col = rgba(00000055)
-      $tk_bg = 0xff${colors.bg0}
-      $tk_base = 0xff${colors.bg1}
-      $tk_accent = 0xff${colors.accent1}
-      $tk_text = 0xff${colors.fg0}
-    '';
-
-    ".config/waybar/colors.css".text = ''
-      @define-color bg0 #${colors.bg0};
-      @define-color bg1 #${colors.bg1};
-      @define-color bg3 #${colors.bg3};
-      @define-color fg0 #${colors.fg0};
-      @define-color fg2 #${colors.fg2};
-      @define-color accent1 #${colors.accent1};
-      @define-color accent3 #${colors.accent3};
-      @define-color red #${colors.red};
-      @define-color yellow #${colors.yellow};
-      @define-color green #${colors.green};
-    '';
-
-    ".config/rofi/colors.rasi".text = ''
-      * {
-        bg: #${colors.bg0}f2;
-        bg-alt: #${colors.bg1};
-        bg-sel: #${colors.bg2};
-        fg: #${colors.fg0};
-        accent: #${colors.accent1};
-        muted: #${colors.bg3};
-      }
     '';
 
     # --- Variáveis de ambiente exportadas pelo UWSM antes de iniciar Hyprland ---
