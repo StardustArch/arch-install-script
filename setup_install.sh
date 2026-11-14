@@ -44,6 +44,7 @@ Etapas disponíveis:
   vscode    8 - Configuração do VS Code / VSCodium e extensões
   zsh       9 - Definir Zsh do Nix como shell padrão
   themes   10 - Compatibilidade de temas (Nix -> Arch bridge) e serviços
+  qt       11 - Tema Qt/KDE (qt6ct-kde, esquema 'noctalia' para o Dolphin)
 
 Exemplos:
   $0                      # executa tudo (predefinido)
@@ -263,11 +264,18 @@ stage_packages() {
       xdg-desktop-portal
       brightnessctl
       greetd greetd-tuigreet
-      noctalia uwsm adw-gtk-theme qt6ct hyprpicker swash kde-cli-tools
+      noctalia uwsm adw-gtk-theme qt6ct-kde hyprpicker kde-cli-tools
       # Temas de cursor e ícones (AUR) — necessários para o cursor não desaparecer em bare metal
       bibata-cursor-theme papirus-icon-theme
       podman distrobox podman-compose btop plymouth
   )
+
+  # qt6ct-kde substitui o qt6ct e os dois conflitam: com --noconfirm o pacman
+  # responderia "não" ao conflito, por isso removemos o qt6ct antes.
+  if pacman -Q qt6ct &>/dev/null && ! pacman -Q qt6ct-kde &>/dev/null; then
+    log "Removendo 'qt6ct' (substituído por 'qt6ct-kde')..."
+    sudo pacman -Rdd --noconfirm qt6ct
+  fi
 
   # Usa o yay para instalar tudo (ele lida com pacotes oficiais e AUR simultaneamente)
   yay -S --noconfirm --needed "${PKGS[@]}"
@@ -281,42 +289,68 @@ stage_packages() {
 
 stage_plymouth() {
   # ==========================================
-  # 4. CONFIGURAÇÃO DO PLYMOUTH (NOVO)
+  # 4. CONFIGURAÇÃO DO PLYMOUTH
   # ==========================================
   log "Etapa 4/10 - Configuração do Plymouth (Animação de Boot)..."
 
-  # 4.1 Adicionar Hook ao mkinitcpio
-  if ! grep -q "plymouth" /etc/mkinitcpio.conf; then
+  local NEED_REBUILD=0
+  local MKINIT_CONF="/etc/mkinitcpio.conf"
+  local GRUB_DEFAULT_FILE="/etc/default/grub"
+
+  # 4.1 Adicionar Hook ao mkinitcpio (só na linha HOOKS=, ignora comentários)
+  if ! grep -E '^HOOKS=' "$MKINIT_CONF" | grep -qw "plymouth"; then
     log "Adicionando hook 'plymouth' ao mkinitcpio..."
-    # Insere 'plymouth' logo após 'udev' para garantir a ordem correta
-    sudo sed -i 's/\(udev\)/\1 plymouth/' /etc/mkinitcpio.conf
+    if grep -E '^HOOKS=' "$MKINIT_CONF" | grep -qw "systemd"; then
+      # Initramfs baseado em systemd: plymouth vai logo após 'systemd'
+      sudo sed -i -E '/^HOOKS=/ s/\bsystemd\b/systemd plymouth/' "$MKINIT_CONF"
+    else
+      # Initramfs baseado em busybox: plymouth vai logo após 'udev'
+      sudo sed -i -E '/^HOOKS=/ s/\budev\b/udev plymouth/' "$MKINIT_CONF"
+    fi
+    NEED_REBUILD=1
   else
     log "Hook do Plymouth já configurado."
   fi
 
-  # 4.2 Configurar GRUB para Boot Silencioso (Quiet Splash)
-  if [ -f /etc/default/grub ]; then
-    if ! grep -q "quiet splash" /etc/default/grub; then
-      log "Adicionando 'quiet splash' ao GRUB..."
-      # Adiciona os parâmetros à linha GRUB_CMDLINE_LINUX_DEFAULT
-      sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/&quiet splash /' /etc/default/grub
-      log "Atualizando configuração do GRUB..."
-      sudo grub-mkconfig -o /boot/efi/grub/grub.cfg
+  # 4.2 Configurar GRUB para Boot Silencioso (quiet splash)
+  if [ -f "$GRUB_DEFAULT_FILE" ]; then
+    local GRUB_CHANGED=0
+    local param
+    # Cada parâmetro é verificado em separado (idempotente, não duplica)
+    for param in quiet splash; do
+      if ! grep -E '^GRUB_CMDLINE_LINUX_DEFAULT=' "$GRUB_DEFAULT_FILE" | grep -qw "$param"; then
+        log "Adicionando '$param' ao GRUB..."
+        # Acrescenta no fim da linha, antes da aspa final
+        sudo sed -i -E "/^GRUB_CMDLINE_LINUX_DEFAULT=/ s/([\"'])\$/ $param\1/" "$GRUB_DEFAULT_FILE"
+        GRUB_CHANGED=1
+      fi
+    done
+
+    if [ "$GRUB_CHANGED" -eq 1 ]; then
+      # Caminho onde o GRUB realmente lê o grub.cfg (Arch: /boot/grub)
+      local GRUB_CFG="/boot/grub/grub.cfg"
+      [ -d /boot/grub ] || GRUB_CFG="/boot/efi/grub/grub.cfg"
+      log "Atualizando configuração do GRUB ($GRUB_CFG)..."
+      sudo grub-mkconfig -o "$GRUB_CFG"
+    else
+      log "Parâmetros 'quiet splash' já presentes no GRUB."
     fi
   else
     warn "GRUB não encontrado (Systemd-boot?). Adicione 'quiet splash' manualmente ao seu bootloader."
   fi
 
   # 4.3 Definir Tema e Gerar Initramfs
-  log "Aplicando tema 'spinner' e gerando imagem de boot..."
-  # O flag -R reconstrói o initramfs automaticamente
-  TARGET_THEME="spinner"
-  # 1. Verifica qual é o tema atual
+  local TARGET_THEME="spinner"
+  local CURRENT_THEME
   CURRENT_THEME=$(plymouth-set-default-theme)
 
   if [ "$CURRENT_THEME" != "$TARGET_THEME" ]; then
     log "Tema do Plymouth diferente de $TARGET_THEME. Atualizando..."
+    # O flag -R já reconstrói o initramfs (inclui o hook novo, se houver)
     sudo plymouth-set-default-theme -R "$TARGET_THEME"
+  elif [ "$NEED_REBUILD" -eq 1 ]; then
+    log "Tema já é $TARGET_THEME, mas o mkinitcpio mudou. Reconstruindo initramfs..."
+    sudo mkinitcpio -P
   else
     log "Plymouth já está configurado como $TARGET_THEME. Ignorando reconstrução do boot."
   fi
@@ -612,12 +646,93 @@ stage_themes() {
   # Compila os esquemas para o sistema os reconhecer imediatamente
   glib-compile-schemas ~/.local/share/glib-2.0/schemas
 
+  # Definir ícones e tema GTK via gsettings (sessão D-Bus; não falha se não houver sessão)
+  if command -v /usr/bin/gsettings &>/dev/null; then
+    /usr/bin/gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark' 2>/dev/null || true
+    /usr/bin/gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3' 2>/dev/null || true
+  fi
+
   log "Pontes criadas com sucesso! Thunar e Hyprland agora reconhecem os temas."
 
   log "Ativando serviços..."
   sudo systemctl enable --now bluetooth # se tiveres bluetooth
   systemctl --user enable xdg-desktop-portal.service
   systemctl --user enable xdg-desktop-portal-hyprland.service
+}
+
+# --- Helpers INI (usados pela etapa 'qt') ---
+# ini_get <ficheiro> <secção> <chave>  -> imprime o valor (vazio se não existir)
+ini_get() {
+  awk -v s="[$2]" -v k="$3" '
+    $0==s {ins=1; next}
+    /^\[/ {ins=0}
+    ins && index($0,k"=")==1 {print substr($0,length(k)+2); exit}
+  ' "$1" 2>/dev/null
+}
+
+# ini_set <ficheiro> <secção> <chave> <valor>  -> cria/atualiza a chave, preserva o resto
+ini_set() {
+  local f="$1" s="$2" k="$3" v="$4"
+  mkdir -p "$(dirname "$f")"
+  touch "$f"
+  grep -qxF "[$s]" "$f" || printf '\n[%s]\n' "$s" >> "$f"
+  if [ -n "$(awk -v s="[$s]" -v k="$k" '
+        $0==s {ins=1; next}
+        /^\[/ {ins=0}
+        ins && index($0,k"=")==1 {print "x"; exit}' "$f")" ]; then
+    awk -v s="[$s]" -v k="$k" -v v="$v" '
+      $0==s {ins=1; print; next}
+      /^\[/ {ins=0}
+      ins && index($0,k"=")==1 {print k"="v; next}
+      {print}' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
+  else
+    awk -v s="[$s]" -v k="$k" -v v="$v" '
+      {print}
+      $0==s {print k"="v}' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
+  fi
+}
+
+stage_qt() {
+  # ==========================================
+  # 11. TEMA QT / KDE (Dolphin e outras apps Qt seguem o Noctalia)
+  # ==========================================
+  log "Etapa 11 - Tema Qt/KDE (qt6ct-kde + esquema 'noctalia')..."
+
+  local QT_CONF="$HOME/.config/qt6ct/qt6ct.conf"
+  local KDEGLOBALS="$HOME/.config/kdeglobals"
+  # Ficheiro de cores gerado pelo Noctalia (template 'Qt' do Noctalia)
+  local QT_COLORS="$HOME/.config/qt6ct/colors/noctalia.conf"
+
+  # 11.1 Garantir qt6ct-kde (substitui o qt6ct; os dois conflitam)
+  if ! pacman -Q qt6ct-kde &>/dev/null; then
+    if pacman -Q qt6ct &>/dev/null; then
+      warn "A remover 'qt6ct' para o substituir por 'qt6ct-kde'..."
+      sudo pacman -Rdd --noconfirm qt6ct
+    fi
+    yay -S --noconfirm --needed qt6ct-kde
+  else
+    log "'qt6ct-kde' já instalado."
+  fi
+
+  # 11.2 qt6ct.conf: escolher o esquema do Noctalia (sem apagar o resto)
+  log "Configurando $QT_CONF..."
+  ini_set "$QT_CONF" Appearance color_scheme_path "$QT_COLORS"
+  ini_set "$QT_CONF" Appearance custom_palette true
+  # Só define estilo e ícones se o utilizador ainda não escolheu
+  [ -n "$(ini_get "$QT_CONF" Appearance style)" ]      || ini_set "$QT_CONF" Appearance style Fusion
+  [ -n "$(ini_get "$QT_CONF" Appearance icon_theme)" ] || ini_set "$QT_CONF" Appearance icon_theme Papirus-Dark
+
+  # 11.3 kdeglobals: apps KDE (Dolphin) leem o esquema daqui
+  ini_set "$KDEGLOBALS" General ColorScheme noctalia
+
+  # 11.4 Avisos úteis
+  if [ -z "${QT_QPA_PLATFORMTHEME:-}" ]; then
+    warn "QT_QPA_PLATFORMTHEME não está definido nesta sessão; confirma que o Hyprland/UWSM exporta QT_QPA_PLATFORMTHEME=qt6ct."
+  fi
+  if [ ! -f "$QT_COLORS" ]; then
+    warn "$QT_COLORS ainda não existe: liga o template 'Qt' no Noctalia e muda o esquema/wallpaper uma vez para o gerar."
+  fi
+  log "Qt configurado. Reinicia as apps Qt (pkill dolphin; dolphin)."
 }
 
 # ==========================================
@@ -641,6 +756,7 @@ if [[ "$STAGE" == "all" ]]; then
   stage_vscode
   stage_zsh
   stage_themes
+  stage_qt
 else
   log ">>> INICIANDO SETUP 'ARCH ETERNO' (etapa isolada: $STAGE) <<<"
   case "$STAGE" in
@@ -654,6 +770,7 @@ else
     vscode)    stage_vscode ;;
     zsh)       stage_zsh ;;
     themes)    stage_themes ;;
+    qt)        stage_qt ;;
     *)
       err "Etapa desconhecida: $STAGE"
       usage

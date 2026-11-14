@@ -118,12 +118,14 @@ in
     # --- Cursor GTK (garante consistência entre Hyprland e apps GTK) ---
     ".config/gtk-3.0/settings.ini".text = ''
       [Settings]
+      gtk-theme-name = adw-gtk3
       gtk-cursor-theme-name = Bibata-Modern-Ice
       gtk-cursor-theme-size = 24
     '';
 
     ".config/gtk-4.0/settings.ini".text = ''
       [Settings]
+      gtk-theme-name = adw-gtk3
       gtk-cursor-theme-name = Bibata-Modern-Ice
       gtk-cursor-theme-size = 24
     '';
