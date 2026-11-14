@@ -186,16 +186,6 @@ in
     };
   };
 
-  home.activation.restartServices = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    ${pkgs.procps}/bin/pkill -USR2 waybar || /usr/bin/waybar &
-
-    if ${pkgs.procps}/bin/pgrep -x "swaync" > /dev/null; then
-       /usr/bin/swaync-client -R && /usr/bin/swaync-client -rs
-    else
-       /usr/bin/swaync &
-    fi
-  '';
-
   # ============================================================
   # GTK/Qt geridos pelo Noctalia (não configurar aqui via Home Manager)
   # ============================================================
