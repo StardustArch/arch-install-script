@@ -256,10 +256,10 @@ stage_packages() {
 
   # Lista unificada (Pacman + AUR via yay)
   PKGS=(
-      hyprland hyprpaper swaybg xorg-xwayland
+      hyprland xorg-xwayland
       kitty hyprtoolkit
       pipewire pipewire-pulse wireplumber polkit-gnome
-      dolphin ttf-jetbrains-mono-nerd flatpak
+      thunar tumbler ttf-jetbrains-mono-nerd flatpak
       xdg-desktop-portal-hyprland qt5-wayland qt6-wayland
       xdg-desktop-portal
       brightnessctl
