@@ -1,7 +1,7 @@
 -- Hyprland default apps (StardustArch - mantido do projeto original)
 TERMINAL     = "kitty"
-FILE_MANAGER = "dolphin"
-BROWSER      = "firefox"
+FILE_MANAGER = "thunar"
+BROWSER      = "brave"
 EDITOR       = "kitty -e nvim"
 CALCULATOR   = "qalculate-gtk"
 

@@ -75,6 +75,9 @@ hl.bind(mainMod .. " + L",          hl.dsp.exec_cmd("noctalia msg session lock")
 hl.bind(mainMod .. " + X",          hl.dsp.exec_cmd("noctalia msg panel-toggle control-center"))
 hl.bind(mainMod .. " + Space",      hl.dsp.exec_cmd("noctalia msg panel-toggle launcher"))
 hl.bind(mainMod .. " + ALT + C",    hl.dsp.exec_cmd("noctalia msg panel-toggle session"))
+hl.bind(mainMod .. " + N",          hl.dsp.exec_cmd("noctalia msg panel-toggle control-center network"))
+hl.bind(mainMod .. " + M",          hl.dsp.exec_cmd("noctalia msg panel-toggle control-center media"))
+hl.bind(mainMod .. " + B",          hl.dsp.exec_cmd("noctalia msg panel-toggle control-center bluetooth"))
 
 ---------------------------
 ---- HARDWARE CONTROLS ----
