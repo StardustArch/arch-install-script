@@ -258,11 +258,14 @@ stage_packages() {
   PKGS=(
       hyprland xorg-xwayland
       kitty hyprtoolkit
-      pipewire pipewire-pulse wireplumber polkit-gnome
+      pipewire pipewire-pulse wireplumber polkit-gnome gnome-disk-utility
       thunar tumbler ttf-jetbrains-mono-nerd flatpak
       xdg-desktop-portal-hyprland qt5-wayland qt6-wayland
       xdg-desktop-portal
       brightnessctl
+      gvfs gvfs-afc gvfs-dnssd gvfs-goa
+      gvfs-gphoto2 gvfs-mtp gvfs-nfs vlc ntfsprogs
+      gvfs-onedrive gvfs-smb gvfs-wsdd ntfs-3g
       greetd greetd-tuigreet
       noctalia uwsm adw-gtk-theme qt6ct-kde hyprpicker kde-cli-tools
       # Temas de cursor e ícones (AUR) — necessários para o cursor não desaparecer em bare metal
@@ -510,11 +513,8 @@ stage_vscode() {
   EXTENSIONS=(
       # --- Estética ---
       "PKief.material-icon-theme"
-      "jdinhlife.gruvbox"
       "yukina.nordavind"
-      # As que o Nix não encontrava:
-      "bfrangi.vscode-nightingale-theme"             # Essencial para o tema Aizome
-      "arcticicestudio.nord-visual-studio-code"
+
       # --- Stack Web (Svelte, Vue) ---
       "svelte.svelte-vscode"
       "Vue.volar"
@@ -524,7 +524,6 @@ stage_vscode() {
 
       # --- Python (Agora instala sem pedir licença!) ---
       "ms-python.python"
-      "charliermarsh.ruff"
 
       # --- Utilitários ---
       "eamodio.gitlens"
