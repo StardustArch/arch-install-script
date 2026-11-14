@@ -377,14 +377,6 @@ vt = 1
 command = "tuigreet --time --time-format '%H:%M | %a %h %d' --remember --remember-user-session --cmd 'uwsm start hyprland-uwsm.desktop'"
 user = "greeter"
 EOF
-
-  # Habilitar e iniciar o serviço greetd
-  if ! systemctl is-enabled --quiet greetd; then
-    sudo systemctl enable greetd
-  fi
-  if ! systemctl is-active --quiet greetd; then
-    sudo systemctl start greetd
-  fi
 }
 
 stage_cache() {
@@ -655,6 +647,10 @@ stage_themes() {
   log "Pontes criadas com sucesso! Thunar e Hyprland agora reconhecem os temas."
 
   log "Ativando serviços..."
+  # Habilitar e iniciar o serviço greetd
+  if ! systemctl is-enabled --quiet greetd; then
+    sudo systemctl enable greetd
+  fi
   sudo systemctl enable --now bluetooth # se tiveres bluetooth
   systemctl --user enable xdg-desktop-portal.service
   systemctl --user enable xdg-desktop-portal-hyprland.service
@@ -720,7 +716,7 @@ stage_qt() {
   ini_set "$QT_CONF" Appearance custom_palette true
   # Só define estilo e ícones se o utilizador ainda não escolheu
   [ -n "$(ini_get "$QT_CONF" Appearance style)" ]      || ini_set "$QT_CONF" Appearance style Fusion
-  [ -n "$(ini_get "$QT_CONF" Appearance icon_theme)" ] || ini_set "$QT_CONF" Appearance icon_theme Papirus-Dark
+  ini_set "$QT_CONF" Appearance icon_theme Papirus-Dark
 
   # 11.3 kdeglobals: apps KDE (Dolphin) leem o esquema daqui
   ini_set "$KDEGLOBALS" General ColorScheme noctalia
