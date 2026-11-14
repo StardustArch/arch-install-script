@@ -43,6 +43,10 @@ in
   home.homeDirectory = "/home/${username}";
   home.stateVersion = "25.11"; # Não alterar sem ler as release notes.
 
+  imports = [
+    ./modules/packages.nix
+  ];
+
   # ============================================================
   # FICHEIROS (cores geradas + dotfiles do repo)
   # ============================================================
@@ -145,15 +149,6 @@ in
   home.sessionVariables = {
     XDG_DATA_DIRS = "$HOME/.nix-profile/share:$HOME/.local/share:/usr/share:$XDG_DATA_DIRS";
   };
-
-  # ============================================================
-  # PACOTES (só CLI e o essencial; fonte Nerd vem do pacman)
-  # ============================================================
-  home.packages = (with pkgs; [
-    eza bat ripgrep fzf fd jq tldr fastfetch lazygit gh
-    grim slurp swappy wl-clipboard dconf
-    glib gsettings-desktop-schemas
-  ]);
 
   dconf.enable = true;
   nixpkgs.config.allowUnfree = true;
