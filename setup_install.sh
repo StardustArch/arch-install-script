@@ -511,7 +511,7 @@ stage_vscode() {
       # --- Estética ---
       "PKief.material-icon-theme"
       "jdinhlife.gruvbox"
-      "arcticicestudio.nord-visual-studio-code"
+      "yukina.nordavind"
       # As que o Nix não encontrava:
       "bfrangi.vscode-nightingale-theme"             # Essencial para o tema Aizome
       "arcticicestudio.nord-visual-studio-code"
