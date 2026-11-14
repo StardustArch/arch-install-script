@@ -83,10 +83,12 @@ PKGS=(
     dolphin ttf-jetbrains-mono-nerd flatpak
     xdg-desktop-portal-hyprland qt5-wayland qt6-wayland
     xdg-desktop-portal
-    brightnessctl blueman network-manager-applet
+    brightnessctl
     greetd greetd-tuigreet
     noctalia uwsm adw-gtk-theme qt6ct hyprpicker swash kde-cli-tools
-    podman distrobox podman-compose btop plymouth nmtui-go bluetuith
+    # Temas de cursor e ícones (AUR) — necessários para o cursor não desaparecer em bare metal
+    bibata-cursor-theme papirus-icon-theme
+    podman distrobox podman-compose btop plymouth
 )
 
 # Usa o yay para instalar tudo (ele lida com pacotes oficiais e AUR simultaneamente)
@@ -121,7 +123,7 @@ if [ -f /etc/default/grub ]; then
         # Adiciona os parâmetros à linha GRUB_CMDLINE_LINUX_DEFAULT
         sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/&quiet splash /' /etc/default/grub
         log "Atualizando configuração do GRUB..."
-        sudo grub-mkconfig -o /boot/grub/grub.cfg
+        sudo grub-mkconfig -o /boot/efi/grub/grub.cfg
     fi
 else
     warn "GRUB não encontrado (Systemd-boot?). Adicione 'quiet splash' manualmente ao seu bootloader."
@@ -418,7 +420,6 @@ glib-compile-schemas ~/.local/share/glib-2.0/schemas
 log "Pontes criadas com sucesso! Thunar e Hyprland agora reconhecem os temas."
 
 log "Ativando serviços..."
-sudo systemctl enable --now sddm
 sudo systemctl enable --now bluetooth # se tiveres bluetooth
 systemctl --user enable xdg-desktop-portal.service
 systemctl --user enable xdg-desktop-portal-hyprland.service

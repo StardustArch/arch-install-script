@@ -106,6 +106,28 @@ in
       }
     '';
 
+    # --- Variáveis de ambiente exportadas pelo UWSM antes de iniciar Hyprland ---
+    # (Conforme sugerido em hypr/.config/hypr/config/environment.lua:
+    #  "if you use UWSM, define your variables in ~/.config/uwsm/env")
+    ".config/uwsm/env".text = ''
+      # Tema e tamanho do cursor — devem bater com /usr/share/icons/<tema>
+      XCURSOR_THEME=Bibata-Modern-Ice
+      XCURSOR_SIZE=24
+    '';
+
+    # --- Cursor GTK (garante consistência entre Hyprland e apps GTK) ---
+    ".config/gtk-3.0/settings.ini".text = ''
+      [Settings]
+      gtk-cursor-theme-name = Bibata-Modern-Ice
+      gtk-cursor-theme-size = 24
+    '';
+
+    ".config/gtk-4.0/settings.ini".text = ''
+      [Settings]
+      gtk-cursor-theme-name = Bibata-Modern-Ice
+      gtk-cursor-theme-size = 24
+    '';
+
     # --- Dotfiles do repo (Hyprland 0.55+ Lua — estrutura CachyOS espelhada) ---
     ".config/hypr/hyprland.lua".source = ../../../hypr/.config/hypr/hyprland.lua;
     ".config/hypr/xdph.conf".source = ../../../hypr/.config/hypr/xdph.conf;

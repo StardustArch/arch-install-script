@@ -23,4 +23,9 @@ hl.config({
     xwayland = {
         force_zero_scaling = true
     },
+    cursor = {
+        -- Força renderização por software do cursor; evita sumiço em hardware real
+        -- com GPUs integradas (Intel/AMD) onde o hardware cursor pode falhar.
+        no_hardware_cursors = 1,
+    },
 })
