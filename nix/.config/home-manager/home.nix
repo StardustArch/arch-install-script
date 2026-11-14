@@ -149,26 +149,7 @@ in
     ".config/hypr/config/binds.lua".source = ../../../hypr/.config/hypr/config/binds.lua;
     ".config/kitty/kitty.conf".source = ../../../kitty/.config/kitty/kitty.conf;
 
-    # --- Dotfiles do repo (legacy .conf — mantidos temporariamente, DESLIGADOS após migração) ---
-    # ".config/hypr/env.conf".text = ''  -- legacy: env vars agora em config/environment.lua via hl.env()
-    #   env = XCURSOR_THEME,Bibata-Modern-Ice
-    #   env = XCURSOR_SIZE,24
-    #   env = GTK_THEME,<gerido pelo Noctalia>
-    # '';
-    # ".config/hypr/hyprland.conf".source = ../../../hypr/.config/hypr/hyprland.conf;  -- legacy, removido após migração
-    # ".config/hypr/lua/theme.lua".source = ../../../hypr/.config/hypr/lua/theme.lua;   -- legacy, substituído por config/colors.lua
-    # ".config/hypr/lua/general.lua".source = ../../../hypr/.config/hypr/lua/general.lua; -- legacy, substituído por config/decorations.lua + misc.lua
-    # ".config/hypr/lua/keybinds.lua".source = ../../../hypr/.config/hypr/lua/keybinds.lua; -- legacy, substituído por config/binds.lua
-    # ".config/hypr/lua/autostart.lua".source = ../../../hypr/.config/hypr/lua/autostart.lua; -- legacy, substituído por config/autostart.lua
-    # ".config/hypr/lua/rules.lua".source = ../../../hypr/.config/hypr/lua/rules.lua; -- legacy, substituído por config/windowrules.lua
     ".config/hypr/hyprtoolkit.conf".source = ../../../hypr/.config/hypr/hyprtoolkit.conf;
-    # ".config/hypr/hyprlock.conf".source = ../../../hypr/.config/hypr/hyprlock.conf;  -- legacy: substituído por Noctalia lockscreen
-    # ".config/hypr/hypridle.conf".source = ../../../hypr/.config/hypr/hypridle.conf;   -- legacy: substituído por Noctalia idle
-    # ".config/waybar/config.jsonc".source = ../../../waybar/.config/waybar/config.jsonc; -- legacy: substituído por Noctalia bar
-    # ".config/waybar/style.css".source = ../../../waybar/.config/waybar/style.css;      -- legacy
-    # ".config/swaync/config.json".source = ../../../swaync/.config/swaync/config.json; -- legacy: substituído por Noctalia notifications
-    # ".config/swaync/style.css".source = ../../../swaync/.config/swaync/style.css;      -- legacy
-    # ".config/rofi/config.rasi".source = ../../../rofi/.config/rofi/config.rasi;        -- legacy: substituído por Noctalia launcher
     ".config/noctalia/config.toml".source = ../../../noctalia/.config/noctalia/config.toml;
     ".config/hypr/wallpapers" = {
       source = ../../../hypr/.config/hypr/wallpapers;
