@@ -48,6 +48,7 @@ in
     ./modules/git.nix
     ./modules/editor.nix
     ./modules/shell.nix
+    ./modules/theming.nix
   ];
 
   # ============================================================
@@ -72,23 +73,6 @@ in
       # Tema e tamanho do cursor — devem bater com /usr/share/icons/<tema>
       XCURSOR_THEME=Bibata-Modern-Ice
       XCURSOR_SIZE=24
-    '';
-
-    # --- Cursor GTK (garante consistência entre Hyprland e apps GTK) ---
-    ".config/gtk-3.0/settings.ini".text = ''
-      [Settings]
-      gtk-theme-name = adw-gtk3
-      gtk-cursor-theme-name = Bibata-Modern-Ice
-      gtk-cursor-theme-size = 24
-      gtk-icon-theme-name = Papirus-Dark
-    '';
-
-    ".config/gtk-4.0/settings.ini".text = ''
-      [Settings]
-      gtk-theme-name = adw-gtk3
-      gtk-cursor-theme-name = Bibata-Modern-Ice
-      gtk-cursor-theme-size = 24
-      gtk-icon-theme-name = Papirus-Dark
     '';
 
     # --- Dotfiles do repo (Hyprland 0.55+ Lua — estrutura CachyOS espelhada) ---
