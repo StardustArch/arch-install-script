@@ -46,6 +46,7 @@ in
   imports = [
     ./modules/packages.nix
     ./modules/git.nix
+    ./modules/editor.nix
   ];
 
   # ============================================================
@@ -182,13 +183,6 @@ in
   programs.starship = {
     enable = true;
     enableZshIntegration = true;
-  };
-
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-    viAlias = true;
-    vimAlias = true;
   };
 
   programs.zoxide = {
